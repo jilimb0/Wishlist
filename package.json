@@ -1,0 +1,25 @@
+{
+  "name": "wishtracker-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test",
+    "dev": "pnpm -r --parallel run dev",
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down",
+    "db:migrate": "pnpm --filter wishtracker-backend run prisma:migrate",
+    "db:generate": "pnpm --filter wishtracker-backend run prisma:generate",
+    "db:studio": "pnpm --filter wishtracker-backend run prisma:studio"
+  },
+  "devDependencies": {
+    "eslint": "^10.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "^5.7.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "metro-cache": "0.80.12"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "WishTracker",
+    "slug": "wishtracker-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.wishtracker.mobile"
+    },
+    "android": {
+      "package": "com.wishtracker.mobile"
+    },
+    "web": {},
+    "plugins": ["expo-image-picker"]
+  }
+}

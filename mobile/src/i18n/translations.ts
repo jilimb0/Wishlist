@@ -1,0 +1,231 @@
+export const translations: Record<string, Record<string, string>> = {
+  en: {
+    // Navbar
+    "nav.my_lists": "My Lists",
+    "nav.following": "Following",
+    "nav.discover": "Discover",
+    "nav.logout": "Log out",
+    "nav.profile": "Profile",
+
+    // Dashboard
+    "dashboard.title": "My Wishlists",
+    "dashboard.new_list": "+ New List",
+    "dashboard.mobile_title": "My Wishes",
+    "dashboard.following_title": "Following",
+    "dashboard.empty_wishlists": "No wishlists yet — create your first one!",
+    "dashboard.mobile_empty_title": "No wishlists yet",
+    "dashboard.mobile_empty_subtitle":
+      "Create your first wishlist and start tracking the things you love",
+    "dashboard.create_wishlist": "Create Wishlist",
+    "dashboard.item_count": "{{count}} items",
+    "dashboard.pending": "Pending Approval",
+
+    // Wishlist Detail
+    "wishlist.public": "Public",
+    "wishlist.friends": "Friends Only",
+    "wishlist.private": "Private",
+    "wishlist.edit": "Edit",
+    "wishlist.delete": "Delete",
+    "wishlist.share": "Share / Invite",
+    "wishlist.follow": "Follow",
+    "wishlist.unfollow": "Unfollow",
+    "wishlist.request_access": "Request Access",
+    "wishlist.cancel_request": "Cancel Request",
+    "wishlist.add_item": "+ Add Item",
+    "wishlist.no_items": "No items in this wishlist yet",
+    "wishlist.by": "by {{name}}",
+    "wishlist.reserved": "RESERVED",
+    "wishlist.view_link": "View Link ↗",
+    "wishlist.reserve": "Reserve",
+    "wishlist.cancel": "Cancel",
+    "wishlist.remove_item": "Remove Item",
+    "wishlist.delete_confirm":
+      "Are you sure you want to delete this wishlist? This action cannot be undone.",
+
+    // Profile
+    "profile.settings": "Profile Settings",
+    "profile.display_name": "Display Name",
+    "profile.update": "Update Profile",
+    "profile.friends": "Friends",
+    "profile.requests": "Requests",
+    "profile.find_friends": "No friends yet. Find them in Discover!",
+    "profile.no_requests": "No pending requests",
+    "profile.security": "Security",
+    "profile.current_password": "Current Password",
+    "profile.new_password": "New Password",
+    "profile.confirm_password": "Confirm New Password",
+    "profile.update_password": "Update Password",
+    "profile.invite": "Invite a Friend",
+    "profile.invite_btn": "Invite",
+
+    // Discover
+    "discover.title": "Discover",
+    "discover.search_placeholder_lists": "Search wishlists...",
+    "discover.search_placeholder_users": "Search users by name or email...",
+    "discover.mobile_search": "Search people...",
+    "discover.mobile_empty_title": "Find friends & family",
+    "discover.mobile_empty_subtitle":
+      "Search by name or email to discover their wishlists",
+    "discover.tab_wishlists": "Wishlists",
+    "discover.tab_users": "Users",
+    "discover.no_results_lists": "No wishlists found",
+    "discover.no_results_users": "No users found",
+    "discover.add_friend": "Add Friend",
+    "discover.friend_request_sent": "Request Sent",
+
+    // Public Profile
+    "profile.user_not_found": "User not found",
+    "profile.back_to_discover": "← Back to Discover",
+    "profile.public_wishlists": "Public Wishlists",
+    "profile.no_public_wishlists":
+      "{{name}} hasn't shared any public wishlists yet.",
+
+    // Following
+    "following.title": "Following",
+    "following.empty_title": "Nothing here yet",
+    "following.empty_subtitle": "Follow friends' wishlists to see them here",
+
+    // Forms
+    "form.title": "Title",
+    "form.description": "Description",
+    "form.privacy": "Privacy",
+    "form.create": "Create Wishlist",
+    "form.new_wishlist": "New Wishlist",
+    "form.choose_emoji": "Choose an emoji",
+    "form.description_optional": "Description (optional)",
+    "form.description_placeholder": "What's this wishlist for?",
+    "form.title_placeholder": "Birthday Wishlist",
+    "form.privacy_private_desc": "Only you",
+    "form.privacy_friends_desc": "Friends only",
+    "form.privacy_public_desc": "Everyone",
+    "form.update": "Update Wishlist",
+    "form.item_url": "Product URL",
+    "form.item_name": "Product Name",
+    "form.item_price": "Price (optional)",
+    "form.item_image": "Image (URL or Upload)",
+    "form.save": "Saving...",
+    "form.add_more": "+ Add more details (price, image, link...)",
+    "form.add_to_wishlist": "+ Add to Wishlist",
+    "form.update_item": "Update Item",
+
+    // Common
+    "common.cancel": "Cancel",
+    "common.delete": "Delete Permanently",
+    "common.loading": "Loading...",
+  },
+  ru: {
+    // Navbar
+    "nav.my_lists": "Мои списки",
+    "nav.following": "Подписки",
+    "nav.discover": "Поиск",
+    "nav.logout": "Выйти",
+    "nav.profile": "Профиль",
+
+    // Dashboard
+    "dashboard.title": "Мои вишлисты",
+    "dashboard.new_list": "+ Создать",
+    "dashboard.mobile_title": "Мои желания",
+    "dashboard.following_title": "Подписки",
+    "dashboard.empty_wishlists": "У вас пока нет вишлистов — создайте первый!",
+    "dashboard.mobile_empty_title": "Вишлистов пока нет",
+    "dashboard.mobile_empty_subtitle":
+      "Создайте свой первый вишлист и начните собирать желания",
+    "dashboard.create_wishlist": "Создать вишлист",
+    "dashboard.item_count": "{{count}} предметов",
+    "dashboard.pending": "Ожидает подтверждения",
+
+    // Wishlist Detail
+    "wishlist.public": "Публичный",
+    "wishlist.friends": "Для друзей",
+    "wishlist.private": "Личный",
+    "wishlist.edit": "Изменить",
+    "wishlist.delete": "Удалить",
+    "wishlist.share": "Поделиться",
+    "wishlist.follow": "Подписаться",
+    "wishlist.unfollow": "Отписаться",
+    "wishlist.request_access": "Запросить доступ",
+    "wishlist.cancel_request": "Отменить запрос",
+    "wishlist.add_item": "+ Добавить",
+    "wishlist.no_items": "В этом списке пока нет предметов",
+    "wishlist.by": "от {{name}}",
+    "wishlist.reserved": "ЗАРЕЗЕРВИРОВАНО",
+    "wishlist.view_link": "Перейти ↗",
+    "wishlist.reserve": "Забронировать",
+    "wishlist.cancel": "Отменить",
+    "wishlist.remove_item": "Удалить",
+    "wishlist.delete_confirm":
+      "Вы уверены, что хотите удалить этот вишлист? Это действие необратимо.",
+
+    // Profile
+    "profile.settings": "Настройки профиля",
+    "profile.display_name": "Имя пользователя",
+    "profile.update": "Обновить профиль",
+    "profile.friends": "Друзья",
+    "profile.requests": "Заявки",
+    "profile.find_friends": "Друзей пока нет. Найдите их в поиске!",
+    "profile.no_requests": "Заявок нет",
+    "profile.security": "Безопасность",
+    "profile.current_password": "Текущий пароль",
+    "profile.new_password": "Новый пароль",
+    "profile.confirm_password": "Подтвердите новый пароль",
+    "profile.update_password": "Обновить пароль",
+    "profile.invite": "Пригласить друга",
+    "profile.invite_btn": "Пригласить",
+
+    // Discover
+    "discover.title": "Поиск",
+    "discover.search_placeholder_lists": "Поиск вишлистов...",
+    "discover.search_placeholder_users": "Поиск людей по имени или email...",
+    "discover.mobile_search": "Поиск людей...",
+    "discover.mobile_empty_title": "Найдите друзей и семью",
+    "discover.mobile_empty_subtitle":
+      "Ищите по имени или email, чтобы найти их вишлисты",
+    "discover.tab_wishlists": "Вишлисты",
+    "discover.tab_users": "Люди",
+    "discover.no_results_lists": "Вишлисты не найдены",
+    "discover.no_results_users": "Пользователи не найдены",
+    "discover.add_friend": "Добавить",
+    "discover.friend_request_sent": "Запрос отправлен",
+
+    // Public Profile
+    "profile.user_not_found": "Пользователь не найден",
+    "profile.back_to_discover": "← Вернуться к поиску",
+    "profile.public_wishlists": "Публичные вишлисты",
+    "profile.no_public_wishlists":
+      "{{name}} пока не поделился публичными вишлистами.",
+
+    // Following
+    "following.title": "Подписки",
+    "following.empty_title": "Пока ничего",
+    "following.empty_subtitle":
+      "Подпишитесь на вишлисты друзей, чтобы видеть их здесь",
+
+    // Forms
+    "form.title": "Название",
+    "form.description": "Описание",
+    "form.privacy": "Приватность",
+    "form.create": "Создать вишлист",
+    "form.new_wishlist": "Новый вишлист",
+    "form.choose_emoji": "Выберите эмодзи",
+    "form.description_optional": "Описание (необязательно)",
+    "form.description_placeholder": "Для чего этот список?",
+    "form.title_placeholder": "Список на день рождения",
+    "form.privacy_private_desc": "Только вы",
+    "form.privacy_friends_desc": "Только друзья",
+    "form.privacy_public_desc": "Все",
+    "form.update": "Обновить вишлист",
+    "form.item_url": "Ссылка на товар",
+    "form.item_name": "Название товара",
+    "form.item_price": "Цена (необязательно)",
+    "form.item_image": "Изображение (ссылка или файл)",
+    "form.save": "Сохранение...",
+    "form.add_more": "+ Добавить детали (цена, фото, ссылка...)",
+    "form.add_to_wishlist": "+ Добавить в вишлист",
+    "form.update_item": "Обновить предмет",
+
+    // Common
+    "common.cancel": "Отмена",
+    "common.delete": "Удалить навсегда",
+    "common.loading": "Загрузка...",
+  },
+}

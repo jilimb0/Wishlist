@@ -1,0 +1,6 @@
+.pnpm-store
+.vscode
+node_modules
+dist
+.env
+*.log
