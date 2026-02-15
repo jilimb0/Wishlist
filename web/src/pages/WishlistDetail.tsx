@@ -54,7 +54,9 @@ export default function WishlistDetailPage() {
   if (error) {
     return (
       <div className="text-center py-12 space-y-4">
-        <p className="text-red-400">{(error as Error).message || "Could not load wishlist"}</p>
+        <p className="text-red-400">
+          {(error as Error).message || "Could not load wishlist"}
+        </p>
         <Link to="/" className="text-brand-400 hover:underline text-sm">
           ← Back to dashboard
         </Link>
@@ -158,7 +160,9 @@ export default function WishlistDetailPage() {
         <div className="flex items-center gap-2 overflow-hidden">
           <span className="text-2xl shrink-0">{wishlist.emoji || "🎁"}</span>
           <div className="flex flex-col min-w-0">
-            <h1 className="text-lg font-bold text-white truncate min-w-0">{wishlist.title}</h1>
+            <h1 className="text-lg font-bold text-white truncate min-w-0">
+              {wishlist.title}
+            </h1>
             <div className="flex items-center gap-2">
               <span className="text-[8px] uppercase tracking-widest bg-brand-500/10 text-brand-400 px-1.5 py-0.5 rounded-md font-black border border-brand-500/20 whitespace-nowrap">
                 {t(`wishlist.${wishlist.privacy.toLowerCase()}`)}
@@ -236,7 +240,9 @@ export default function WishlistDetailPage() {
               disabled={unsubscribe.isPending}
               className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl transition-colors disabled:opacity-50"
             >
-              {wishlist.subscriptionStatus === "PENDING" ? "Cancel" : "Unfollow"}
+              {wishlist.subscriptionStatus === "PENDING"
+                ? "Cancel"
+                : "Unfollow"}
             </button>
           ) : (
             <button
@@ -245,7 +251,9 @@ export default function WishlistDetailPage() {
               disabled={subscribe.isPending}
               className="px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-brand-500 hover:bg-brand-600 text-black rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-500/10 disabled:opacity-50"
             >
-              {wishlist.privacy === "FRIENDS" ? t("wishlist.request_access") : t("wishlist.follow")}
+              {wishlist.privacy === "FRIENDS"
+                ? t("wishlist.request_access")
+                : t("wishlist.follow")}
             </button>
           )}
         </div>
@@ -308,7 +316,9 @@ export default function WishlistDetailPage() {
             className="w-14 h-14 bg-brand-500 hover:bg-brand-600 text-black rounded-full shadow-2xl shadow-brand-500/20 flex items-center justify-center transition-all active:scale-90 group"
             title={t("wishlist.add_item")}
           >
-            <span className="text-2xl transition-transform group-hover:rotate-90">➕</span>
+            <span className="text-2xl transition-transform group-hover:rotate-90">
+              ➕
+            </span>
           </button>
         </div>
       )}
@@ -324,7 +334,7 @@ export default function WishlistDetailPage() {
           isOwner={isOwner}
           user={user}
           onEdit={setEditingItem}
-          onRemove={setDeleteItemId}
+          onRemove={(id: string) => deleteItem.mutate(id)}
           onReserve={(id: string) => reserveItem.mutate({ itemId: id })}
           onCancelReserve={(id: string) => cancelReservation.mutate(id)}
         />
@@ -333,7 +343,15 @@ export default function WishlistDetailPage() {
   )
 }
 
-function ItemsGrid({ items, isOwner, user, onEdit, onRemove, onReserve, onCancelReserve }: any) {
+function ItemsGrid({
+  items,
+  isOwner,
+  user,
+  onEdit,
+  onRemove,
+  onReserve,
+  onCancelReserve,
+}: any) {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
   const totalPages = Math.ceil(items.length / itemsPerPage)
@@ -347,7 +365,7 @@ function ItemsGrid({ items, isOwner, user, onEdit, onRemove, onReserve, onCancel
         <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
           {currentItems.map((item: any) => (
             <ItemCard
-              key={item._id}
+              key={item.id}
               item={item}
               isOwner={isOwner}
               user={user}

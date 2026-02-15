@@ -1,8 +1,10 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common"
 import { Throttle } from "@nestjs/throttler"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
-import type { AuthService } from "./auth.service"
-import type { LoginDto, RegisterDto } from "./dto/auth.dto"
+// biome-ignore lint/style/useImportType: DI requirement
+import { AuthService } from "./auth.service"
+// biome-ignore lint/style/useImportType: DI requirement
+import { LoginDto, RegisterDto } from "./dto/auth.dto"
 import { Public } from "./public.decorator"
 
 @Controller("api/auth")

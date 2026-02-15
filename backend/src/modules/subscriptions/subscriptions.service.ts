@@ -5,14 +5,20 @@ import {
   NotFoundException,
 } from "@nestjs/common"
 import { Privacy, SubscriptionStatus } from "@prisma/client"
-import type { PrismaService } from "../../prisma/prisma.service"
-import type { CreateSubscriptionDto } from "./dto/subscription.dto"
+// biome-ignore lint/style/useImportType: DI requirement
+import { PrismaService } from "../../prisma/prisma.service"
+// biome-ignore lint/style/useImportType: validation requirement
+import { CreateSubscriptionDto } from "./dto/subscription.dto"
 
 @Injectable()
 export class SubscriptionsService {
   constructor(private prisma: PrismaService) {}
 
-  async subscribe(wishlistId: string, userId: string, dto: CreateSubscriptionDto) {
+  async subscribe(
+    wishlistId: string,
+    userId: string,
+    dto: CreateSubscriptionDto,
+  ) {
     const wishlist = await this.prisma.wishlist.findUnique({
       where: { id: wishlistId },
     })
@@ -112,7 +118,11 @@ export class SubscriptionsService {
     })
   }
 
-  async updateStatus(subscriptionId: string, ownerId: string, status: SubscriptionStatus) {
+  async updateStatus(
+    subscriptionId: string,
+    ownerId: string,
+    status: SubscriptionStatus,
+  ) {
     const subscription = await this.prisma.subscription.findUnique({
       where: { id: subscriptionId },
       include: { wishlist: { select: { userId: true } } },

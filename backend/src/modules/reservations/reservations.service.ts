@@ -5,8 +5,10 @@ import {
   NotFoundException,
 } from "@nestjs/common"
 import { ReservationStatus } from "@prisma/client"
-import type { PrismaService } from "../../prisma/prisma.service"
-import type { CreateReservationDto } from "./dto/reservation.dto"
+// biome-ignore lint/style/useImportType: DI requirement
+import { PrismaService } from "../../prisma/prisma.service"
+// biome-ignore lint/style/useImportType: validation requirement
+import { CreateReservationDto } from "./dto/reservation.dto"
 
 @Injectable()
 export class ReservationsService {
@@ -36,7 +38,10 @@ export class ReservationsService {
         }
 
         // Check if already actively reserved
-        if (item.reservation && item.reservation.status === ReservationStatus.ACTIVE) {
+        if (
+          item.reservation &&
+          item.reservation.status === ReservationStatus.ACTIVE
+        ) {
           throw new ConflictException("Item is already reserved")
         }
 
@@ -91,7 +96,8 @@ export class ReservationsService {
     })
 
     if (!reservation) throw new NotFoundException("Reservation not found")
-    if (reservation.userId !== userId) throw new ForbiddenException("Not your reservation")
+    if (reservation.userId !== userId)
+      throw new ForbiddenException("Not your reservation")
 
     await this.prisma.reservation.delete({
       where: { id: reservationId },

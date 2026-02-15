@@ -5,7 +5,8 @@ import {
   NotFoundException,
 } from "@nestjs/common"
 import { FriendshipStatus } from "@prisma/client"
-import type { PrismaService } from "../../prisma/prisma.service"
+// biome-ignore lint/style/useImportType: DI requirement
+import { PrismaService } from "../../prisma/prisma.service"
 
 @Injectable()
 export class FriendsService {
@@ -13,7 +14,9 @@ export class FriendsService {
 
   async sendRequest(userId: string, friendId: string) {
     if (userId === friendId) {
-      throw new BadRequestException("You cannot send a friend request to yourself")
+      throw new BadRequestException(
+        "You cannot send a friend request to yourself",
+      )
     }
 
     const existingFriendship = await this.prisma.friendship.findFirst({
@@ -185,7 +188,10 @@ export class FriendsService {
       where: { id: friendshipId },
     })
 
-    if (!friendship || (friendship.userId !== userId && friendship.friendId !== userId)) {
+    if (
+      !friendship ||
+      (friendship.userId !== userId && friendship.friendId !== userId)
+    ) {
       throw new NotFoundException("Friendship or request not found")
     }
 
@@ -196,7 +202,8 @@ export class FriendsService {
 
   async createInvitation(inviterId: string, email: string) {
     const token =
-      Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
     const expiresAt = new Date()
     expiresAt.setDate(expiresAt.getDate() + 7) // 7 days expiry
 
@@ -210,7 +217,9 @@ export class FriendsService {
     })
 
     // In a real app, send email here. For now, log it.
-    console.log(`[INVITE] To: ${email}, Link: http://localhost:3011/register?token=${token}`)
+    console.log(
+      `[INVITE] To: ${email}, Link: http://localhost:3011/register?token=${token}`,
+    )
 
     return invitation
   }

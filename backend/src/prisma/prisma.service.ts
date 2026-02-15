@@ -1,11 +1,20 @@
-import { Injectable, Logger, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common"
-import type { ConfigService } from "@nestjs/config"
+import {
+  Injectable,
+  Logger,
+  type OnModuleDestroy,
+  type OnModuleInit,
+} from "@nestjs/common"
+// ConfigService MUST be a value import (not type) for NestJS Dependency Injection to work
+import { ConfigService } from "@nestjs/config"
 import { PrismaPg } from "@prisma/adapter-pg"
 import { PrismaClient } from "@prisma/client"
 import { Pool } from "pg"
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
   private readonly logger = new Logger(PrismaService.name)
 
   constructor(private configService: ConfigService) {

@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Patch, Query } from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
-import type { NotificationsService } from "./notifications.service"
+// biome-ignore lint/style/useImportType: DI requirement
+import { NotificationsService } from "./notifications.service"
 
 @Controller("api/notifications")
 export class NotificationsController {

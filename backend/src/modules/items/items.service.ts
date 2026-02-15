@@ -4,8 +4,10 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common"
-import type { PrismaService } from "../../prisma/prisma.service"
-import type { CreateItemDto, UpdateItemDto } from "./dto/item.dto"
+// biome-ignore lint/style/useImportType: DI requirement
+import { PrismaService } from "../../prisma/prisma.service"
+// biome-ignore lint/style/useImportType: validation requirement
+import { CreateItemDto, UpdateItemDto } from "./dto/item.dto"
 
 @Injectable()
 export class ItemsService {
@@ -22,7 +24,8 @@ export class ItemsService {
     })
 
     if (!wishlist) throw new NotFoundException("Wishlist not found")
-    if (wishlist.userId !== userId) throw new ForbiddenException("Not your wishlist")
+    if (wishlist.userId !== userId)
+      throw new ForbiddenException("Not your wishlist")
 
     if (!dto.title && !dto.url) {
       throw new BadRequestException("Either title or URL is required")
@@ -55,7 +58,9 @@ export class ItemsService {
     }
 
     // Notify subscribers about new item
-    const subscribersToNotify = wishlist.subscriptions.filter((s: any) => s.notifyNewItems)
+    const subscribersToNotify = wishlist.subscriptions.filter(
+      (s: any) => s.notifyNewItems,
+    )
     if (subscribersToNotify.length > 0) {
       await this.prisma.notification.createMany({
         data: subscribersToNotify.map((sub: any) => ({
@@ -82,7 +87,8 @@ export class ItemsService {
     })
 
     if (!item) throw new NotFoundException("Item not found")
-    if (item.wishlist.userId !== userId) throw new ForbiddenException("Not your item")
+    if (item.wishlist.userId !== userId)
+      throw new ForbiddenException("Not your item")
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } })
 
@@ -113,7 +119,8 @@ export class ItemsService {
     })
 
     if (!item) throw new NotFoundException("Item not found")
-    if (item.wishlist.userId !== userId) throw new ForbiddenException("Not your item")
+    if (item.wishlist.userId !== userId)
+      throw new ForbiddenException("Not your item")
 
     await this.prisma.item.delete({ where: { id: itemId } })
     return { success: true }

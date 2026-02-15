@@ -1,8 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestjs/common"
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
 import { Public } from "../auth/public.decorator"
-import type { CreateWishlistDto, UpdateWishlistDto } from "./dto/wishlist.dto"
-import type { WishlistsService } from "./wishlists.service"
+// biome-ignore lint/style/useImportType: validation requirement
+import { CreateWishlistDto, UpdateWishlistDto } from "./dto/wishlist.dto"
+// biome-ignore lint/style/useImportType: DI requirement
+import { WishlistsService } from "./wishlists.service"
 
 @Controller("api")
 export class WishlistsController {
@@ -14,7 +25,10 @@ export class WishlistsController {
   }
 
   @Post("wishlists")
-  async create(@CurrentUser("id") userId: string, @Body() dto: CreateWishlistDto) {
+  async create(
+    @CurrentUser("id") userId: string,
+    @Body() dto: CreateWishlistDto,
+  ) {
     return this.wishlistsService.create(userId, dto)
   }
 

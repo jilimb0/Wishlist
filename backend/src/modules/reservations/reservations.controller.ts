@@ -1,7 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
-import type { CreateReservationDto } from "./dto/reservation.dto"
-import type { ReservationsService } from "./reservations.service"
+// biome-ignore lint/style/useImportType: validation requirement
+import { CreateReservationDto } from "./dto/reservation.dto"
+// biome-ignore lint/style/useImportType: DI requirement
+import { ReservationsService } from "./reservations.service"
 
 @Controller("api")
 export class ReservationsController {

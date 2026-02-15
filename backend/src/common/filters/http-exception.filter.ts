@@ -13,6 +13,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp()
     const response = ctx.getResponse<Response>()
 
+    // Log the error so we can see it in terminal!
+    console.error("🔥 [HttpExceptionFilter] Caught exception:", exception)
+
     let status = HttpStatus.INTERNAL_SERVER_ERROR
     let message: string | string[] = "Internal server error"
 

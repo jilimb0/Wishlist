@@ -38,6 +38,7 @@ export const translations: Record<string, Record<string, string>> = {
     "wishlist.reserved": "RESERVED",
     "wishlist.view_link": "View Link ↗",
     "wishlist.reserve": "Reserve",
+    "wishlist.cancel_reserve": "Cancel Reserve",
     "wishlist.cancel": "Cancel",
     "wishlist.remove_item": "Remove Item",
     "wishlist.delete_confirm":
@@ -70,7 +71,8 @@ export const translations: Record<string, Record<string, string>> = {
     "profile.avatar_uploaded": "Avatar uploaded",
     "profile.avatar_upload_error": "Failed to upload avatar",
     "profile.password_mismatch": "Passwords do not match",
-    "profile.password_same_error": "New password must be different from current password",
+    "profile.password_same_error":
+      "New password must be different from current password",
     "profile.password_changed": "Changed!",
     "profile.password_updating": "Updating...",
     "profile.save_success": "Saved",
@@ -90,7 +92,8 @@ export const translations: Record<string, Record<string, string>> = {
     "discover.search_placeholder_users": "Search users by name or email...",
     "discover.mobile_search": "Search people...",
     "discover.mobile_empty_title": "Find friends & family",
-    "discover.mobile_empty_subtitle": "Search by name or email to discover their wishlists",
+    "discover.mobile_empty_subtitle":
+      "Search by name or email to discover their wishlists",
     "discover.tab_wishlists": "Wishlists",
     "discover.tab_users": "Users",
     "discover.no_results_lists": "No wishlists found",
@@ -106,14 +109,17 @@ export const translations: Record<string, Record<string, string>> = {
     "discover.cancel_request": "Cancel Request",
     "discover.remove_friend": "Remove Friend",
     "discover.resend_request": "Resend Request",
-    "discover.remove_friend_confirm": "Are you sure you want to remove this friend?",
-    "discover.cancel_request_confirm": "Are you sure you want to cancel this friend request?",
+    "discover.remove_friend_confirm":
+      "Are you sure you want to remove this friend?",
+    "discover.cancel_request_confirm":
+      "Are you sure you want to cancel this friend request?",
 
     // Public Profile
     "profile.user_not_found": "User not found",
     "profile.back_to_discover": "← Back to Discover",
     "profile.public_wishlists": "Public Wishlists",
-    "profile.no_public_wishlists": "{{name}} hasn't shared any public wishlists yet.",
+    "profile.no_public_wishlists":
+      "{{name}} hasn't shared any public wishlists yet.",
 
     // Following
     "following.title": "Following",
@@ -149,6 +155,7 @@ export const translations: Record<string, Record<string, string>> = {
     "common.loading": "Loading...",
     "common.update": "Update",
     "common.save": "Save",
+    "common.remove": "Remove",
 
     // Notifications
     "notifications.title": "Notifications",
@@ -171,7 +178,8 @@ export const translations: Record<string, Record<string, string>> = {
     "dashboard.following_title": "Подписки",
     "dashboard.empty_wishlists": "У вас пока нет вишлистов — создайте первый!",
     "dashboard.mobile_empty_title": "Вишлистов пока нет",
-    "dashboard.mobile_empty_subtitle": "Создайте свой первый вишлист и начните собирать желания",
+    "dashboard.mobile_empty_subtitle":
+      "Создайте свой первый вишлист и начните собирать желания",
     "dashboard.create_wishlist": "Создать вишлист",
     "dashboard.item_count_one": "{{count}} предмет",
     "dashboard.item_count_few": "{{count}} предмета",
@@ -195,6 +203,7 @@ export const translations: Record<string, Record<string, string>> = {
     "wishlist.reserved": "ЗАРЕЗЕРВИРОВАНО",
     "wishlist.view_link": "Перейти ↗",
     "wishlist.reserve": "Забронировать",
+    "wishlist.cancel_reserve": "Отменить бронь",
     "wishlist.cancel": "Отменить",
     "wishlist.remove_item": "Удалить",
     "wishlist.delete_confirm":
@@ -218,7 +227,8 @@ export const translations: Record<string, Record<string, string>> = {
     "profile.invite_success": "Ссылка для приглашения создана!",
     "profile.invite_error": "Не удалось создать приглашение",
     "profile.user_found": 'Пользователь "{{name}}" найден!',
-    "profile.user_not_found_invite": "Пользователь не найден. Отправить приглашение?",
+    "profile.user_not_found_invite":
+      "Пользователь не найден. Отправить приглашение?",
     "profile.invalid_email": "Введите корректный email",
     "profile.updated": "Профиль обновлен",
     "profile.avatar_uploaded": "Аватар обновлен",
@@ -244,7 +254,8 @@ export const translations: Record<string, Record<string, string>> = {
     "discover.search_placeholder_users": "Поиск людей по имени или email...",
     "discover.mobile_search": "Поиск людей...",
     "discover.mobile_empty_title": "Найдите друзей и семью",
-    "discover.mobile_empty_subtitle": "Ищите по имени или email, чтобы найти их вишлисты",
+    "discover.mobile_empty_subtitle":
+      "Ищите по имени или email, чтобы найти их вишлисты",
     "discover.tab_wishlists": "Вишлисты",
     "discover.tab_users": "Люди",
     "discover.no_results_lists": "Вишлисты не найдены",
@@ -263,18 +274,21 @@ export const translations: Record<string, Record<string, string>> = {
     "discover.resend_request": "Отправить снова",
     "discover.remove_friend_confirm":
       "Вы уверены, что хотите удалить этого пользователя из друзей?",
-    "discover.cancel_request_confirm": "Вы уверены, что хотите отменить запрос в друзья?",
+    "discover.cancel_request_confirm":
+      "Вы уверены, что хотите отменить запрос в друзья?",
 
     // Public Profile
     "profile.user_not_found": "Пользователь не найден",
     "profile.back_to_discover": "← Вернуться к поиску",
     "profile.public_wishlists": "Публичные вишлисты",
-    "profile.no_public_wishlists": "{{name}} пока не поделился публичными вишлистами.",
+    "profile.no_public_wishlists":
+      "{{name}} пока не поделился публичными вишлистами.",
 
     // Following
     "following.title": "Подписки",
     "following.empty_title": "Пока ничего",
-    "following.empty_subtitle": "Подпишитесь на вишлисты друзей, чтобы видеть их здесь",
+    "following.empty_subtitle":
+      "Подпишитесь на вишлисты друзей, чтобы видеть их здесь",
 
     // Forms
     "form.title": "Название",
@@ -305,6 +319,7 @@ export const translations: Record<string, Record<string, string>> = {
     "common.loading": "Загрузка...",
     "common.update": "Обновить",
     "common.save": "Сохранить",
+    "common.remove": "Удалить",
 
     // Notifications
     "notifications.title": "Уведомления",

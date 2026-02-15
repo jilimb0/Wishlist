@@ -1,8 +1,10 @@
 import { Injectable, Logger, UnauthorizedException } from "@nestjs/common"
-import type { ConfigService } from "@nestjs/config"
+// biome-ignore lint/style/useImportType: DI requirement
+import { ConfigService } from "@nestjs/config"
 import { PassportStrategy } from "@nestjs/passport"
 import { ExtractJwt, Strategy } from "passport-jwt"
-import type { PrismaService } from "../../prisma/prisma.service"
+// biome-ignore lint/style/useImportType: DI requirement
+import { PrismaService } from "../../prisma/prisma.service"
 
 export interface JwtPayload {
   sub: string
@@ -32,7 +34,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * @returns User object if valid, throws UnauthorizedException otherwise
    */
   async validate(payload: JwtPayload) {
-    this.logger.warn(`[STRATEGY] Validating token payload: ${JSON.stringify(payload)}`)
+    this.logger.warn(
+      `[STRATEGY] Validating token payload: ${JSON.stringify(payload)}`,
+    )
     const { sub, email: _email } = payload
 
     if (!sub) {

@@ -85,17 +85,7 @@ export function ItemCard({
                 )}
               </div>
 
-              {isOwner ? (
-                <div className="mt-auto pt-2 border-t border-zinc-800/10">
-                  <button
-                    type="button"
-                    onClick={() => onEdit?.(item)}
-                    className="w-full py-1.5 text-[8px] font-black uppercase tracking-widest text-zinc-500 hover:text-brand-400 transition-colors"
-                  >
-                    {t("common.edit")}
-                  </button>
-                </div>
-              ) : (
+              {!isOwner && (
                 <div className="mt-auto">
                   {item.reservation?.isReserved ? (
                     <button
@@ -127,30 +117,31 @@ export function ItemCard({
           </div>
         </div>
 
-        {/* Back Side (Confirmation) */}
+        {/* Back Side (Delete Confirmation) */}
         <div className="absolute inset-0 rotate-y-180 backface-hidden w-full h-full">
-          <div className="flex flex-col items-center justify-center h-full p-4 bg-red-950/90 backdrop-blur-3xl border border-red-500/20 rounded-2xl text-center">
-            <span className="text-2xl mb-2">🗑️</span>
-            <p className="text-[10px] font-black text-white uppercase tracking-wider mb-4 leading-relaxed">
-              {t("common.delete")}?
+          <div className="flex flex-col items-center justify-center h-full p-3 bg-zinc-900/95 backdrop-blur-xl border border-red-500/30 rounded-2xl text-center gap-3">
+            <span className="text-xl">🗑️</span>
+            <p className="text-[10px] font-bold text-zinc-300 leading-snug">
+              {t("common.delete")}{" "}
+              <span className="text-white font-black">«{item.title}»</span>?
             </p>
-            <div className="flex flex-col w-full gap-2">
+            <div className="flex w-full gap-2">
+              <button
+                type="button"
+                onClick={() => setIsFlipped(false)}
+                className="flex-1 py-2 bg-zinc-800 text-zinc-400 hover:text-white text-[9px] font-black uppercase tracking-widest rounded-xl transition-colors active:scale-95"
+              >
+                {t("common.cancel")}
+              </button>
               <button
                 type="button"
                 onClick={() => {
                   onRemove?.(item.id)
                   setIsFlipped(false)
                 }}
-                className="w-full py-2 bg-white text-red-600 text-[9px] font-black uppercase tracking-widest rounded-xl shadow-lg active:scale-95"
+                className="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white text-[9px] font-black uppercase tracking-widest rounded-xl transition-colors active:scale-95"
               >
                 {t("common.delete")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsFlipped(false)}
-                className="w-full py-2 text-white/60 hover:text-white text-[9px] font-black uppercase tracking-widest transition-colors"
-              >
-                {t("common.cancel")}
               </button>
             </div>
           </div>
