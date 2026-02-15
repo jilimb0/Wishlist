@@ -64,8 +64,7 @@ export const translations: Record<string, Record<string, string>> = {
     "discover.search_placeholder_users": "Search users by name or email...",
     "discover.mobile_search": "Search people...",
     "discover.mobile_empty_title": "Find friends & family",
-    "discover.mobile_empty_subtitle":
-      "Search by name or email to discover their wishlists",
+    "discover.mobile_empty_subtitle": "Search by name or email to discover their wishlists",
     "discover.tab_wishlists": "Wishlists",
     "discover.tab_users": "Users",
     "discover.no_results_lists": "No wishlists found",
@@ -77,8 +76,7 @@ export const translations: Record<string, Record<string, string>> = {
     "profile.user_not_found": "User not found",
     "profile.back_to_discover": "← Back to Discover",
     "profile.public_wishlists": "Public Wishlists",
-    "profile.no_public_wishlists":
-      "{{name}} hasn't shared any public wishlists yet.",
+    "profile.no_public_wishlists": "{{name}} hasn't shared any public wishlists yet.",
 
     // Following
     "following.title": "Following",
@@ -128,8 +126,7 @@ export const translations: Record<string, Record<string, string>> = {
     "dashboard.following_title": "Подписки",
     "dashboard.empty_wishlists": "У вас пока нет вишлистов — создайте первый!",
     "dashboard.mobile_empty_title": "Вишлистов пока нет",
-    "dashboard.mobile_empty_subtitle":
-      "Создайте свой первый вишлист и начните собирать желания",
+    "dashboard.mobile_empty_subtitle": "Создайте свой первый вишлист и начните собирать желания",
     "dashboard.create_wishlist": "Создать вишлист",
     "dashboard.item_count": "{{count}} предметов",
     "dashboard.pending": "Ожидает подтверждения",
@@ -178,8 +175,7 @@ export const translations: Record<string, Record<string, string>> = {
     "discover.search_placeholder_users": "Поиск людей по имени или email...",
     "discover.mobile_search": "Поиск людей...",
     "discover.mobile_empty_title": "Найдите друзей и семью",
-    "discover.mobile_empty_subtitle":
-      "Ищите по имени или email, чтобы найти их вишлисты",
+    "discover.mobile_empty_subtitle": "Ищите по имени или email, чтобы найти их вишлисты",
     "discover.tab_wishlists": "Вишлисты",
     "discover.tab_users": "Люди",
     "discover.no_results_lists": "Вишлисты не найдены",
@@ -191,14 +187,12 @@ export const translations: Record<string, Record<string, string>> = {
     "profile.user_not_found": "Пользователь не найден",
     "profile.back_to_discover": "← Вернуться к поиску",
     "profile.public_wishlists": "Публичные вишлисты",
-    "profile.no_public_wishlists":
-      "{{name}} пока не поделился публичными вишлистами.",
+    "profile.no_public_wishlists": "{{name}} пока не поделился публичными вишлистами.",
 
     // Following
     "following.title": "Подписки",
     "following.empty_title": "Пока ничего",
-    "following.empty_subtitle":
-      "Подпишитесь на вишлисты друзей, чтобы видеть их здесь",
+    "following.empty_subtitle": "Подпишитесь на вишлисты друзей, чтобы видеть их здесь",
 
     // Forms
     "form.title": "Название",

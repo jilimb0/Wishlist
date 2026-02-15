@@ -1,9 +1,9 @@
+import { Input } from "@/components/Input"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "react-hot-toast"
 import { Link } from "react-router-dom"
 import { useForgotPassword } from "../hooks/api"
-import { toast } from "react-hot-toast"
-import { Input } from "@/components/Input"
 
 export default function ForgotPassword() {
   const {
@@ -37,6 +37,7 @@ export default function ForgotPassword() {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
+              <title>forgot password</title>
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -46,9 +47,7 @@ export default function ForgotPassword() {
             </svg>
           </div>
           <div className="space-y-2">
-            <h2 className="text-3xl font-black text-white tracking-tight">
-              Check your email
-            </h2>
+            <h2 className="text-3xl font-black text-white tracking-tight">Check your email</h2>
             <p className="text-zinc-500 text-sm leading-relaxed">
               We have sent password reset instructions to your email address.
             </p>
@@ -78,9 +77,7 @@ export default function ForgotPassword() {
               </span>
             </h1>
           </div>
-          <p className="text-zinc-500 text-sm">
-            Enter your email address to reset your password.
-          </p>
+          <p className="text-zinc-500 text-sm">Enter your email address to reset your password.</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common"
-import { WishlistsController } from "./wishlists.controller"
-import { WishlistsService } from "./wishlists.service"
 import { PrismaModule } from "../../prisma/prisma.module"
 import { FriendsModule } from "../friends/friends.module"
+import { WishlistsController } from "./wishlists.controller"
+import { WishlistsService } from "./wishlists.service"
 
 @Module({
   imports: [PrismaModule, FriendsModule],

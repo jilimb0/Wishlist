@@ -1,17 +1,9 @@
-import React from "react"
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  RefreshControl,
-} from "react-native"
-import { useRoute, useNavigation } from "@react-navigation/native"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { useNavigation, useRoute } from "@react-navigation/native"
 import { StatusBar } from "expo-status-bar"
-import { usePublicProfile, useDiscoverByUser } from "../hooks/api"
+import { FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 import { UserAvatar } from "../components/UserAvatar"
+import { useDiscoverByUser, usePublicProfile } from "../hooks/api"
 
 export default function PublicProfileScreen() {
   const { params } = useRoute<any>()
@@ -20,15 +12,12 @@ export default function PublicProfileScreen() {
   const navigation = useNavigation<any>()
 
   const { data: user, isLoading: loadingUser } = usePublicProfile(userId)
-  const { data: wishlists, isLoading: loadingWishlists } =
-    useDiscoverByUser(userId)
+  const { data: wishlists, isLoading: loadingWishlists } = useDiscoverByUser(userId)
 
   const renderWishlist = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() =>
-        navigation.navigate("WishlistDetail", { wishlistId: item.id })
-      }
+      onPress={() => navigation.navigate("WishlistDetail", { wishlistId: item.id })}
     >
       <View style={styles.cardHeader}>
         <Text style={styles.emoji}>{item.emoji}</Text>
@@ -56,9 +45,7 @@ export default function PublicProfileScreen() {
         contentContainerStyle={styles.list}
         numColumns={2}
         columnWrapperStyle={{ gap: 12 }}
-        refreshControl={
-          <RefreshControl refreshing={loadingUser || loadingWishlists} />
-        }
+        refreshControl={<RefreshControl refreshing={loadingUser || loadingWishlists} />}
       />
     </SafeAreaView>
   )

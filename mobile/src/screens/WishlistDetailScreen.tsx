@@ -1,37 +1,34 @@
-import React, { useState, useLayoutEffect } from "react"
+import { Ionicons } from "@expo/vector-icons"
+import { useNavigation, useRoute } from "@react-navigation/native"
+import { StatusBar } from "expo-status-bar"
+import { useLayoutEffect, useState } from "react"
 import {
-  View,
-  Text,
   FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  RefreshControl,
   Image,
   Linking,
+  RefreshControl,
   Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { Ionicons } from "@expo/vector-icons"
-import { StatusBar } from "expo-status-bar"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { useAuth } from "../context/AuthContext"
-import { useI18n } from "../i18n/context"
-import {
-  useWishlist,
-  useAddItem,
-  useDeleteItem,
-  useUpdateItem,
-  useReserveItem,
-  useCancelReservation,
-  useDeleteWishlist,
-} from "../hooks/api"
-import { Item, Wishlist } from "../types"
+import Toast from "react-native-toast-message"
 import { BottomSheet } from "../components/BottomSheet"
 import { ItemForm } from "../components/ItemForm"
-import { WishlistForm } from "../components/WishlistForm"
 import { Modal } from "../components/Modal"
-import Toast from "react-native-toast-message"
-import * as Clipboard from "expo-clipboard"
+import { useAuth } from "../context/AuthContext"
+import {
+  useAddItem,
+  useCancelReservation,
+  useDeleteItem,
+  useDeleteWishlist,
+  useReserveItem,
+  useWishlist,
+} from "../hooks/api"
+import { useI18n } from "../i18n/context"
+import type { Item } from "../types"
 
 export default function WishlistDetailScreen() {
   const { params } = useRoute<any>()
@@ -44,12 +41,12 @@ export default function WishlistDetailScreen() {
   const { data: wishlist, isLoading, refetch } = useWishlist(wishlistId)
 
   const [isAddItemOpen, setIsAddItemOpen] = useState(false)
-  const [isEditWishlistOpen, setIsEditWishlistOpen] = useState(false)
+  const [_isEditWishlistOpen, setIsEditWishlistOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<string | null>(null)
 
   const addItemMutation = useAddItem()
   const deleteItemMutation = useDeleteItem()
-  const deleteWishlistMutation = useDeleteWishlist()
+  const _deleteWishlistMutation = useDeleteWishlist()
   const reserveMutation = useReserveItem()
   const cancelReservationMutation = useCancelReservation()
 
@@ -75,8 +72,7 @@ export default function WishlistDetailScreen() {
           setIsAddItemOpen(false)
           Toast.show({ type: "success", text1: "Item added" })
         },
-        onError: (err: any) =>
-          Toast.show({ type: "error", text1: err.message }),
+        onError: (err: any) => Toast.show({ type: "error", text1: err.message }),
       },
     )
   }
@@ -105,10 +101,7 @@ export default function WishlistDetailScreen() {
 
     return (
       <View style={styles.card}>
-        <TouchableOpacity
-          style={styles.imageContainer}
-          onPress={() => Linking.openURL(item.url)}
-        >
+        <TouchableOpacity style={styles.imageContainer} onPress={() => Linking.openURL(item.url)}>
           {item.imageUrl ? (
             <Image source={{ uri: item.imageUrl }} style={styles.image} />
           ) : (
@@ -129,9 +122,7 @@ export default function WishlistDetailScreen() {
           </Text>
 
           {item.currentPrice && (
-            <Text style={styles.itemPrice}>
-              {formatPrice(item.currentPrice, item.currency)}
-            </Text>
+            <Text style={styles.itemPrice}>{formatPrice(item.currentPrice, item.currency)}</Text>
           )}
 
           <View style={styles.actions}>
@@ -159,20 +150,14 @@ export default function WishlistDetailScreen() {
                 }}
               >
                 <Text
-                  style={[
-                    styles.reserveButtonText,
-                    reservedByMe && styles.reserveButtonTextActive,
-                  ]}
+                  style={[styles.reserveButtonText, reservedByMe && styles.reserveButtonTextActive]}
                 >
                   {reservedByMe ? "Reserved" : isReserved ? "Taken" : "Reserve"}
                 </Text>
               </TouchableOpacity>
             )}
 
-            <TouchableOpacity
-              style={styles.linkButton}
-              onPress={() => Linking.openURL(item.url)}
-            >
+            <TouchableOpacity style={styles.linkButton} onPress={() => Linking.openURL(item.url)}>
               <Ionicons name="open-outline" size={20} color="#fbbf24" />
             </TouchableOpacity>
           </View>
@@ -192,9 +177,7 @@ export default function WishlistDetailScreen() {
       </View>
 
       <Text style={styles.title}>{wishlist?.title}</Text>
-      {wishlist?.description && (
-        <Text style={styles.description}>{wishlist.description}</Text>
-      )}
+      {wishlist?.description && <Text style={styles.description}>{wishlist.description}</Text>}
 
       <View style={styles.privacyRow}>
         <Ionicons name="lock-closed-outline" size={14} color="#71717a" />
@@ -222,29 +205,18 @@ export default function WishlistDetailScreen() {
         numColumns={2}
         columnWrapperStyle={{ gap: 12 }}
         refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={refetch}
-            tintColor="#fbbf24"
-          />
+          <RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor="#fbbf24" />
         }
       />
 
       {isOwner && (
-        <TouchableOpacity
-          style={styles.fab}
-          onPress={() => setIsAddItemOpen(true)}
-        >
+        <TouchableOpacity style={styles.fab} onPress={() => setIsAddItemOpen(true)}>
           <Ionicons name="add" size={32} color="#000" />
         </TouchableOpacity>
       )}
 
       {/* Add Item Sheet */}
-      <BottomSheet
-        isOpen={isAddItemOpen}
-        onClose={() => setIsAddItemOpen(false)}
-        title="Add Item"
-      >
+      <BottomSheet isOpen={isAddItemOpen} onClose={() => setIsAddItemOpen(false)} title="Add Item">
         <ItemForm
           onSubmit={handleAddItem}
           isLoading={addItemMutation.isPending}
@@ -259,10 +231,7 @@ export default function WishlistDetailScreen() {
         title="Remove Item"
         footer={
           <View style={styles.modalFooter}>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setItemToDelete(null)}
-            >
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setItemToDelete(null)}>
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -275,9 +244,7 @@ export default function WishlistDetailScreen() {
           </View>
         }
       >
-        <Text style={styles.modalText}>
-          Are you sure you want to remove this item?
-        </Text>
+        <Text style={styles.modalText}>Are you sure you want to remove this item?</Text>
       </Modal>
     </SafeAreaView>
   )

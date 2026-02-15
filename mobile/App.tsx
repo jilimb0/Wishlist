@@ -1,11 +1,10 @@
-import React from "react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { StatusBar } from "expo-status-bar"
 import { SafeAreaProvider } from "react-native-safe-area-context"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import Toast from "react-native-toast-message"
 import { AuthProvider } from "./src/context/AuthContext"
 import { I18nProvider } from "./src/i18n/context"
 import AppNavigator from "./src/navigation/AppNavigator"
-import Toast from "react-native-toast-message"
 
 const queryClient = new QueryClient({
   defaultOptions: {

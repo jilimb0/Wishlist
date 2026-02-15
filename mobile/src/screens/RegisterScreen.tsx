@@ -1,20 +1,20 @@
-import React, { useState } from "react"
+import { useNavigation } from "@react-navigation/native"
+import { StatusBar } from "expo-status-bar"
+import { useState } from "react"
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native"
-import { useNavigation } from "@react-navigation/native"
+import { SafeAreaView } from "react-native-safe-area-context"
 import { useAuth } from "../context/AuthContext"
 import { useRegister } from "../hooks/api"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { StatusBar } from "expo-status-bar"
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState("")
@@ -109,10 +109,7 @@ export default function RegisterScreen() {
             </View>
 
             <TouchableOpacity
-              style={[
-                styles.button,
-                registerMutation.isPending && styles.buttonDisabled,
-              ]}
+              style={[styles.button, registerMutation.isPending && styles.buttonDisabled]}
               onPress={handleSubmit}
               disabled={registerMutation.isPending}
             >

@@ -1,21 +1,21 @@
+import { extname } from "node:path"
 import {
+  Body,
   Controller,
-  Post,
-  Patch,
   Delete,
   Get,
-  Body,
   Param,
-  UseInterceptors,
+  Patch,
+  Post,
   UploadedFile,
+  UseInterceptors,
 } from "@nestjs/common"
 import { FileInterceptor } from "@nestjs/platform-express"
 import { diskStorage } from "multer"
 import { v4 as uuidv4 } from "uuid"
-import { extname } from "path"
-import { ItemsService } from "./items.service"
-import { CreateItemDto, UpdateItemDto } from "./dto/item.dto"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
+import type { CreateItemDto, UpdateItemDto } from "./dto/item.dto"
+import type { ItemsService } from "./items.service"
 
 @Controller("api")
 export class ItemsController {
@@ -54,7 +54,7 @@ export class ItemsController {
     FileInterceptor("file", {
       storage: diskStorage({
         destination: "./uploads",
-        filename: (req, file, cb) => {
+        filename: (_req, file, cb) => {
           const randomName = uuidv4()
           cb(null, `${randomName}${extname(file.originalname)}`)
         },

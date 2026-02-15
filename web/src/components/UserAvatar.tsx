@@ -1,4 +1,4 @@
-import React from "react"
+import type React from "react"
 
 interface UserAvatarProps {
   user?: {
@@ -9,11 +9,7 @@ interface UserAvatarProps {
   className?: string
 }
 
-export const UserAvatar: React.FC<UserAvatarProps> = ({
-  user,
-  size = "md",
-  className = "",
-}) => {
+export const UserAvatar: React.FC<UserAvatarProps> = ({ user, size = "md", className = "" }) => {
   const sizeClasses = {
     sm: "w-8 h-8 text-xs",
     md: "w-10 h-10 text-sm",

@@ -1,28 +1,24 @@
-import React, { useState } from "react"
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  RefreshControl,
-  SafeAreaView,
-} from "react-native"
-import { StatusBar } from "expo-status-bar"
 import { Ionicons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
+import { StatusBar } from "expo-status-bar"
+import { useState } from "react"
 import {
-  useMyWishlists,
-  useCreateWishlist,
-  useDeleteWishlist,
-} from "../hooks/api"
-import { WishlistForm } from "../components/WishlistForm"
+  FlatList,
+  RefreshControl,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native"
+import Toast from "react-native-toast-message"
 import { BottomSheet } from "../components/BottomSheet"
 import { Modal } from "../components/Modal"
 import { UserAvatar } from "../components/UserAvatar"
+import { WishlistForm } from "../components/WishlistForm"
 import { useAuth } from "../context/AuthContext"
-import { Wishlist } from "../types"
-import Toast from "react-native-toast-message"
+import { useCreateWishlist, useDeleteWishlist, useMyWishlists } from "../hooks/api"
+import type { Wishlist } from "../types"
 
 export default function DashboardScreen() {
   const { user } = useAuth()
@@ -135,10 +131,7 @@ export default function DashboardScreen() {
       <Text style={styles.emptySubtitle}>
         Create your first wishlist and start tracking the things you love
       </Text>
-      <TouchableOpacity
-        style={styles.emptyButton}
-        onPress={() => setIsCreateOpen(true)}
-      >
+      <TouchableOpacity style={styles.emptyButton} onPress={() => setIsCreateOpen(true)}>
         <Text style={styles.emptyButtonText}>Create Wishlist</Text>
       </TouchableOpacity>
     </View>
@@ -152,29 +145,19 @@ export default function DashboardScreen() {
         data={wishlists}
         renderItem={renderWishlistCard}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={[
-          styles.listContent,
-          !wishlists?.length && { flex: 1 },
-        ]}
+        contentContainerStyle={[styles.listContent, !wishlists?.length && { flex: 1 }]}
         ListHeaderComponent={ListHeader}
         ListEmptyComponent={!isLoading ? EmptyState : null}
         numColumns={2}
         columnWrapperStyle={{ justifyContent: "space-between" }}
         refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={refetch}
-            tintColor="#fbbf24"
-          />
+          <RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor="#fbbf24" />
         }
       />
 
       {/* FAB */}
       {wishlists && wishlists.length > 0 && (
-        <TouchableOpacity
-          style={styles.fab}
-          onPress={() => setIsCreateOpen(true)}
-        >
+        <TouchableOpacity style={styles.fab} onPress={() => setIsCreateOpen(true)}>
           <Ionicons name="add" size={32} color="#000" />
         </TouchableOpacity>
       )}
@@ -199,10 +182,7 @@ export default function DashboardScreen() {
         title="Delete Wishlist"
         footer={
           <View style={styles.modalFooter}>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setWishlistToDelete(null)}
-            >
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setWishlistToDelete(null)}>
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -211,17 +191,14 @@ export default function DashboardScreen() {
               disabled={deleteMutation.isPending}
             >
               <Text style={styles.deleteButtonText}>
-                {deleteMutation.isPending
-                  ? "Deleting..."
-                  : "Delete Permanently"}
+                {deleteMutation.isPending ? "Deleting..." : "Delete Permanently"}
               </Text>
             </TouchableOpacity>
           </View>
         }
       >
         <Text style={styles.modalText}>
-          Are you sure you want to delete this wishlist? This action cannot be
-          undone.
+          Are you sure you want to delete this wishlist? This action cannot be undone.
         </Text>
       </Modal>
     </SafeAreaView>

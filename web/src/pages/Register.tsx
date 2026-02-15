@@ -1,8 +1,8 @@
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Input } from "@/components/Input"
 import { useAuth } from "@/context/AuthContext"
 import { useRegister } from "@/hooks/api"
-import { Input } from "@/components/Input"
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("")
@@ -52,10 +52,14 @@ export default function RegisterPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5 ml-1">
+              <label
+                htmlFor="displayName"
+                className="block text-sm font-medium text-zinc-400 mb-1.5 ml-1"
+              >
                 Display Name
               </label>
               <Input
+                id="displayName"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 required
@@ -64,10 +68,14 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5 ml-1">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-zinc-400 mb-1.5 ml-1"
+              >
                 Email
               </label>
               <Input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -77,10 +85,14 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5 ml-1">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-zinc-400 mb-1.5 ml-1"
+              >
                 Password
               </label>
               <Input
+                id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -96,9 +108,7 @@ export default function RegisterPage() {
             disabled={registerMutation.isPending}
             className="w-full py-3 bg-brand-500 hover:bg-brand-600 text-black font-bold rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-brand-500/10 disabled:opacity-50"
           >
-            {registerMutation.isPending
-              ? "Creating account..."
-              : "Create Account"}
+            {registerMutation.isPending ? "Creating account..." : "Create Account"}
           </button>
         </form>
 

@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useCallback } from "react"
-import { translations } from "./translations"
+import type React from "react"
+import { createContext, useCallback, useContext } from "react"
 import { useAuth } from "../context/AuthContext"
+import { translations } from "./translations"
 
 interface I18nContextType {
   language: string
@@ -30,7 +31,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   const t = useCallback(
     (key: string, params?: Record<string, string | number>) => {
-      const dict = translations[language] || translations["en"]
+      const dict = translations[language] || translations.en
       let finalKey = key
 
       if (params && typeof params.count === "number") {
@@ -40,11 +41,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
           const mod100 = count % 100
           if (mod10 === 1 && mod100 !== 11) {
             finalKey = `${key}_one`
-          } else if (
-            mod10 >= 2 &&
-            mod10 <= 4 &&
-            (mod100 < 10 || mod100 >= 20)
-          ) {
+          } else if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) {
             finalKey = `${key}_few`
           } else {
             finalKey = `${key}_many`
@@ -57,9 +54,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       let text = dict[finalKey] || dict[key] || key
 
       if (params) {
-        Object.entries(params).forEach(([k, v]) => {
+        for (const [k, v] of Object.entries(params)) {
           text = text.replace(`{{${k}}}`, String(v))
-        })
+        }
       }
 
       return text
@@ -68,7 +65,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   )
 
   const formatPrice = useCallback(
-    (amount: number, originalCurrency: string = "USD") => {
+    (amount: number, originalCurrency = "USD") => {
       // 1. Convert to USD first (base)
       const amountInUSD = amount / (RATES[originalCurrency] || 1)
 
@@ -76,7 +73,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       const targetRate = RATES[userCurrency] || 1
       const finalAmount = amountInUSD * targetRate
 
-      const symbol = CURRENCY_SYMBOLS[userCurrency] || userCurrency
+      const _symbol = CURRENCY_SYMBOLS[userCurrency] || userCurrency
 
       // Format based on currency
       return new Intl.NumberFormat(language === "ru" ? "ru-RU" : "en-US", {
@@ -90,9 +87,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   )
 
   return (
-    <I18nContext.Provider value={{ language, t, formatPrice }}>
-      {children}
-    </I18nContext.Provider>
+    <I18nContext.Provider value={{ language, t, formatPrice }}>{children}</I18nContext.Provider>
   )
 }
 

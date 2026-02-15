@@ -1,41 +1,82 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Input } from "@/components/Input"
+import { Modal } from "@/components/Modal"
+import { UserAvatar } from "@/components/UserAvatar"
+import { WishlistCard } from "@/components/WishlistCard"
 import {
   useDiscover,
+  useMe,
+  useMySubscriptions,
+  useRemoveFriendship,
   useSearchUsers,
   useSendFriendRequest,
   useSubscribe,
-  useMe,
 } from "@/hooks/api"
-import { Wishlist, User } from "@/types"
-import { UserAvatar } from "@/components/UserAvatar"
-import { toast } from "react-hot-toast"
 import { useI18n } from "@/i18n/context"
-import { WishlistCard } from "@/components/WishlistCard"
-import { Input } from "@/components/Input"
+import type { User, Wishlist } from "@/types"
+import { useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
+import { toast } from "react-hot-toast"
+import { Link } from "react-router-dom"
 
 export default function DiscoverPage() {
   const [search, setSearch] = useState("")
   const [tab, setTab] = useState<"wishlists" | "users">("wishlists")
 
-  const { data: wishlistData, isLoading: wishlistsLoading } =
-    useDiscover(search)
+  const { data: wishlistData, isLoading: wishlistsLoading } = useDiscover(search)
   const { data: userData, isLoading: usersLoading } = useSearchUsers(search)
   const { data: me } = useMe()
+  const subscriptions = useMySubscriptions()
   const sendFriendRequest = useSendFriendRequest()
+  const removeFriendship = useRemoveFriendship()
   const subscribe = useSubscribe()
   const { t } = useI18n()
 
   const filteredWishlists = wishlistData?.wishlists.filter(
-    (wl) => wl.user?.id !== me?.id,
+    (wl) => wl.user?.id !== me?.id && !subscriptions.data?.some((s) => s.wishlistId === wl.id),
   )
+
+  const qc = useQueryClient()
 
   const handleAddFriend = (userId: string) => {
     sendFriendRequest.mutate(userId, {
-      onSuccess: () => toast.success(t("discover.request_sent_success")),
+      onSuccess: () => {
+        toast.success(t("discover.request_sent_success"))
+        qc.invalidateQueries({ queryKey: ["users", "search"] })
+      },
       onError: (err: any) => {
         const msg = err.response?.data?.message || t("discover.request_error")
         toast.error(msg)
+      },
+    })
+  }
+
+  const [modal, setModal] = useState<{
+    isOpen: boolean
+    message: string
+    action: () => void
+  }>({
+    isOpen: false,
+    message: "",
+    action: () => {},
+  })
+
+  // ... (existing code)
+
+  const handleRemoveFriend = (friendshipId: string, confirmMsg?: string) => {
+    setModal({
+      isOpen: true,
+      message: confirmMsg || t("discover.remove_friend_confirm"),
+      action: () => {
+        removeFriendship.mutate(friendshipId, {
+          onSuccess: () => {
+            toast.success(t("common.delete"))
+            setModal((prev) => ({ ...prev, isOpen: false }))
+            // Invalidate queries to refresh UI
+            qc.invalidateQueries({ queryKey: ["friends"] })
+            qc.invalidateQueries({ queryKey: ["friends", "pending"] })
+            qc.invalidateQueries({ queryKey: ["users", "search"] })
+          },
+        })
       },
     })
   }
@@ -56,6 +97,7 @@ export default function DiscoverPage() {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
+              <title>discover</title>
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
@@ -73,6 +115,7 @@ export default function DiscoverPage() {
 
           <div className="flex bg-zinc-900/80 backdrop-blur-md p-1 rounded-xl border border-zinc-800 shadow-xl w-full sm:w-auto overflow-x-auto scrollbar-hide h-[46px]">
             <button
+              type="button"
               onClick={() => setTab("wishlists")}
               className={`flex-1 sm:flex-none px-8 rounded-lg text-sm font-bold transition-all active:scale-95 whitespace-nowrap h-full ${
                 tab === "wishlists"
@@ -83,6 +126,7 @@ export default function DiscoverPage() {
               {t("discover.tab_wishlists")}
             </button>
             <button
+              type="button"
               onClick={() => setTab("users")}
               className={`flex-1 sm:flex-none px-8 rounded-lg text-sm font-bold transition-all active:scale-95 whitespace-nowrap h-full ${
                 tab === "users"
@@ -101,7 +145,7 @@ export default function DiscoverPage() {
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
               <div
-                key={i}
+                key={+i}
                 className="h-24 bg-zinc-900/50 border border-zinc-800/50 rounded-2xl animate-pulse"
               />
             ))}
@@ -109,9 +153,7 @@ export default function DiscoverPage() {
         ) : !wishlistData?.wishlists.length ? (
           <div className="text-center py-20 bg-zinc-900/20 rounded-3xl border border-dashed border-zinc-800">
             <p className="text-zinc-500 italic">
-              {search
-                ? t("discover.no_results_lists")
-                : t("discover.no_public_lists")}
+              {search ? t("discover.no_results_lists") : t("discover.no_public_lists")}
             </p>
           </div>
         ) : (
@@ -130,12 +172,12 @@ export default function DiscoverPage() {
                   showPrivacy={false}
                   action={
                     <button
+                      type="button"
                       onClick={() =>
                         subscribe.mutate(
                           { wishlistId: wl.id },
                           {
-                            onSuccess: () =>
-                              toast.success(t("wishlist.follow") + "!"),
+                            onSuccess: () => toast.success(`${t("wishlist.follow")}!`),
                           },
                         )
                       }
@@ -154,7 +196,7 @@ export default function DiscoverPage() {
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
             <div
-              key={i}
+              key={+i}
               className="h-20 bg-zinc-900/50 border border-zinc-800/50 rounded-2xl animate-pulse"
             />
           ))}
@@ -179,25 +221,74 @@ export default function DiscoverPage() {
                   {u.displayName}
                 </span>
               </Link>
-              <button
-                onClick={() => handleAddFriend(u.id)}
-                disabled={sendFriendRequest.isPending}
-                className="px-4 py-2 bg-brand-500 hover:bg-brand-600 active:scale-95 text-black text-xs font-black uppercase tracking-widest rounded-xl transition-all disabled:opacity-50 shadow-lg shadow-brand-500/10"
-              >
-                {sendFriendRequest.isPending ? "..." : t("discover.add_friend")}
-              </button>
+              <div className="flex items-center gap-2">
+                {u.friendship?.status === "ACCEPTED" ? (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveFriend(u.friendship!.id)}
+                    className="group px-3 py-1.5 bg-zinc-800 text-zinc-400 text-[10px] font-black uppercase tracking-widest rounded-xl border border-zinc-700 active:scale-95 transition-all hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20"
+                  >
+                    <span className="block group-hover:hidden">{t("profile.friends")}</span>
+                    <span className="hidden group-hover:block">{t("common.remove")}</span>
+                  </button>
+                ) : u.friendship?.status === "PENDING" ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleRemoveFriend(u.friendship!.id, t("discover.cancel_request_confirm"))
+                    }
+                    className="px-3 py-1.5 bg-zinc-800/50 text-brand-400/50 text-[10px] font-black uppercase tracking-widest rounded-xl border border-brand-400/10 active:scale-95 transition-all"
+                    title={t("discover.cancel_request")}
+                  >
+                    {t("discover.friend_request_sent")}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handleAddFriend(u.id)}
+                    disabled={sendFriendRequest.isPending}
+                    className="px-4 py-2 bg-brand-500 hover:bg-brand-600 active:scale-95 text-black text-[10px] font-black uppercase tracking-widest rounded-xl transition-all disabled:opacity-50 shadow-lg shadow-brand-500/10"
+                  >
+                    {sendFriendRequest.isPending ? "..." : t("discover.add_friend")}
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
       ) : (
         <div className="text-center py-20 bg-zinc-900/20 rounded-3xl border border-dashed border-zinc-800">
           <p className="text-zinc-500 italic">
-            {search
-              ? t("discover.no_results_users")
-              : t("discover.search_users_hint")}
+            {search ? t("discover.no_results_users") : t("discover.search_users_hint")}
           </p>
         </div>
       )}
+
+      <Modal
+        isOpen={modal.isOpen}
+        onClose={() => setModal((prev) => ({ ...prev, isOpen: false }))}
+        title={t("common.delete")}
+      >
+        <div className="space-y-6">
+          <p className="text-zinc-400">{modal.message}</p>
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => setModal((prev) => ({ ...prev, isOpen: false }))}
+              className="px-4 py-2 text-sm font-bold text-zinc-400 hover:text-white transition-colors"
+            >
+              {t("common.cancel")}
+            </button>
+            <button
+              type="button"
+              onClick={modal.action}
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 active:scale-95 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-red-500/20"
+            >
+              {t("common.delete")}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

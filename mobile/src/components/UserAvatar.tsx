@@ -1,6 +1,6 @@
-import React from "react"
-import { View, Text, Image, StyleSheet } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
+import type React from "react"
+import { Image, StyleSheet, Text } from "react-native"
 
 interface UserAvatarProps {
   user?: {
@@ -11,10 +11,7 @@ interface UserAvatarProps {
   className?: string // kept for compatibility if needed, but not used with StyleSheet
 }
 
-export const UserAvatar: React.FC<UserAvatarProps> = ({
-  user,
-  size = "md",
-}) => {
+export const UserAvatar: React.FC<UserAvatarProps> = ({ user, size = "md" }) => {
   const getInitials = (name: string) => {
     if (!name) return "?"
     const parts = name.trim().split(/\s+/)
@@ -37,12 +34,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({
   const { width, height, fontSize } = sizeStyles[size]
 
   if (user?.avatarUrl) {
-    return (
-      <Image
-        source={{ uri: user.avatarUrl }}
-        style={[styles.avatar, { width, height }]}
-      />
-    )
+    return <Image source={{ uri: user.avatarUrl }} style={[styles.avatar, { width, height }]} />
   }
 
   return (

@@ -1,23 +1,22 @@
-import { useState } from "react"
-import { useParams, Link, useNavigate } from "react-router-dom"
+import { ItemForm, WishlistForm } from "@/components/Forms"
+import { ItemCard } from "@/components/ItemCard"
+import { Modal } from "@/components/Modal"
 import { useAuth } from "@/context/AuthContext"
 import {
-  useWishlist,
   useAddItem,
-  useDeleteItem,
-  useUpdateItem,
-  useReserveItem,
   useCancelReservation,
-  useUpdateWishlist,
+  useDeleteItem,
   useDeleteWishlist,
+  useReserveItem,
   useSubscribe,
   useUnsubscribe,
+  useUpdateItem,
+  useUpdateWishlist,
+  useWishlist,
 } from "@/hooks/api"
-import { ItemForm, WishlistForm } from "@/components/Forms"
-import { Modal } from "@/components/Modal"
-import { toast } from "react-hot-toast"
 import { useI18n } from "@/i18n/context"
-import { ItemCard } from "@/components/ItemCard"
+import { useState } from "react"
+import { Link, useNavigate, useParams } from "react-router-dom"
 
 export default function WishlistDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -55,9 +54,7 @@ export default function WishlistDetailPage() {
   if (error) {
     return (
       <div className="text-center py-12 space-y-4">
-        <p className="text-red-400">
-          {(error as Error).message || "Could not load wishlist"}
-        </p>
+        <p className="text-red-400">{(error as Error).message || "Could not load wishlist"}</p>
         <Link to="/" className="text-brand-400 hover:underline text-sm">
           ← Back to dashboard
         </Link>
@@ -77,12 +74,14 @@ export default function WishlistDetailPage() {
         footer={
           <div className="flex gap-3">
             <button
+              type="button"
               onClick={() => setDeleteWishlistId(null)}
               className="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors"
             >
               Cancel
             </button>
             <button
+              type="button"
               onClick={() => {
                 if (deleteWishlistId) {
                   deleteWishlist.mutate(deleteWishlistId, {
@@ -110,12 +109,14 @@ export default function WishlistDetailPage() {
         footer={
           <div className="flex gap-3">
             <button
+              type="button"
               onClick={() => setDeleteItemId(null)}
               className="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors"
             >
               Cancel
             </button>
             <button
+              type="button"
               onClick={() => {
                 if (deleteItemId) {
                   deleteItem.mutate(deleteItemId, {
@@ -157,9 +158,7 @@ export default function WishlistDetailPage() {
         <div className="flex items-center gap-2 overflow-hidden">
           <span className="text-2xl shrink-0">{wishlist.emoji || "🎁"}</span>
           <div className="flex flex-col min-w-0">
-            <h1 className="text-lg font-bold text-white truncate min-w-0">
-              {wishlist.title}
-            </h1>
+            <h1 className="text-lg font-bold text-white truncate min-w-0">{wishlist.title}</h1>
             <div className="flex items-center gap-2">
               <span className="text-[8px] uppercase tracking-widest bg-brand-500/10 text-brand-400 px-1.5 py-0.5 rounded-md font-black border border-brand-500/20 whitespace-nowrap">
                 {t(`wishlist.${wishlist.privacy.toLowerCase()}`)}
@@ -184,6 +183,7 @@ export default function WishlistDetailPage() {
           {isOwner ? (
             <>
               <button
+                type="button"
                 onClick={() => setShowEditList(!showEditList)}
                 className="p-2 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded-xl transition-all active:scale-95"
                 title="Edit"
@@ -194,7 +194,9 @@ export default function WishlistDetailPage() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
+                    aria-label="Edit"
                   >
+                    <title>Edit</title>
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -205,6 +207,7 @@ export default function WishlistDetailPage() {
                 </div>
               </button>
               <button
+                type="button"
                 onClick={() => setDeleteWishlistId(wishlist.id)}
                 className="p-2 bg-red-500/5 border border-red-500/10 hover:bg-red-500/10 text-red-500 rounded-xl transition-all active:scale-95"
                 title="Delete"
@@ -214,7 +217,9 @@ export default function WishlistDetailPage() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-label="Delete"
                 >
+                  <title>Delete</title>
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -226,60 +231,84 @@ export default function WishlistDetailPage() {
             </>
           ) : wishlist.subscriptionId ? (
             <button
+              type="button"
               onClick={() => unsubscribe.mutate(wishlist.subscriptionId!)}
               disabled={unsubscribe.isPending}
               className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl transition-colors disabled:opacity-50"
             >
-              {wishlist.subscriptionStatus === "PENDING"
-                ? "Cancel"
-                : "Unfollow"}
+              {wishlist.subscriptionStatus === "PENDING" ? "Cancel" : "Unfollow"}
             </button>
           ) : (
             <button
+              type="button"
               onClick={() => subscribe.mutate({ wishlistId: wishlist.id })}
               disabled={subscribe.isPending}
               className="px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-brand-500 hover:bg-brand-600 text-black rounded-xl transition-all active:scale-95 shadow-lg shadow-brand-500/10 disabled:opacity-50"
             >
-              {wishlist.privacy === "FRIENDS"
-                ? t("wishlist.request_access")
-                : t("wishlist.follow")}
+              {wishlist.privacy === "FRIENDS" ? t("wishlist.request_access") : t("wishlist.follow")}
             </button>
           )}
         </div>
       </div>
 
-      {/* ─── Edit form ─────────────────────────────── */}
-      {showEditList && (
-        <div className="p-4 bg-zinc-900 border border-zinc-800 rounded-xl">
-          <WishlistForm
-            initial={{
-              title: wishlist.title,
-              description: wishlist.description || "",
-              emoji: wishlist.emoji || "🎁",
-              privacy: wishlist.privacy,
-            }}
+      <Modal
+        isOpen={showEditList}
+        onClose={() => setShowEditList(false)}
+        title={t("common.update")}
+        centered
+        fullWidth
+        mobileFullscreen
+      >
+        <WishlistForm
+          initial={{
+            title: wishlist.title,
+            description: wishlist.description || "",
+            emoji: wishlist.emoji || "🎁",
+            privacy: wishlist.privacy,
+          }}
+          onSubmit={(data: any) =>
+            updateWishlist.mutate(
+              { id: wishlist.id, ...data },
+              { onSuccess: () => setShowEditList(false) },
+            )
+          }
+          isLoading={updateWishlist.isPending}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={!!editingItem}
+        onClose={() => setEditingItem(null)}
+        title={t("common.update")}
+        centered
+        fullWidth
+        mobileFullscreen
+      >
+        {editingItem && (
+          <ItemForm
+            wishlistId={wishlist.id}
+            initial={editingItem}
             onSubmit={(data: any) =>
-              updateWishlist.mutate(
-                { id: wishlist.id, ...data },
-                { onSuccess: () => setShowEditList(false) },
+              updateItem.mutate(
+                { id: editingItem.id, wishlistId: wishlist.id, ...data },
+                { onSuccess: () => setEditingItem(null) },
               )
             }
-            isLoading={updateWishlist.isPending}
+            isLoading={updateItem.isPending}
           />
-        </div>
-      )}
+        )}
+      </Modal>
 
       {/* ─── Add item FAB ──────────────────────────── */}
       {isOwner && (
         <div className="fixed bottom-20 right-6 md:bottom-10 md:right-10 z-40">
           <button
+            type="button"
             onClick={() => setShowAddItem(true)}
             className="w-14 h-14 bg-brand-500 hover:bg-brand-600 text-black rounded-full shadow-2xl shadow-brand-500/20 flex items-center justify-center transition-all active:scale-90 group"
             title={t("wishlist.add_item")}
           >
-            <span className="text-2xl transition-transform group-hover:rotate-90">
-              ➕
-            </span>
+            <span className="text-2xl transition-transform group-hover:rotate-90">➕</span>
           </button>
         </div>
       )}
@@ -304,22 +333,13 @@ export default function WishlistDetailPage() {
   )
 }
 
-function ItemsGrid({
-  items,
-  isOwner,
-  user,
-  onEdit,
-  onRemove,
-  onReserve,
-  onCancelReserve,
-}: any) {
+function ItemsGrid({ items, isOwner, user, onEdit, onRemove, onReserve, onCancelReserve }: any) {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
   const totalPages = Math.ceil(items.length / itemsPerPage)
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentItems = items.slice(indexOfFirstItem, indexOfLastItem)
-  const { t, formatPrice } = useI18n()
 
   return (
     <div className="h-full flex flex-col min-h-0">
@@ -327,7 +347,7 @@ function ItemsGrid({
         <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
           {currentItems.map((item: any) => (
             <ItemCard
-              key={item.id}
+              key={item._id}
               item={item}
               isOwner={isOwner}
               user={user}
@@ -344,6 +364,7 @@ function ItemsGrid({
         <div className="flex-none mt-auto py-4 flex flex-col items-center gap-3">
           <div className="flex items-center gap-1.5">
             <button
+              type="button"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
               className="w-7 h-7 flex items-center justify-center bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/50 rounded-lg disabled:opacity-20 transition-all active:scale-90"
@@ -356,6 +377,7 @@ function ItemsGrid({
               </span>
             </div>
             <button
+              type="button"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
               className="w-7 h-7 flex items-center justify-center bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800/50 rounded-lg disabled:opacity-20 transition-all active:scale-90"
@@ -365,12 +387,13 @@ function ItemsGrid({
           </div>
 
           <div className="flex gap-1.5 px-3 py-1.5 bg-zinc-900/20 rounded-full border border-zinc-800/10">
-            {Array.from({ length: totalPages }).map((_, i) => (
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
+                type="button"
+                key={page}
+                onClick={() => setCurrentPage(page)}
                 className={`w-1 h-1 rounded-full transition-all duration-300 ${
-                  currentPage === i + 1 ? "bg-brand-500 w-3" : "bg-zinc-800"
+                  currentPage === page ? "bg-brand-500 w-3" : "bg-zinc-800"
                 }`}
               />
             ))}

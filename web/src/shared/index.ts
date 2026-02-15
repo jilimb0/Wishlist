@@ -31,6 +31,13 @@ export interface User {
   language: string
   currency: string
   createdAt: string
+  friendship?: {
+    id: string
+    status: FriendshipStatus
+    isInitiator: boolean
+    updatedAt: string
+  } | null
+  friendshipId?: string
 }
 
 export interface Friendship {
@@ -98,10 +105,7 @@ export interface Reservation {
   isAnonymous: boolean
   status: ReservationStatus | "ACTIVE" | "CANCELLED" | "FULFILLED"
   createdAt: string
-  item: Pick<
-    Item,
-    "id" | "title" | "url" | "imageUrl" | "currentPrice" | "currency"
-  > & {
+  item: Pick<Item, "id" | "title" | "url" | "imageUrl" | "currentPrice" | "currency"> & {
     wishlist: {
       id: string
       title: string

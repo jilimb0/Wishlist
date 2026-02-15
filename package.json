@@ -10,11 +10,14 @@
     "db:down": "docker-compose down",
     "db:migrate": "pnpm --filter wishtracker-backend run prisma:migrate",
     "db:generate": "pnpm --filter wishtracker-backend run prisma:generate",
-    "db:studio": "pnpm --filter wishtracker-backend run prisma:studio"
+    "db:studio": "pnpm --filter wishtracker-backend run prisma:studio",
+    "format": "biome format --write .",
+    "lint": "biome lint --write .",
+    "check": "biome check --write .",
+    "type-check": "pnpm -r run type-check"
   },
   "devDependencies": {
-    "eslint": "^10.0.0",
-    "prettier": "^3.8.1",
+    "@biomejs/biome": "^1.9.4",
     "typescript": "^5.7.3"
   },
   "pnpm": {

@@ -1,14 +1,14 @@
-import React from "react"
-import {
-  View,
-  Text,
-  Modal as RNModal,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-} from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { BlurView } from "expo-blur"
+import type React from "react"
+import {
+  Modal as RNModal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native"
 
 interface ModalProps {
   isOpen: boolean
@@ -18,20 +18,9 @@ interface ModalProps {
   footer?: React.ReactNode
 }
 
-export const Modal: React.FC<ModalProps> = ({
-  isOpen,
-  onClose,
-  title,
-  children,
-  footer,
-}) => {
+export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, footer }) => {
   return (
-    <RNModal
-      visible={isOpen}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <RNModal visible={isOpen} transparent animationType="fade" onRequestClose={onClose}>
       <TouchableWithoutFeedback onPress={onClose}>
         <BlurView intensity={20} tint="dark" style={styles.overlay}>
           <TouchableWithoutFeedback>

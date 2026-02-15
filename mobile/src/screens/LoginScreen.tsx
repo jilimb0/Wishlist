@@ -1,20 +1,20 @@
-import React, { useState } from "react"
+import { useNavigation } from "@react-navigation/native"
+import { StatusBar } from "expo-status-bar"
+import { useState } from "react"
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native"
-import { useNavigation } from "@react-navigation/native"
+import { SafeAreaView } from "react-native-safe-area-context"
 import { useAuth } from "../context/AuthContext"
 import { useLogin } from "../hooks/api"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { StatusBar } from "expo-status-bar"
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("")
@@ -83,12 +83,8 @@ export default function LoginScreen() {
             <View style={styles.inputGroup}>
               <View style={styles.passwordHeader}>
                 <Text style={styles.label}>Password</Text>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("ForgotPassword")}
-                >
-                  <Text style={styles.forgotPassword}>
-                    Forgot your password?
-                  </Text>
+                <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
+                  <Text style={styles.forgotPassword}>Forgot your password?</Text>
                 </TouchableOpacity>
               </View>
               <TextInput
@@ -102,10 +98,7 @@ export default function LoginScreen() {
             </View>
 
             <TouchableOpacity
-              style={[
-                styles.button,
-                loginMutation.isPending && styles.buttonDisabled,
-              ]}
+              style={[styles.button, loginMutation.isPending && styles.buttonDisabled]}
               onPress={handleSubmit}
               disabled={loginMutation.isPending}
             >

@@ -1,14 +1,14 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { api } from "../lib/api"
 import type {
   AuthResponse,
-  User,
-  Wishlist,
   Item,
-  Reservation,
-  Subscription,
   Notification,
   PriceHistory,
+  Reservation,
+  Subscription,
+  User,
+  Wishlist,
 } from "../types"
 
 // ─── Auth ─────────────────────────────────────────────────
@@ -64,10 +64,7 @@ export function useUpdateProfile() {
 export function usePublicProfile(userId: string) {
   return useQuery({
     queryKey: ["user", userId],
-    queryFn: () =>
-      api.get<Pick<User, "id" | "displayName" | "avatarUrl">>(
-        `/users/${userId}`,
-      ),
+    queryFn: () => api.get<Pick<User, "id" | "displayName" | "avatarUrl">>(`/users/${userId}`),
   })
 }
 
@@ -145,8 +142,7 @@ export function useAddItem() {
       price?: number
       currency?: string
     }) => api.post<Item>(`/wishlists/${wishlistId}/items`, data),
-    onSuccess: (_, vars) =>
-      qc.invalidateQueries({ queryKey: ["wishlist", vars.wishlistId] }),
+    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ["wishlist", vars.wishlistId] }),
   })
 }
 
@@ -179,10 +175,7 @@ export function useUploadItemImage() {
         name: file.name,
         type: file.type,
       })
-      const response = await api.post<{ imageUrl: string }>(
-        "/items/upload",
-        formData,
-      )
+      const response = await api.post<{ imageUrl: string }>("/items/upload", formData)
       return response
     },
   })

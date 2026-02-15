@@ -1,6 +1,6 @@
-import { Injectable, ExecutionContext } from "@nestjs/common"
+import { type ExecutionContext, Injectable } from "@nestjs/common"
+import type { Reflector } from "@nestjs/core"
 import { AuthGuard } from "@nestjs/passport"
-import { Reflector } from "@nestjs/core"
 import { IS_PUBLIC_KEY } from "../../modules/auth/public.decorator"
 
 @Injectable()
@@ -26,12 +26,7 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
     }
   }
 
-  handleRequest<TUser = any>(
-    err: any,
-    user: any,
-    info: any,
-    context: ExecutionContext,
-  ): TUser {
+  handleRequest<TUser = any>(err: any, user: any, info: any, context: ExecutionContext): TUser {
     // If we have a user, return it (whether public or private)
     if (user) return user
 

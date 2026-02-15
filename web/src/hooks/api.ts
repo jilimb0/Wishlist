@@ -1,14 +1,14 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { api } from "../lib/api"
 import type {
   AuthResponse,
-  User,
-  Wishlist,
   Item,
-  Reservation,
-  Subscription,
   Notification,
   PriceHistory,
+  Reservation,
+  Subscription,
+  User,
+  Wishlist,
 } from "../types"
 
 // ─── Auth ─────────────────────────────────────────────────
@@ -55,7 +55,7 @@ export function useUpdateProfile() {
       language?: string
       currency?: string
     }) => api.patch<User>("/users/me", data),
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       qc.invalidateQueries({ queryKey: ["me"] })
     },
   })
@@ -75,9 +75,7 @@ export function usePublicProfile(userId: string) {
   return useQuery({
     queryKey: ["user", userId],
     queryFn: () =>
-      api.get<Pick<User, "id" | "displayName" | "avatarUrl">>(
-        `/users/${userId}`,
-      ),
+      api.get<Pick<User, "id" | "displayName" | "avatarUrl" | "email">>(`/users/${userId}`),
   })
 }
 
@@ -155,8 +153,7 @@ export function useAddItem() {
       price?: number
       currency?: string
     }) => api.post<Item>(`/wishlists/${wishlistId}/items`, data),
-    onSuccess: (_, vars) =>
-      qc.invalidateQueries({ queryKey: ["wishlist", vars.wishlistId] }),
+    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ["wishlist", vars.wishlistId] }),
   })
 }
 
@@ -167,7 +164,7 @@ export function useUpdateItem() {
       const { id, wishlistId, ...rest } = data
       return api.patch(`/items/${id}`, rest)
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (_, _variables) => {
       queryClient.invalidateQueries({ queryKey: ["wishlist"] })
     },
   })
@@ -178,10 +175,8 @@ export function useUploadItemImage() {
     mutationFn: async (file: File) => {
       const formData = new FormData()
       formData.append("file", file)
-      const { data } = await api.post("/items/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      return data as { imageUrl: string }
+      const data = await api.post<{ imageUrl: string }>("/items/upload", formData)
+      return data
     },
   })
 }
@@ -445,5 +440,17 @@ export function useSearchUsers(query: string) {
 export function useInviteFriend() {
   return useMutation({
     mutationFn: (email: string) => api.post("/friends/invite", { email }),
+  })
+}
+
+export function useRemoveFriendship() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/friends/${id}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["friends"] })
+      qc.invalidateQueries({ queryKey: ["friends", "pending"] })
+      qc.invalidateQueries({ queryKey: ["users", "search"] })
+    },
   })
 }

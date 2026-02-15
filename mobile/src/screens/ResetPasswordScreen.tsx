@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react"
+import { useNavigation } from "@react-navigation/native"
+import * as Linking from "expo-linking"
+import { StatusBar } from "expo-status-bar"
+import { useEffect, useState } from "react"
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native"
-import { useNavigation, useRoute } from "@react-navigation/native"
-import { useResetPassword } from "../hooks/api"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { StatusBar } from "expo-status-bar"
-import * as Linking from "expo-linking"
+import { useResetPassword } from "../hooks/api"
 
 export default function ResetPasswordScreen() {
   const [token, setToken] = useState("")
@@ -89,13 +89,10 @@ export default function ResetPasswordScreen() {
             <Text style={styles.emoji}>🎉</Text>
             <Text style={styles.title}>Password Reset!</Text>
             <Text style={styles.message}>
-              Your password has been successfully updated. You can now sign in
-              with your new password.
+              Your password has been successfully updated. You can now sign in with your new
+              password.
             </Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => navigation.navigate("Login")}
-            >
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Login")}>
               <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
           </View>
@@ -167,10 +164,7 @@ export default function ResetPasswordScreen() {
             </View>
 
             <TouchableOpacity
-              style={[
-                styles.button,
-                resetPasswordMutation.isPending && styles.buttonDisabled,
-              ]}
+              style={[styles.button, resetPasswordMutation.isPending && styles.buttonDisabled]}
               onPress={handleSubmit}
               disabled={resetPasswordMutation.isPending}
             >

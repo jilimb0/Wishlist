@@ -1,17 +1,16 @@
-import React from "react"
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-  StyleSheet,
-  SafeAreaView,
-} from "react-native"
 import { Ionicons } from "@expo/vector-icons"
-import { useNotifications, useMarkAsRead, useMarkAllAsRead } from "../hooks/api"
-import { useI18n } from "../i18n/context"
 import { DateTime } from "luxon"
+import {
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native"
+import { useMarkAllAsRead, useMarkAsRead, useNotifications } from "../hooks/api"
+import { useI18n } from "../i18n/context"
 import { NotificationType } from "../types"
 
 export default function NotificationsScreen() {
@@ -56,9 +55,7 @@ export default function NotificationsScreen() {
         <Text style={styles.headerTitle}>{t("notifications.title")}</Text>
         {notifications.some((n) => !n.isRead) && (
           <TouchableOpacity onPress={() => markAllAsRead.mutate()}>
-            <Text style={styles.markAllText}>
-              {t("notifications.mark_all_read")}
-            </Text>
+            <Text style={styles.markAllText}>{t("notifications.mark_all_read")}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -69,11 +66,7 @@ export default function NotificationsScreen() {
         </View>
       ) : notifications.length === 0 ? (
         <View style={styles.center}>
-          <Ionicons
-            name="notifications-off-outline"
-            size={64}
-            color="#27272a"
-          />
+          <Ionicons name="notifications-off-outline" size={64} color="#27272a" />
           <Text style={styles.emptyText}>{t("notifications.empty")}</Text>
         </View>
       ) : (

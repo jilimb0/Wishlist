@@ -1,20 +1,20 @@
-import React, { useState } from "react"
+import { Ionicons } from "@expo/vector-icons"
+import { useNavigation } from "@react-navigation/native"
+import { StatusBar } from "expo-status-bar"
+import { useState } from "react"
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native"
-import { useNavigation } from "@react-navigation/native"
-import { useForgotPassword } from "../hooks/api"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { StatusBar } from "expo-status-bar"
-import { Ionicons } from "@expo/vector-icons"
+import { useForgotPassword } from "../hooks/api"
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("")
@@ -55,10 +55,7 @@ export default function ForgotPasswordScreen() {
               We've sent password reset instructions to{"\n"}
               <Text style={styles.emailHighlight}>{email}</Text>
             </Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => navigation.navigate("Login")}
-            >
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Login")}>
               <Text style={styles.buttonText}>Back to Sign In</Text>
             </TouchableOpacity>
           </View>
@@ -78,19 +75,14 @@ export default function ForgotPasswordScreen() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
 
           <View style={styles.header}>
             <Text style={styles.emoji}>🔑</Text>
             <Text style={styles.title}>Forgot Password?</Text>
-            <Text style={styles.subtitle}>
-              Enter your email to receive reset instructions
-            </Text>
+            <Text style={styles.subtitle}>Enter your email to receive reset instructions</Text>
           </View>
 
           {error ? (
@@ -114,10 +106,7 @@ export default function ForgotPasswordScreen() {
             </View>
 
             <TouchableOpacity
-              style={[
-                styles.button,
-                forgotPasswordMutation.isPending && styles.buttonDisabled,
-              ]}
+              style={[styles.button, forgotPasswordMutation.isPending && styles.buttonDisabled]}
               onPress={handleSubmit}
               disabled={forgotPasswordMutation.isPending}
             >

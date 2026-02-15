@@ -1,6 +1,6 @@
-import { Controller, Post, Body } from "@nestjs/common"
-import { ScraperService } from "./scraper.service"
-import { ScrapeDto } from "./dto/scrape.dto"
+import { Body, Controller, Post } from "@nestjs/common"
+import type { ScrapeDto } from "./dto/scrape.dto"
+import type { ScraperService } from "./scraper.service"
 
 @Controller("api/scrape")
 export class ScraperController {

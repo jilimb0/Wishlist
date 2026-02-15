@@ -1,12 +1,8 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from "@nestjs/common"
-import { PrismaService } from "../../prisma/prisma.service"
-import { CreateWishlistDto, UpdateWishlistDto } from "./dto/wishlist.dto"
-import { Privacy, SubscriptionStatus } from "@prisma/client"
-import { FriendsService } from "../friends/friends.service"
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common"
+import { Privacy, type SubscriptionStatus } from "@prisma/client"
+import type { PrismaService } from "../../prisma/prisma.service"
+import type { FriendsService } from "../friends/friends.service"
+import type { CreateWishlistDto, UpdateWishlistDto } from "./dto/wishlist.dto"
 
 @Injectable()
 export class WishlistsService {
@@ -60,29 +56,17 @@ export class WishlistsService {
     if (!wishlist) throw new NotFoundException("Wishlist not found")
 
     // Privacy check
-    if (
-      wishlist.privacy === Privacy.PRIVATE &&
-      wishlist.userId !== currentUserId
-    ) {
+    if (wishlist.privacy === Privacy.PRIVATE && wishlist.userId !== currentUserId) {
       throw new ForbiddenException("This wishlist is private")
     }
 
-    if (
-      wishlist.privacy === Privacy.FRIENDS &&
-      wishlist.userId !== currentUserId
-    ) {
-      if (!currentUserId)
-        throw new ForbiddenException("This wishlist is for friends only")
+    if (wishlist.privacy === Privacy.FRIENDS && wishlist.userId !== currentUserId) {
+      if (!currentUserId) throw new ForbiddenException("This wishlist is for friends only")
 
-      const isFriend = await this.friendsService.isFriend(
-        currentUserId,
-        wishlist.userId,
-      )
+      const isFriend = await this.friendsService.isFriend(currentUserId, wishlist.userId)
 
       if (!isFriend) {
-        throw new ForbiddenException(
-          "This wishlist is for approved friends only",
-        )
+        throw new ForbiddenException("This wishlist is for approved friends only")
       }
     }
 
@@ -113,9 +97,7 @@ export class WishlistsService {
             id: item.reservation.id,
             status: item.reservation.status,
             isAnonymous: item.reservation.isAnonymous,
-            userId: item.reservation.isAnonymous
-              ? undefined
-              : item.reservation.userId,
+            userId: item.reservation.isAnonymous ? undefined : item.reservation.userId,
             isReserved: true,
           },
         }
@@ -146,14 +128,10 @@ export class WishlistsService {
     })
 
     if (!wishlist) throw new NotFoundException("Wishlist not found")
-    if (wishlist.userId !== userId)
-      throw new ForbiddenException("Not your wishlist")
+    if (wishlist.userId !== userId) throw new ForbiddenException("Not your wishlist")
 
     // If privacy changed to PRIVATE, remove all subscriptions
-    if (
-      dto.privacy === Privacy.PRIVATE &&
-      wishlist.privacy !== Privacy.PRIVATE
-    ) {
+    if (dto.privacy === Privacy.PRIVATE && wishlist.privacy !== Privacy.PRIVATE) {
       await this.prisma.subscription.deleteMany({
         where: { wishlistId },
       })
@@ -171,8 +149,7 @@ export class WishlistsService {
     })
 
     if (!wishlist) throw new NotFoundException("Wishlist not found")
-    if (wishlist.userId !== userId)
-      throw new ForbiddenException("Not your wishlist")
+    if (wishlist.userId !== userId) throw new ForbiddenException("Not your wishlist")
 
     await this.prisma.wishlist.delete({ where: { id: wishlistId } })
     return { success: true }
@@ -180,7 +157,7 @@ export class WishlistsService {
 
   async discover(search?: string, limit = 20, offset = 0) {
     // Cap limit to prevent abuse
-    limit = Math.min(Math.max(1, limit), 100)
+    const takenLimit = Math.min(Math.max(1, limit), 100)
     const where: any = { privacy: Privacy.PUBLIC }
 
     if (search) {
@@ -195,11 +172,20 @@ export class WishlistsService {
       this.prisma.wishlist.findMany({
         where,
         include: {
-          user: { select: { id: true, displayName: true, avatarUrl: true } },
-          _count: { select: { items: true } },
+          user: {
+            select: {
+              id: true,
+              displayName: true,
+              avatarUrl: true,
+            },
+          },
+          items: {
+            take: 4, // Preview items
+            select: { imageUrl: true },
+          },
         },
-        orderBy: { createdAt: "desc" },
-        take: limit,
+        orderBy: { updatedAt: "desc" },
+        take: takenLimit,
         skip: offset,
       }),
       this.prisma.wishlist.count({ where }),

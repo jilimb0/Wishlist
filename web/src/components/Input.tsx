@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, forwardRef, ReactNode } from "react"
+import { type InputHTMLAttributes, type ReactNode, forwardRef } from "react"
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: boolean | string
@@ -8,17 +8,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  (
-    {
-      error,
-      success,
-      rightElement,
-      className = "",
-      containerClassName = "",
-      ...props
-    },
-    ref,
-  ) => {
+  ({ error, success, rightElement, className = "", containerClassName = "", ...props }, ref) => {
     return (
       <div className={`relative w-full ${containerClassName}`}>
         <input

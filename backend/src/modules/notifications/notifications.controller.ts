@@ -1,6 +1,6 @@
-import { Controller, Get, Patch, Param, Query } from "@nestjs/common"
-import { NotificationsService } from "./notifications.service"
+import { Controller, Get, Param, Patch, Query } from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
+import type { NotificationsService } from "./notifications.service"
 
 @Controller("api/notifications")
 export class NotificationsController {
@@ -14,8 +14,8 @@ export class NotificationsController {
   ) {
     return this.notificationsService.getNotifications(
       userId,
-      limit ? parseInt(limit, 10) : 20,
-      offset ? parseInt(offset, 10) : 0,
+      limit ? Number.parseInt(limit, 10) : 20,
+      offset ? Number.parseInt(offset, 10) : 0,
     )
   }
 

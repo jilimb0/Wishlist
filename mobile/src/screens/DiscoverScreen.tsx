@@ -1,20 +1,12 @@
-import React, { useState } from "react"
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
-  Image,
-} from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { StatusBar } from "expo-status-bar"
 import { Ionicons } from "@expo/vector-icons"
-import { useDiscover, useSearchUsers, useSendFriendRequest } from "../hooks/api"
-import { UserAvatar } from "../components/UserAvatar"
 import { useNavigation } from "@react-navigation/native"
+import { StatusBar } from "expo-status-bar"
+import { useState } from "react"
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 import Toast from "react-native-toast-message"
+import { UserAvatar } from "../components/UserAvatar"
+import { useDiscover, useSearchUsers, useSendFriendRequest } from "../hooks/api"
 
 export default function DiscoverScreen() {
   const [activeTab, setActiveTab] = useState<"wishlists" | "users">("wishlists")
@@ -23,9 +15,8 @@ export default function DiscoverScreen() {
   const navigation = useNavigation<any>()
 
   // Hooks
-  const { data: discoverData, isLoading: isLoadingDiscover } =
-    useDiscover(query)
-  const { data: usersData, isLoading: isLoadingUsers } = useSearchUsers(query)
+  const { data: discoverData, isLoading: _isLoadingDiscover } = useDiscover(query)
+  const { data: _usersData, isLoading: _isLoadingUsers } = useSearchUsers(query)
   const sendRequestMutation = useSendFriendRequest()
 
   const handleSearch = () => {
@@ -34,19 +25,15 @@ export default function DiscoverScreen() {
 
   const handleSendRequest = (userId: string) => {
     sendRequestMutation.mutate(userId, {
-      onSuccess: () =>
-        Toast.show({ type: "success", text1: "Friend request sent" }),
-      onError: () =>
-        Toast.show({ type: "error", text1: "Failed to send request" }),
+      onSuccess: () => Toast.show({ type: "success", text1: "Friend request sent" }),
+      onError: () => Toast.show({ type: "error", text1: "Failed to send request" }),
     })
   }
 
   const renderWishlist = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() =>
-        navigation.navigate("WishlistDetail", { wishlistId: item.id })
-      }
+      onPress={() => navigation.navigate("WishlistDetail", { wishlistId: item.id })}
     >
       <View style={styles.cardHeader}>
         <Text style={styles.cardEmoji}>{item.emoji}</Text>
@@ -68,10 +55,7 @@ export default function DiscoverScreen() {
       <View style={styles.userInfo}>
         <Text style={styles.userName}>{item.displayName}</Text>
       </View>
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => handleSendRequest(item.id)}
-      >
+      <TouchableOpacity style={styles.addButton} onPress={() => handleSendRequest(item.id)}>
         <Ionicons name="person-add-outline" size={20} color="#000" />
       </TouchableOpacity>
     </TouchableOpacity>
@@ -99,12 +83,7 @@ export default function DiscoverScreen() {
             style={[styles.tab, activeTab === "wishlists" && styles.activeTab]}
             onPress={() => setActiveTab("wishlists")}
           >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === "wishlists" && styles.activeTabText,
-              ]}
-            >
+            <Text style={[styles.tabText, activeTab === "wishlists" && styles.activeTabText]}>
               Wishlists
             </Text>
           </TouchableOpacity>
@@ -112,12 +91,7 @@ export default function DiscoverScreen() {
             style={[styles.tab, activeTab === "users" && styles.activeTab]}
             onPress={() => setActiveTab("users")}
           >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === "users" && styles.activeTabText,
-              ]}
-            >
+            <Text style={[styles.tabText, activeTab === "users" && styles.activeTabText]}>
               People
             </Text>
           </TouchableOpacity>
@@ -132,9 +106,7 @@ export default function DiscoverScreen() {
           numColumns={2}
           contentContainerStyle={styles.list}
           columnWrapperStyle={{ gap: 12 }}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>No wishlists found</Text>
-          }
+          ListEmptyComponent={<Text style={styles.emptyText}>No wishlists found</Text>}
         />
       ) : (
         <FlatList
@@ -142,9 +114,7 @@ export default function DiscoverScreen() {
           renderItem={renderUser}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>No users found</Text>
-          }
+          ListEmptyComponent={<Text style={styles.emptyText}>No users found</Text>}
         />
       )}
     </SafeAreaView>

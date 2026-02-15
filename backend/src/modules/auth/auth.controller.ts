@@ -1,16 +1,9 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-  UseGuards,
-} from "@nestjs/common"
+import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common"
 import { Throttle } from "@nestjs/throttler"
-import { AuthService } from "./auth.service"
-import { RegisterDto, LoginDto } from "./dto/auth.dto"
-import { Public } from "./public.decorator"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
+import type { AuthService } from "./auth.service"
+import type { LoginDto, RegisterDto } from "./dto/auth.dto"
+import { Public } from "./public.decorator"
 
 @Controller("api/auth")
 export class AuthController {

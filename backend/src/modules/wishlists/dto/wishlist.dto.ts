@@ -1,5 +1,5 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator"
 import { Privacy } from "@prisma/client"
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator"
 
 export class CreateWishlistDto {
   @IsString()

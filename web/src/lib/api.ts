@@ -20,17 +20,17 @@ class ApiClient {
     return this.token
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {},
-  ): Promise<T> {
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const headers: Record<string, string> = {
-      "Content-Type": "application/json",
       ...(options.headers as Record<string, string>),
     }
 
+    if (!headers["Content-Type"] && !(options.body instanceof FormData)) {
+      headers["Content-Type"] = "application/json"
+    }
+
     if (this.token) {
-      headers["Authorization"] = `Bearer ${this.token}`
+      headers.Authorization = `Bearer ${this.token}`
     }
 
     const response = await fetch(`${API_BASE}${endpoint}`, {
@@ -58,10 +58,21 @@ class ApiClient {
     return this.request<T>(endpoint)
   }
 
-  post<T>(endpoint: string, data?: unknown) {
+  post<T>(endpoint: string, data?: unknown, options?: RequestInit) {
+    const isFormData = data instanceof FormData
+    const headers = options?.headers || {}
+
+    // If FormData, let the browser set the Content-Type
+    if (isFormData) {
+      // @ts-ignore
+      headers["Content-Type"] = undefined
+    }
+
     return this.request<T>(endpoint, {
       method: "POST",
-      body: data ? JSON.stringify(data) : undefined,
+      body: isFormData ? (data as FormData) : data ? JSON.stringify(data) : undefined,
+      ...options,
+      headers: isFormData ? headers : { ...headers },
     })
   }
 

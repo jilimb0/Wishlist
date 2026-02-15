@@ -1,11 +1,11 @@
 import {
-  Injectable,
-  NotFoundException,
   BadRequestException,
   ConflictException,
+  Injectable,
+  NotFoundException,
 } from "@nestjs/common"
-import { PrismaService } from "../../prisma/prisma.service"
 import { FriendshipStatus } from "@prisma/client"
+import type { PrismaService } from "../../prisma/prisma.service"
 
 @Injectable()
 export class FriendsService {
@@ -13,9 +13,7 @@ export class FriendsService {
 
   async sendRequest(userId: string, friendId: string) {
     if (userId === friendId) {
-      throw new BadRequestException(
-        "You cannot send a friend request to yourself",
-      )
+      throw new BadRequestException("You cannot send a friend request to yourself")
     }
 
     const existingFriendship = await this.prisma.friendship.findFirst({
@@ -58,11 +56,11 @@ export class FriendsService {
         where: { id: requestId },
         data: { status: FriendshipStatus.ACCEPTED },
       })
-    } else {
-      return this.prisma.friendship.delete({
-        where: { id: requestId },
-      })
     }
+
+    return this.prisma.friendship.delete({
+      where: { id: requestId },
+    })
   }
 
   async getMyFriends(userId: string) {
@@ -91,19 +89,30 @@ export class FriendsService {
       },
     })
 
-    return friendships.map((f: any) =>
-      f.userId === userId ? f.friend : f.user,
-    )
+    return friendships.map((f: any) => {
+      const user = f.userId === userId ? f.friend : f.user
+      return {
+        ...user,
+        friendshipId: f.id,
+      }
+    })
   }
 
   async getPendingRequests(userId: string) {
     return this.prisma.friendship.findMany({
       where: {
-        friendId: userId,
+        OR: [{ userId: userId }, { friendId: userId }],
         status: FriendshipStatus.PENDING,
       },
       include: {
         user: {
+          select: {
+            id: true,
+            displayName: true,
+            avatarUrl: true,
+          },
+        },
+        friend: {
           select: {
             id: true,
             displayName: true,
@@ -128,7 +137,7 @@ export class FriendsService {
   }
 
   async searchUsers(query: string, currentUserId: string) {
-    return this.prisma.user.findMany({
+    const users = await this.prisma.user.findMany({
       where: {
         OR: [
           { displayName: { contains: query, mode: "insensitive" } },
@@ -144,12 +153,50 @@ export class FriendsService {
       },
       take: 10,
     })
+
+    // Include friendship status for each user
+    return Promise.all(
+      users.map(async (user) => {
+        const friendship = await this.prisma.friendship.findFirst({
+          where: {
+            OR: [
+              { userId: currentUserId, friendId: user.id },
+              { userId: user.id, friendId: currentUserId },
+            ],
+          },
+        })
+        return {
+          ...user,
+          friendship: friendship
+            ? {
+                id: friendship.id,
+                status: friendship.status,
+                isInitiator: friendship.userId === currentUserId,
+                updatedAt: friendship.updatedAt,
+              }
+            : null,
+        }
+      }),
+    )
+  }
+
+  async removeFriendship(userId: string, friendshipId: string) {
+    const friendship = await this.prisma.friendship.findUnique({
+      where: { id: friendshipId },
+    })
+
+    if (!friendship || (friendship.userId !== userId && friendship.friendId !== userId)) {
+      throw new NotFoundException("Friendship or request not found")
+    }
+
+    return this.prisma.friendship.delete({
+      where: { id: friendshipId },
+    })
   }
 
   async createInvitation(inviterId: string, email: string) {
     const token =
-      Math.random().toString(36).substring(2, 15) +
-      Math.random().toString(36).substring(2, 15)
+      Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     const expiresAt = new Date()
     expiresAt.setDate(expiresAt.getDate() + 7) // 7 days expiry
 
@@ -163,9 +210,7 @@ export class FriendsService {
     })
 
     // In a real app, send email here. For now, log it.
-    console.log(
-      `[INVITE] To: ${email}, Link: http://localhost:3011/register?token=${token}`,
-    )
+    console.log(`[INVITE] To: ${email}, Link: http://localhost:3011/register?token=${token}`)
 
     return invitation
   }

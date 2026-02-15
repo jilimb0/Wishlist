@@ -1,8 +1,8 @@
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Input } from "@/components/Input"
 import { useAuth } from "@/context/AuthContext"
 import { useLogin } from "@/hooks/api"
-import { Input } from "@/components/Input"
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -51,10 +51,14 @@ export default function LoginPage() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5 ml-1">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-zinc-400 mb-1.5 ml-1"
+              >
                 Email
               </label>
               <Input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -65,7 +69,7 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-center justify-between mb-1.5 ml-1">
-                <label className="block text-sm font-medium text-zinc-400">
+                <label htmlFor="password" className="block text-sm font-medium text-zinc-400">
                   Password
                 </label>
                 <Link
@@ -76,6 +80,7 @@ export default function LoginPage() {
                 </Link>
               </div>
               <Input
+                id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

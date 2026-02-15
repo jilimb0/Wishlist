@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom"
-import { Wishlist } from "@/types"
 import { useI18n } from "@/i18n/context"
+import type { Wishlist } from "@/types"
+import { Link } from "react-router-dom"
 
 interface WishlistCardProps {
   wishlist: Wishlist
@@ -56,6 +56,7 @@ export function WishlistCard({
           </div>
         </div>
         {action && (
+          // biome-ignore lint/a11y/useKeyWithClickEvents: Stop propagation wrapper only
           <div
             onClick={(e) => {
               e.preventDefault()

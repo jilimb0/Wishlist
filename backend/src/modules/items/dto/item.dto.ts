@@ -1,13 +1,4 @@
-import {
-  IsOptional,
-  IsString,
-  IsUrl,
-  IsNumber,
-  IsInt,
-  IsBoolean,
-  Min,
-  Max,
-} from "class-validator"
+import { IsBoolean, IsInt, IsNumber, IsOptional, IsString, IsUrl, Max, Min } from "class-validator"
 
 export class CreateItemDto {
   @IsOptional()

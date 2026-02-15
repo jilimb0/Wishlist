@@ -1,23 +1,23 @@
 import { Module } from "@nestjs/common"
 import { ConfigModule } from "@nestjs/config"
 import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core"
-import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler"
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler"
 
-import configuration from "./config/configuration"
-import { PrismaModule } from "./prisma/prisma.module"
 import { JwtAuthGuard } from "./common/guards/jwt-auth.guard"
 import { TransformInterceptor } from "./common/interceptors/transform.interceptor"
+import configuration from "./config/configuration"
+import { PrismaModule } from "./prisma/prisma.module"
 
+import { AppController } from "./app.controller"
 import { AuthModule } from "./modules/auth/auth.module"
+import { FriendsModule } from "./modules/friends/friends.module"
+import { ItemsModule } from "./modules/items/items.module"
+import { NotificationsModule } from "./modules/notifications/notifications.module"
+import { ReservationsModule } from "./modules/reservations/reservations.module"
+import { ScraperModule } from "./modules/scraper/scraper.module"
+import { SubscriptionsModule } from "./modules/subscriptions/subscriptions.module"
 import { UsersModule } from "./modules/users/users.module"
 import { WishlistsModule } from "./modules/wishlists/wishlists.module"
-import { ItemsModule } from "./modules/items/items.module"
-import { ReservationsModule } from "./modules/reservations/reservations.module"
-import { SubscriptionsModule } from "./modules/subscriptions/subscriptions.module"
-import { NotificationsModule } from "./modules/notifications/notifications.module"
-import { ScraperModule } from "./modules/scraper/scraper.module"
-import { FriendsModule } from "./modules/friends/friends.module"
-import { AppController } from "./app.controller"
 
 @Module({
   imports: [

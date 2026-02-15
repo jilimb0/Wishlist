@@ -1,5 +1,5 @@
-const fs = require("fs")
-const path = require("path")
+const fs = require("node:fs")
+const path = require("node:path")
 
 const screens = [
   "LoginScreen",
@@ -35,11 +35,8 @@ const styles = StyleSheet.create({
 });
 `
 
-screens.forEach((screen) => {
-  const filePath = path.join(
-    "/Users/jilimbo/Documents/Personal/Wishlist/mobile/src/screens",
-    `${screen}.tsx`,
-  )
+for (const screen of screens) {
+  const filePath = path.join(__dirname, "mobile/src/screens", `${screen}.tsx`)
   fs.writeFileSync(filePath, template(screen))
   console.log(`Created ${screen}.tsx`)
-})
+}

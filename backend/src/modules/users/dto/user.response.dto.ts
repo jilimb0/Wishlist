@@ -1,5 +1,5 @@
+import type { User } from "@prisma/client"
 import { Exclude, Expose } from "class-transformer"
-import { User } from "@prisma/client"
 
 export class UserResponseDto {
   constructor(partial: Partial<User>) {

@@ -1,24 +1,23 @@
-import React from "react"
+import { Ionicons } from "@expo/vector-icons"
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { useAuth } from "../context/AuthContext"
-import { Ionicons } from "@expo/vector-icons"
 
-// Screens
-import LoginScreen from "../screens/LoginScreen"
-import RegisterScreen from "../screens/RegisterScreen"
-import ForgotPasswordScreen from "../screens/ForgotPasswordScreen"
-import ResetPasswordScreen from "../screens/ResetPasswordScreen"
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native"
+import { useNotifications } from "../hooks/api"
 import DashboardScreen from "../screens/DashboardScreen"
 import DiscoverScreen from "../screens/DiscoverScreen"
 import FollowingScreen from "../screens/FollowingScreen"
-import ProfileScreen from "../screens/ProfileScreen"
+import ForgotPasswordScreen from "../screens/ForgotPasswordScreen"
+// Screens
+import LoginScreen from "../screens/LoginScreen"
 import NotificationsScreen from "../screens/NotificationsScreen"
-import WishlistDetailScreen from "../screens/WishlistDetailScreen"
+import ProfileScreen from "../screens/ProfileScreen"
 import PublicProfileScreen from "../screens/PublicProfileScreen"
-import { ActivityIndicator, View, TouchableOpacity, Text } from "react-native"
-import { useNotifications } from "../hooks/api"
+import RegisterScreen from "../screens/RegisterScreen"
+import ResetPasswordScreen from "../screens/ResetPasswordScreen"
+import WishlistDetailScreen from "../screens/WishlistDetailScreen"
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -32,11 +31,7 @@ function AuthStack() {
         contentStyle: { backgroundColor: "#0a0a0a" },
       }}
     >
-      <Stack.Screen
-        name="Login"
-        component={LoginScreen}
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
@@ -92,11 +87,7 @@ function MainTabs({ navigation }: any) {
               onPress={() => navigation.navigate("Notifications")}
               style={{ marginRight: 15, position: "relative" }}
             >
-              <Ionicons
-                name="notifications-outline"
-                size={24}
-                color="#f5f5f5"
-              />
+              <Ionicons name="notifications-outline" size={24} color="#f5f5f5" />
               {unreadCount > 0 && (
                 <View
                   style={{
@@ -113,9 +104,7 @@ function MainTabs({ navigation }: any) {
                     borderColor: "#0a0a0a",
                   }}
                 >
-                  <Text
-                    style={{ color: "white", fontSize: 8, fontWeight: "900" }}
-                  >
+                  <Text style={{ color: "white", fontSize: 8, fontWeight: "900" }}>
                     {unreadCount > 9 ? "!" : unreadCount}
                   </Text>
                 </View>
@@ -140,11 +129,7 @@ function AuthenticatedStack() {
         contentStyle: { backgroundColor: "#0a0a0a" },
       }}
     >
-      <Stack.Screen
-        name="MainTabs"
-        component={MainTabs}
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
       <Stack.Screen
         name="WishlistDetail"
         component={WishlistDetailScreen}
@@ -182,9 +167,5 @@ export default function AppNavigator() {
     )
   }
 
-  return (
-    <NavigationContainer>
-      {user ? <AuthenticatedStack /> : <AuthStack />}
-    </NavigationContainer>
-  )
+  return <NavigationContainer>{user ? <AuthenticatedStack /> : <AuthStack />}</NavigationContainer>
 }

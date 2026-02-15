@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from "react"
-import { useScrape, useUploadItemImage } from "../hooks/api"
-import EmojiPicker, { Theme } from "emoji-picker-react"
-import { useI18n } from "@/i18n/context"
-import { useAuth } from "@/context/AuthContext"
 import { Input } from "@/components/Input"
+import { useAuth } from "@/context/AuthContext"
+import { useI18n } from "@/i18n/context"
+import EmojiPicker, { Theme } from "emoji-picker-react"
+import { useEffect, useRef, useState } from "react"
+import { useScrape, useUploadItemImage } from "../hooks/api"
 
 interface WishlistFormProps {
   onSubmit: (data: {
@@ -64,12 +64,7 @@ const PRIVACY_OPTIONS = [
   },
 ]
 
-export function WishlistForm({
-  onSubmit,
-  initial,
-  isLoading,
-  mobileMode,
-}: WishlistFormProps) {
+export function WishlistForm({ onSubmit, initial, isLoading, mobileMode }: WishlistFormProps) {
   const [title, setTitle] = useState(initial?.title || "")
   const [description, setDescription] = useState(initial?.description || "")
   const [emoji, setEmoji] = useState(initial?.emoji || "🎁")
@@ -85,10 +80,7 @@ export function WishlistForm({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        emojiPickerRef.current &&
-        !emojiPickerRef.current.contains(event.target as Node)
-      ) {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
         setShowEmojiPicker(false)
       }
     }
@@ -119,10 +111,11 @@ export function WishlistForm({
         </div>
 
         {/* Title */}
-        <label className="block text-sm font-medium text-zinc-400 mb-2">
+        <label htmlFor="wishlist-title" className="block text-sm font-medium text-zinc-400 mb-2">
           {t("form.title")}
         </label>
         <Input
+          id="wishlist-title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder={t("form.title_placeholder")}
@@ -131,10 +124,14 @@ export function WishlistForm({
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-zinc-400 mb-2">
+          <label
+            htmlFor="wishlist-description"
+            className="block text-sm font-medium text-zinc-400 mb-2"
+          >
             {t("form.description_optional")}
           </label>
           <textarea
+            id="wishlist-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
@@ -145,9 +142,7 @@ export function WishlistForm({
 
         {/* Privacy radio cards */}
         <div>
-          <label className="block text-sm font-medium text-zinc-400 mb-3">
-            {t("form.privacy")}
-          </label>
+          <span className="block text-sm font-medium text-zinc-400 mb-3">{t("form.privacy")}</span>
           <div className="space-y-2">
             {PRIVACY_OPTIONS.map((opt) => (
               <button
@@ -174,15 +169,9 @@ export function WishlistForm({
           type="submit"
           disabled={isLoading || !title.trim()}
           className="w-full py-3.5 bg-zinc-800 text-zinc-300 font-semibold rounded-xl transition-colors disabled:opacity-40 text-[15px] active:scale-[0.98]"
-          style={
-            title.trim() ? { background: "#27272a", color: "#f5f5f5" } : {}
-          }
+          style={title.trim() ? { background: "#27272a", color: "#f5f5f5" } : {}}
         >
-          {isLoading
-            ? t("form.save")
-            : initial
-              ? t("form.update")
-              : t("form.create")}
+          {isLoading ? t("form.save") : initial ? t("form.update") : t("form.create")}
         </button>
       </form>
     )
@@ -192,7 +181,7 @@ export function WishlistForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-zinc-300 mb-1">
+        <label htmlFor="item-title" className="block text-sm font-medium text-zinc-300 mb-1">
           {t("form.title")}
         </label>
         <div className="flex gap-2 relative">
@@ -205,10 +194,7 @@ export function WishlistForm({
           </button>
 
           {showEmojiPicker && (
-            <div
-              ref={emojiPickerRef}
-              className="absolute top-full left-0 z-50 mt-2"
-            >
+            <div ref={emojiPickerRef} className="absolute top-full left-0 z-50 mt-2">
               <EmojiPicker
                 theme={Theme.DARK}
                 onEmojiClick={(emojiData) => {
@@ -229,10 +215,11 @@ export function WishlistForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-zinc-300 mb-1">
+        <label htmlFor="item-description" className="block text-sm font-medium text-zinc-300 mb-1">
           {t("form.description")}
         </label>
         <textarea
+          id="item-description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
@@ -242,9 +229,7 @@ export function WishlistForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-zinc-300 mb-1">
-          {t("form.privacy")}
-        </label>
+        <span className="block text-sm font-medium text-zinc-300 mb-1">{t("form.privacy")}</span>
         <div className="grid grid-cols-3 gap-3">
           {(["PRIVATE", "FRIENDS", "PUBLIC"] as const).map((p) => (
             <button
@@ -257,11 +242,7 @@ export function WishlistForm({
                   : "bg-zinc-900/50 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white"
               }`}
             >
-              {p === "PRIVATE"
-                ? `🔒 Private`
-                : p === "FRIENDS"
-                  ? `👥 Friends`
-                  : `🌍 Public`}
+              {p === "PRIVATE" ? "🔒 Private" : p === "FRIENDS" ? "👥 Friends" : "🌍 Public"}
             </button>
           ))}
         </div>
@@ -272,11 +253,7 @@ export function WishlistForm({
         disabled={isLoading || !title.trim()}
         className="w-full py-3 bg-brand-500 hover:bg-brand-600 text-black font-bold rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-brand-500/10 disabled:opacity-50"
       >
-        {isLoading
-          ? t("form.save")
-          : initial
-            ? t("form.update")
-            : t("form.create")}
+        {isLoading ? t("form.save") : initial ? t("form.update") : t("form.create")}
       </button>
     </form>
   )
@@ -304,26 +281,15 @@ interface ItemFormProps {
   isLoading?: boolean
 }
 
-export function ItemForm({
-  wishlistId,
-  onSubmit,
-  initial,
-  isLoading,
-}: ItemFormProps) {
+export function ItemForm({ wishlistId, onSubmit, initial, isLoading }: ItemFormProps) {
   const [input, setInput] = useState(initial?.url || initial?.title || "")
   const [title, setTitle] = useState(initial?.title || "")
   const [url, setUrl] = useState(initial?.url || "")
   const [imageUrl, setImageUrl] = useState(initial?.imageUrl || "")
-  const [price, setPrice] = useState(
-    initial?.currentPrice ? String(initial.currentPrice) : "",
-  )
-  const [isUrl, setIsUrl] = useState(
-    initial?.url?.startsWith("http") || !!initial?.url || false,
-  )
+  const [price, setPrice] = useState(initial?.currentPrice ? String(initial.currentPrice) : "")
+  const [isUrl, setIsUrl] = useState(initial?.url?.startsWith("http") || !!initial?.url || false)
   const { user } = useAuth()
-  const [currency, setCurrency] = useState(
-    initial?.currency || user?.currency || "USD",
-  )
+  const [currency, _setCurrency] = useState(initial?.currency || user?.currency || "USD")
   const [manualMode, setManualMode] = useState(!!initial)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { t } = useI18n()
@@ -344,9 +310,7 @@ export function ItemForm({
     setIsUrl(looksLikeUrl)
 
     if (looksLikeUrl) {
-      const fullUrl = val.trim().startsWith("http")
-        ? val.trim()
-        : `https://${val.trim()}`
+      const fullUrl = val.trim().startsWith("http") ? val.trim() : `https://${val.trim()}`
       setUrl(fullUrl)
       scrape.mutate(fullUrl, {
         onSuccess: (data) => {
@@ -385,7 +349,7 @@ export function ItemForm({
       url: finalUrl,
       title: isUrl ? title || input : input || title,
       imageUrl: imageUrl || undefined,
-      price: price ? parseFloat(price) : undefined,
+      price: price ? Number.parseFloat(price) : undefined,
     })
 
     if (!initial) {
@@ -402,10 +366,11 @@ export function ItemForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
-        <label className="block text-sm font-medium text-zinc-300 mb-1">
+        <label htmlFor="scraping-input" className="block text-sm font-medium text-zinc-300 mb-1">
           {isUrl ? t("form.item_url") : t("form.item_name")}
         </label>
         <Input
+          id="scraping-input"
           value={input}
           onChange={(e) => handleInputChange(e.target.value)}
           placeholder="e.g. Leather Jacket or https://amazon.com/..."
@@ -417,20 +382,19 @@ export function ItemForm({
           }
         />
         {scrape.isPending && (
-          <p className="text-xs text-brand-400 mt-1 animate-pulse">
-            Fetching product info...
-          </p>
+          <p className="text-xs text-brand-400 mt-1 animate-pulse">Fetching product info...</p>
         )}
       </div>
 
       {(isUrl || manualMode) && (
         <div className="space-y-3 pt-2 border-t border-zinc-800">
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-1">
+            <label htmlFor="manual-title" className="block text-sm font-medium text-zinc-300 mb-1">
               {isUrl ? t("form.title") : "Link (optional)"}
             </label>
             {isUrl ? (
               <Input
+                id="manual-title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Item name"
@@ -446,7 +410,7 @@ export function ItemForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-1">
+            <label htmlFor="manual-price" className="block text-sm font-medium text-zinc-300 mb-1">
               {t("form.item_price")}
             </label>
             <div className="relative">
@@ -457,7 +421,7 @@ export function ItemForm({
                 value={price}
                 onChange={(e) => {
                   const val = e.target.value
-                  if (val === "" || parseFloat(val) >= 0) {
+                  if (val === "" || Number.parseFloat(val) >= 0) {
                     setPrice(val)
                   }
                 }}
@@ -470,11 +434,12 @@ export function ItemForm({
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-1">
+            <label htmlFor="manual-image" className="block text-sm font-medium text-zinc-300 mb-1">
               {t("form.item_image")}
             </label>
             <div className="flex gap-2">
               <Input
+                id="manual-image"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
                 placeholder="https://..."
@@ -536,11 +501,7 @@ export function ItemForm({
         disabled={isLoading || !input.trim()}
         className="w-full py-3 bg-brand-500 hover:bg-brand-600 text-black font-bold rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-brand-500/10 disabled:opacity-50 mt-2"
       >
-        {isLoading
-          ? t("form.save")
-          : initial
-            ? t("form.update_item")
-            : t("form.add_to_wishlist")}
+        {isLoading ? t("form.save") : initial ? t("form.update_item") : t("form.add_to_wishlist")}
       </button>
     </form>
   )

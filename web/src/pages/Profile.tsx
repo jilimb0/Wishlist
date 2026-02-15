@@ -1,25 +1,25 @@
-import { useState, useRef } from "react"
-import { useAuth } from "@/context/AuthContext"
-import { Link } from "react-router-dom"
-import {
-  useUpdateProfile,
-  useMyReservations,
-  useCancelReservation,
-  useUploadAvatar,
-  useChangePassword,
-  usePendingFriends,
-  useRespondFriendRequest,
-  useFriends,
-  useInviteFriend,
-  useSearchUsers,
-  useDeleteProfile,
-} from "@/hooks/api"
-import { toast } from "react-hot-toast"
-import { useNavigate } from "react-router-dom"
-import { UserAvatar } from "@/components/UserAvatar"
-import { useI18n } from "@/i18n/context"
 import { Input } from "@/components/Input"
 import { Modal } from "@/components/Modal"
+import { UserAvatar } from "@/components/UserAvatar"
+import { useAuth } from "@/context/AuthContext"
+import {
+  useCancelReservation,
+  useChangePassword,
+  useDeleteProfile,
+  useFriends,
+  useInviteFriend,
+  useMyReservations,
+  usePendingFriends,
+  useRespondFriendRequest,
+  useSearchUsers,
+  useUpdateProfile,
+  useUploadAvatar,
+} from "@/hooks/api"
+import { useI18n } from "@/i18n/context"
+import { useRef, useState } from "react"
+import { toast } from "react-hot-toast"
+import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 function InviteForm() {
   const [email, setEmail] = useState("")
@@ -28,9 +28,7 @@ function InviteForm() {
   const { t } = useI18n()
 
   const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-  const { data: searchResults, isLoading: isSearching } = useSearchUsers(
-    isValid ? email : "",
-  )
+  const { data: searchResults, isLoading: isSearching } = useSearchUsers(isValid ? email : "")
   const existingUser = Array.isArray(searchResults)
     ? searchResults.find((u) => u.email?.toLowerCase() === email.toLowerCase())
     : null
@@ -139,9 +137,7 @@ export default function ProfilePage() {
   const [oldPassword, setOldPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [passwordState, setPasswordState] = useState<
-    "idle" | "loading" | "success"
-  >("idle")
+  const [passwordState, setPasswordState] = useState<"idle" | "loading" | "success">("idle")
   const [passwordError, setPasswordError] = useState<string | null>(null)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -191,10 +187,7 @@ export default function ProfilePage() {
         },
         onError: (err: any) => {
           setPasswordState("idle")
-          const message =
-            err.response?.data?.message ||
-            err.message ||
-            "Failed to change password"
+          const message = err.response?.data?.message || err.message || "Failed to change password"
           setPasswordError(message)
         },
       },
@@ -244,6 +237,7 @@ export default function ProfilePage() {
                 className="border-2 border-zinc-700 shadow-xl"
               />
               <button
+                type="button"
                 onClick={() => fileInputRef.current?.click()}
                 className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 rounded-full transition-all duration-300 backdrop-blur-[2px]"
               >
@@ -266,21 +260,20 @@ export default function ProfilePage() {
             </div>
             <div className="space-y-1">
               <p className="text-lg font-bold text-white">{user?.email}</p>
-              <p className="text-sm text-zinc-500">
-                {t("profile.avatar_desc")}
-              </p>
+              <p className="text-sm text-zinc-500">{t("profile.avatar_desc")}</p>
             </div>
           </div>
 
-          <form
-            onSubmit={handleSaveProfile}
-            className="space-y-4 pt-4 border-t border-zinc-800"
-          >
+          <form onSubmit={handleSaveProfile} className="space-y-4 pt-4 border-t border-zinc-800">
             <div>
-              <label className="block text-sm font-semibold text-zinc-400 mb-2 uppercase tracking-wider">
+              <label
+                htmlFor="display-name"
+                className="block text-sm font-semibold text-zinc-400 mb-2 uppercase tracking-wider"
+              >
                 {t("profile.display_name")}
               </label>
               <Input
+                id="display-name"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Your display name"
@@ -317,19 +310,19 @@ export default function ProfilePage() {
           footer={
             <div className="flex gap-3">
               <button
+                type="button"
                 onClick={() => setShowDeleteModal(false)}
                 className="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-colors"
               >
                 {t("common.cancel")}
               </button>
               <button
+                type="button"
                 onClick={handleDeleteProfile}
                 disabled={deleteProfile.isPending}
                 className="px-6 py-2.5 text-sm font-bold bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all active:scale-95 shadow-lg shadow-red-500/10 disabled:opacity-50"
               >
-                {deleteProfile.isPending
-                  ? t("common.loading")
-                  : t("profile.delete_btn")}
+                {deleteProfile.isPending ? t("common.loading") : t("profile.delete_btn")}
               </button>
             </div>
           }
@@ -348,10 +341,7 @@ export default function ProfilePage() {
             {friends.isLoading ? (
               <div className="space-y-3">
                 {[...Array(3)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-12 bg-zinc-800/30 animate-pulse rounded-xl"
-                  />
+                  <div key={+i} className="h-12 bg-zinc-800/30 animate-pulse rounded-xl" />
                 ))}
               </div>
             ) : !friends.data?.length ? (
@@ -372,9 +362,7 @@ export default function ProfilePage() {
                     className="flex items-center gap-3 p-3 bg-zinc-800/30 border border-zinc-700/50 rounded-xl hover:border-zinc-700 transition-all active:scale-[0.98]"
                   >
                     <UserAvatar user={friend} size="sm" />
-                    <span className="text-sm font-bold text-zinc-200">
-                      {friend.displayName}
-                    </span>
+                    <span className="text-sm font-bold text-zinc-200">{friend.displayName}</span>
                   </Link>
                 ))}
               </div>
@@ -402,46 +390,50 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {pendingFriends.data.map((req: any) => (
-                  <div
-                    key={req.id}
-                    className="p-3 bg-brand-500/5 border border-brand-500/10 rounded-xl space-y-3"
-                  >
-                    <Link
-                      to={`/users/${req.user.id}`}
-                      className="flex items-center gap-3 active:scale-95 transition-transform"
+                {pendingFriends.data
+                  ?.filter((req: any) => req.friendId === req.user.id)
+                  .map((req: any) => (
+                    <div
+                      key={req.id}
+                      className="p-3 bg-brand-500/5 border border-brand-500/10 rounded-xl space-y-3"
                     >
-                      <UserAvatar user={req.user} size="sm" />
-                      <span className="text-sm font-bold text-zinc-200">
-                        {req.user.displayName}
-                      </span>
-                    </Link>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() =>
-                          respondFriendRequest.mutate({
-                            id: req.id,
-                            accept: true,
-                          })
-                        }
-                        className="flex-1 py-1.5 bg-brand-500 text-black text-[10px] font-black uppercase rounded-lg hover:bg-brand-600 transition-colors"
+                      <Link
+                        to={`/users/${req.user.id}`}
+                        className="flex items-center gap-3 active:scale-95 transition-transform"
                       >
-                        {t("profile.accept")}
-                      </button>
-                      <button
-                        onClick={() =>
-                          respondFriendRequest.mutate({
-                            id: req.id,
-                            accept: false,
-                          })
-                        }
-                        className="flex-1 py-1.5 bg-zinc-800 text-zinc-400 text-[10px] font-black uppercase rounded-lg hover:bg-zinc-700 transition-colors"
-                      >
-                        {t("profile.ignore")}
-                      </button>
+                        <UserAvatar user={req.user} size="sm" />
+                        <span className="text-sm font-bold text-zinc-200">
+                          {req.user.displayName}
+                        </span>
+                      </Link>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            respondFriendRequest.mutate({
+                              id: req.id,
+                              accept: true,
+                            })
+                          }
+                          className="flex-1 py-1.5 bg-brand-500 text-black text-[10px] font-black uppercase rounded-lg hover:bg-brand-600 transition-colors"
+                        >
+                          {t("profile.accept")}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            respondFriendRequest.mutate({
+                              id: req.id,
+                              accept: false,
+                            })
+                          }
+                          className="flex-1 py-1.5 bg-zinc-800 text-zinc-400 text-[10px] font-black uppercase rounded-lg hover:bg-zinc-700 transition-colors"
+                        >
+                          {t("profile.reject")}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             )}
           </div>
@@ -458,10 +450,14 @@ export default function ProfilePage() {
           className="space-y-4 p-6 bg-zinc-900/50 backdrop-blur-3xl border border-zinc-800/50 rounded-3xl shadow-xl"
         >
           <div>
-            <label className="block text-sm font-semibold text-zinc-400 mb-2 uppercase tracking-wider">
+            <label
+              htmlFor="current-password"
+              className="block text-sm font-semibold text-zinc-400 mb-2 uppercase tracking-wider"
+            >
               {t("profile.current_password")}
             </label>
             <Input
+              id="current-password"
               type="password"
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
@@ -471,10 +467,14 @@ export default function ProfilePage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-zinc-400 mb-2 uppercase tracking-wider">
+              <label
+                htmlFor="new-password"
+                className="block text-sm font-semibold text-zinc-400 mb-2 uppercase tracking-wider"
+              >
                 {t("profile.new_password")}
               </label>
               <Input
+                id="new-password"
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
@@ -483,10 +483,14 @@ export default function ProfilePage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-zinc-400 mb-2 uppercase tracking-wider">
+              <label
+                htmlFor="confirm-password"
+                className="block text-sm font-semibold text-zinc-400 mb-2 uppercase tracking-wider"
+              >
                 {t("profile.confirm_password")}
               </label>
               <Input
+                id="confirm-password"
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -516,14 +520,12 @@ export default function ProfilePage() {
 
       {/* ─── My Reservations ───────────────────────── */}
       <section>
-        <h2 className="text-xl font-bold mb-4 text-zinc-100">
-          {t("profile.reservations")}
-        </h2>
+        <h2 className="text-xl font-bold mb-4 text-zinc-100">{t("profile.reservations")}</h2>
         {reservations.isLoading ? (
           <div className="space-y-3">
             {[...Array(2)].map((_, i) => (
               <div
-                key={i}
+                key={+i}
                 className="h-20 bg-zinc-900 border border-zinc-800 rounded-2xl animate-pulse"
               />
             ))}
@@ -542,17 +544,12 @@ export default function ProfilePage() {
                 <div>
                   <h3 className="font-bold text-zinc-100">{res.item.title}</h3>
                   <p className="text-[10px] uppercase tracking-wider font-black text-zinc-500 mt-1">
-                    from{" "}
-                    <span className="text-zinc-300">
-                      {res.item.wishlist.title}
-                    </span>{" "}
-                    by{" "}
-                    <span className="text-brand-400">
-                      {res.item.wishlist.user.displayName}
-                    </span>
+                    from <span className="text-zinc-300">{res.item.wishlist.title}</span> by{" "}
+                    <span className="text-brand-400">{res.item.wishlist.user.displayName}</span>
                   </p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => cancelReservation.mutate(res.id)}
                   className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300 hover:bg-red-400/5 border border-transparent hover:border-red-400/20 rounded-xl transition-all active:scale-95"
                 >

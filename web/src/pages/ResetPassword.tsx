@@ -1,8 +1,8 @@
+import { Input } from "@/components/Input"
 import { useForm } from "react-hook-form"
+import { toast } from "react-hot-toast"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { useResetPassword } from "../hooks/api"
-import { toast } from "react-hot-toast"
-import { Input } from "@/components/Input"
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams()
@@ -49,6 +49,7 @@ export default function ResetPassword() {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
+              <title>Invalid link</title>
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -58,12 +59,9 @@ export default function ResetPassword() {
             </svg>
           </div>
           <div className="space-y-2">
-            <h2 className="text-3xl font-black text-red-500 tracking-tight">
-              Invalid Link
-            </h2>
+            <h2 className="text-3xl font-black text-red-500 tracking-tight">Invalid Link</h2>
             <p className="text-zinc-500 text-sm leading-relaxed">
-              This password reset link is invalid or missing a token. Please
-              request a new one.
+              This password reset link is invalid or missing a token. Please request a new one.
             </p>
           </div>
           <div className="pt-4">
@@ -91,9 +89,7 @@ export default function ResetPassword() {
               </span>
             </h1>
           </div>
-          <p className="text-zinc-500 text-sm">
-            Create a new password for your account.
-          </p>
+          <p className="text-zinc-500 text-sm">Create a new password for your account.</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -136,7 +132,7 @@ export default function ResetPassword() {
                 {...register("confirmPassword", {
                   required: true,
                   validate: (val) => {
-                    if (watch("password") != val) {
+                    if (watch("password") !== val) {
                       return "Your passwords do no match"
                     }
                   },

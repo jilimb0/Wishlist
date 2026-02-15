@@ -1,7 +1,7 @@
-import { Controller, Post, Delete, Get, Body, Param } from "@nestjs/common"
-import { ReservationsService } from "./reservations.service"
-import { CreateReservationDto } from "./dto/reservation.dto"
+import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
+import type { CreateReservationDto } from "./dto/reservation.dto"
+import type { ReservationsService } from "./reservations.service"
 
 @Controller("api")
 export class ReservationsController {

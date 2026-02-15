@@ -1,11 +1,6 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import type React from "react"
+import { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { api } from "../lib/api"
 import type { User } from "../types"
 
@@ -71,9 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider
-      value={{ user, token, isLoading, login, logout, updateUser }}
-    >
+    <AuthContext.Provider value={{ user, token, isLoading, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   )

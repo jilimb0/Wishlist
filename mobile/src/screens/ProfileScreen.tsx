@@ -1,25 +1,15 @@
-import React, { useState } from "react"
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Switch,
-  Alert,
-  Image,
-} from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { StatusBar } from "expo-status-bar"
 import { Ionicons } from "@expo/vector-icons"
+import * as ImagePicker from "expo-image-picker"
+import { StatusBar } from "expo-status-bar"
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
+import Toast from "react-native-toast-message"
+import { UserAvatar } from "../components/UserAvatar"
 import { useAuth } from "../context/AuthContext"
 import { useLogout, useUpdateProfile, useUploadAvatar } from "../hooks/api"
-import { UserAvatar } from "../components/UserAvatar"
-import * as ImagePicker from "expo-image-picker"
-import Toast from "react-native-toast-message"
 
 export default function ProfileScreen() {
-  const { user, token } = useAuth()
+  const { user: _user, token: _token } = useAuth()
   const logoutMutation = useLogout()
   const updateProfileMutation = useUpdateProfile()
   const uploadAvatarMutation = useUploadAvatar()
@@ -59,10 +49,8 @@ export default function ProfileScreen() {
           type: asset.mimeType || "image/jpeg",
         },
         {
-          onSuccess: () =>
-            Toast.show({ type: "success", text1: "Avatar updated" }),
-          onError: () =>
-            Toast.show({ type: "error", text1: "Failed to update avatar" }),
+          onSuccess: () => Toast.show({ type: "success", text1: "Avatar updated" }),
+          onError: () => Toast.show({ type: "error", text1: "Failed to update avatar" }),
         },
       )
     }
@@ -106,9 +94,7 @@ export default function ProfileScreen() {
               <Ionicons name="language-outline" size={24} color="#fbbf24" />
               <Text style={styles.rowLabel}>Language ({user?.language})</Text>
             </View>
-            <Text style={styles.valueText}>
-              {user?.language === "en" ? "English" : "Russian"}
-            </Text>
+            <Text style={styles.valueText}>{user?.language === "en" ? "English" : "Russian"}</Text>
           </View>
         </View>
 
@@ -125,11 +111,7 @@ export default function ProfileScreen() {
 
           <TouchableOpacity style={styles.row}>
             <View style={styles.rowLeft}>
-              <Ionicons
-                name="notifications-outline"
-                size={24}
-                color="#fbbf24"
-              />
+              <Ionicons name="notifications-outline" size={24} color="#fbbf24" />
               <Text style={styles.rowLabel}>Notifications</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#52525b" />

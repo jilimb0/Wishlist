@@ -1,8 +1,8 @@
-import { Injectable, UnauthorizedException, Logger } from "@nestjs/common"
+import { Injectable, Logger, UnauthorizedException } from "@nestjs/common"
+import type { ConfigService } from "@nestjs/config"
 import { PassportStrategy } from "@nestjs/passport"
 import { ExtractJwt, Strategy } from "passport-jwt"
-import { ConfigService } from "@nestjs/config"
-import { PrismaService } from "../../prisma/prisma.service"
+import type { PrismaService } from "../../prisma/prisma.service"
 
 export interface JwtPayload {
   sub: string
@@ -32,10 +32,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * @returns User object if valid, throws UnauthorizedException otherwise
    */
   async validate(payload: JwtPayload) {
-    this.logger.warn(
-      `[STRATEGY] Validating token payload: ${JSON.stringify(payload)}`,
-    )
-    const { sub, email } = payload
+    this.logger.warn(`[STRATEGY] Validating token payload: ${JSON.stringify(payload)}`)
+    const { sub, email: _email } = payload
 
     if (!sub) {
       this.logger.error(`[STRATEGY] Token missing 'sub' claim!`)

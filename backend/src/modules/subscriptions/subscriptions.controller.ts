@@ -1,7 +1,7 @@
-import { Controller, Post, Delete, Get, Body, Param } from "@nestjs/common"
-import { SubscriptionsService } from "./subscriptions.service"
-import { CreateSubscriptionDto } from "./dto/subscription.dto"
+import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
+import type { CreateSubscriptionDto } from "./dto/subscription.dto"
+import type { SubscriptionsService } from "./subscriptions.service"
 
 @Controller("api")
 export class SubscriptionsController {
@@ -22,10 +22,7 @@ export class SubscriptionsController {
   }
 
   @Delete("subscriptions/:id")
-  async unsubscribe(
-    @Param("id") id: string,
-    @CurrentUser("id") userId: string,
-  ) {
+  async unsubscribe(@Param("id") id: string, @CurrentUser("id") userId: string) {
     return this.subscriptionsService.unsubscribe(id, userId)
   }
 

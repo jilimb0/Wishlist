@@ -1,5 +1,5 @@
 export default () => ({
-  port: parseInt(process.env.PORT || "3010", 10),
+  port: Number.parseInt(process.env.PORT || "3010", 10),
   jwt: {
     secret: (() => {
       const s = process.env.JWT_SECRET

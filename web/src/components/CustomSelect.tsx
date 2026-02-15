@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 
 interface Option {
   id: string
@@ -29,10 +29,7 @@ export function CustomSelect({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false)
       }
     }
@@ -68,6 +65,7 @@ export function CustomSelect({
           <div className="py-1">
             {options.map((option) => (
               <button
+                type="button"
                 key={option.id}
                 onClick={() => {
                   onChange(option.value)
@@ -79,11 +77,7 @@ export function CustomSelect({
                     : "text-zinc-400 hover:bg-zinc-800 hover:text-white"
                 }`}
               >
-                {option.icon && (
-                  <span className="text-base w-5 text-center">
-                    {option.icon}
-                  </span>
-                )}
+                {option.icon && <span className="text-base w-5 text-center">{option.icon}</span>}
                 <span className="flex-1">{option.label}</span>
                 {option.value === value && <span>✓</span>}
               </button>

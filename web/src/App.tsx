@@ -1,24 +1,50 @@
-import { Routes, Route } from "react-router-dom"
+import { Route, Routes } from "react-router-dom"
 import { Layout } from "./components/Layout"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 
-import LoginPage from "./pages/Login"
-import RegisterPage from "./pages/Register"
-import ForgotPasswordPage from "./pages/ForgotPassword"
-import ResetPasswordPage from "./pages/ResetPassword"
 import DashboardPage from "./pages/Dashboard"
-import WishlistDetailPage from "./pages/WishlistDetail"
-import ProfilePage from "./pages/Profile"
 import DiscoverPage from "./pages/Discover"
 import FollowingPage from "./pages/Following"
+import ForgotPasswordPage from "./pages/ForgotPassword"
+import LoginPage from "./pages/Login"
+import ProfilePage from "./pages/Profile"
 import PublicProfilePage from "./pages/PublicProfile"
+import RegisterPage from "./pages/Register"
+import ResetPasswordPage from "./pages/ResetPassword"
+import WishlistDetailPage from "./pages/WishlistDetail"
 
 import { Toaster } from "react-hot-toast"
 
 export default function App() {
   return (
     <>
-      <Toaster position="top-right" />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "#18181b",
+            color: "#fff",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            fontSize: "14px",
+            fontWeight: "600",
+            borderRadius: "12px",
+            padding: "12px 16px",
+            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.25)",
+          },
+          success: {
+            iconTheme: {
+              primary: "#ffc107",
+              secondary: "#18181b",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#ef4444",
+              secondary: "#fff",
+            },
+          },
+        }}
+      />
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />

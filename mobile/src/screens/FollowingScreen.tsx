@@ -1,17 +1,9 @@
-import React from "react"
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  RefreshControl,
-} from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { StatusBar } from "expo-status-bar"
-import { useMySubscriptions } from "../hooks/api"
-import { UserAvatar } from "../components/UserAvatar"
 import { useNavigation } from "@react-navigation/native"
+import { StatusBar } from "expo-status-bar"
+import { FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { UserAvatar } from "../components/UserAvatar"
+import { useMySubscriptions } from "../hooks/api"
 
 export default function FollowingScreen() {
   const { data: subscriptions, isLoading, refetch } = useMySubscriptions()
@@ -22,9 +14,7 @@ export default function FollowingScreen() {
     return (
       <TouchableOpacity
         style={styles.card}
-        onPress={() =>
-          navigation.navigate("WishlistDetail", { wishlistId: wishlist.id })
-        }
+        onPress={() => navigation.navigate("WishlistDetail", { wishlistId: wishlist.id })}
       >
         <View style={styles.cardHeader}>
           <Text style={styles.emoji}>{wishlist.emoji}</Text>
@@ -58,17 +48,11 @@ export default function FollowingScreen() {
         numColumns={2}
         columnWrapperStyle={{ gap: 12 }}
         refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            onRefresh={refetch}
-            tintColor="#fbbf24"
-          />
+          <RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor="#fbbf24" />
         }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>
-              You haven't followed any wishlists yet.
-            </Text>
+            <Text style={styles.emptyText}>You haven't followed any wishlists yet.</Text>
           </View>
         }
       />

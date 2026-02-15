@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react"
+import { type ReactNode, useEffect } from "react"
 
 interface BottomSheetProps {
   isOpen: boolean
@@ -7,12 +7,7 @@ interface BottomSheetProps {
   children: ReactNode
 }
 
-export function BottomSheet({
-  isOpen,
-  onClose,
-  title,
-  children,
-}: BottomSheetProps) {
+export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetProps) {
   // Prevent body scroll when open
   useEffect(() => {
     if (isOpen) {
@@ -28,21 +23,16 @@ export function BottomSheet({
   if (!isOpen) return null
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: Overlay handles click to close, but is not focusable to prevent trapping focus outside content
     <div className="bottom-sheet-overlay" onClick={onClose}>
-      <div
-        className="bottom-sheet-content"
-        onClick={(e) => e.stopPropagation()}
-      >
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: Stop propagation wrapper */}
+      <div className="bottom-sheet-content" onClick={(e) => e.stopPropagation()}>
         {/* Drag handle */}
         <div className="bottom-sheet-handle-area">
           <div className="bottom-sheet-handle" />
         </div>
 
-        {title && (
-          <h2 className="text-center text-lg font-bold text-white mb-4">
-            {title}
-          </h2>
-        )}
+        {title && <h2 className="text-center text-lg font-bold text-white mb-4">{title}</h2>}
 
         <div className="bottom-sheet-body">{children}</div>
       </div>

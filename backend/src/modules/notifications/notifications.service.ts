@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common"
-import { PrismaService } from "../../prisma/prisma.service"
+import type { PrismaService } from "../../prisma/prisma.service"
 
 @Injectable()
 export class NotificationsService {
@@ -7,12 +7,12 @@ export class NotificationsService {
 
   async getNotifications(userId: string, limit = 20, offset = 0) {
     // Cap limit to prevent abuse
-    limit = Math.min(Math.max(1, limit), 100)
+    const takenLimit = Math.min(Math.max(1, limit), 100)
     const [notifications, total] = await Promise.all([
       this.prisma.notification.findMany({
         where: { userId },
         orderBy: { createdAt: "desc" },
-        take: limit,
+        take: takenLimit,
         skip: offset,
       }),
       this.prisma.notification.count({ where: { userId } }),

@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react"
+import { Ionicons } from "@expo/vector-icons"
+import * as Clipboard from "expo-clipboard"
+import * as ImagePicker from "expo-image-picker"
+import type React from "react"
+import { useState } from "react"
 import {
-  View,
+  ActivityIndicator,
+  Image,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  Image,
   Vibration,
-  Switch,
+  View,
 } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
-import * as ImagePicker from "expo-image-picker"
-import * as Clipboard from "expo-clipboard"
-import { useScrape, useUploadItemImage } from "../hooks/api"
 import Toast from "react-native-toast-message"
+import { useScrape, useUploadItemImage } from "../hooks/api"
 
 interface ItemFormProps {
   initialData?: any
@@ -32,9 +32,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({
   const [url, setUrl] = useState(initialData?.url || "")
   const [title, setTitle] = useState(initialData?.title || "")
   const [description, setDescription] = useState(initialData?.description || "")
-  const [price, setPrice] = useState(
-    initialData?.currentPrice?.toString() || "",
-  )
+  const [price, setPrice] = useState(initialData?.currentPrice?.toString() || "")
   const [currency, setCurrency] = useState(initialData?.currency || "USD")
   const [imageUrl, setImageUrl] = useState(initialData?.imageUrl || "")
   const [imageUrlInput, setImageUrlInput] = useState("")
@@ -103,7 +101,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({
       title,
       description,
       imageUrl: imageUrl || imageUrlInput,
-      currentPrice: price ? parseFloat(price) : null,
+      currentPrice: price ? Number.parseFloat(price) : null,
       currency,
     })
   }
@@ -183,10 +181,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({
         {imageUrl ? (
           <View style={styles.imagePreview}>
             <Image source={{ uri: imageUrl }} style={styles.previewImage} />
-            <TouchableOpacity
-              style={styles.removeImage}
-              onPress={() => setImageUrl("")}
-            >
+            <TouchableOpacity style={styles.removeImage} onPress={() => setImageUrl("")}>
               <Ionicons name="close-circle" size={24} color="#ef4444" />
             </TouchableOpacity>
           </View>

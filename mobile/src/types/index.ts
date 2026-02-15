@@ -98,10 +98,7 @@ export interface Reservation {
   isAnonymous: boolean
   status: ReservationStatus | "ACTIVE" | "CANCELLED" | "FULFILLED"
   createdAt: string
-  item: Pick<
-    Item,
-    "id" | "title" | "url" | "imageUrl" | "currentPrice" | "currency"
-  > & {
+  item: Pick<Item, "id" | "title" | "url" | "imageUrl" | "currentPrice" | "currency"> & {
     wishlist: {
       id: string
       title: string

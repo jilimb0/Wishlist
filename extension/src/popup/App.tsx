@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 
 // Types duplicated from web/src/types/index.ts
 // In a monorepo we'd share this, but for this structure we duplicate.
@@ -46,13 +46,9 @@ export default function App() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const activeTab = tabs[0]
       if (activeTab?.id) {
-        chrome.tabs.sendMessage(
-          activeTab.id,
-          { action: "scrape" },
-          (response) => {
-            if (response) setMeta(response)
-          },
-        )
+        chrome.tabs.sendMessage(activeTab.id, { action: "scrape" }, (response) => {
+          if (response) setMeta(response)
+        })
       }
     })
   }, [])
@@ -72,7 +68,7 @@ export default function App() {
         chrome.storage.local.remove("token")
         setLoading(false)
       }
-    } catch (e) {
+    } catch (_e) {
       setError("Connection error")
       setLoading(false)
     }
@@ -101,7 +97,7 @@ export default function App() {
         setError(data.message || "Login failed")
         setLoading(false)
       }
-    } catch (e) {
+    } catch (_e) {
       setError("Network error")
       setLoading(false)
     }
@@ -135,7 +131,7 @@ export default function App() {
         const err = await res.json()
         setError(err.message)
       }
-    } catch (e) {
+    } catch (_e) {
       setError("Failed to add item")
     } finally {
       setLoading(false)
@@ -208,12 +204,8 @@ export default function App() {
         <div className="w-16 h-16 bg-brand-500/10 border border-brand-500/20 rounded-full flex items-center justify-center mb-6">
           <span className="text-4xl text-brand-500">✓</span>
         </div>
-        <h2 className="text-xl font-black text-white mb-2 tracking-tight">
-          ITEM ADDED!
-        </h2>
-        <p className="text-sm text-zinc-500 font-medium">
-          Closing in a few seconds...
-        </p>
+        <h2 className="text-xl font-black text-white mb-2 tracking-tight">ITEM ADDED!</h2>
+        <p className="text-sm text-zinc-500 font-medium">Closing in a few seconds...</p>
       </div>
     )
   }
@@ -230,9 +222,13 @@ export default function App() {
             </span>
           </div>
           <button
+            type="button"
             onClick={() => {
-              setToken(null)
-              chrome.storage.local.remove("token")
+              // Clear tokens
+              chrome.storage.local.remove(["auth_token"], () => {
+                setToken(null)
+                // setUser(null) // Assuming setUser is defined elsewhere or will be added
+              })
             }}
             className="text-[10px] uppercase tracking-widest font-black text-zinc-600 hover:text-white transition-colors"
           >
@@ -265,9 +261,7 @@ export default function App() {
                 </h2>
                 {meta.price && (
                   <div className="flex items-baseline gap-1">
-                    <span className="text-brand-500 font-black text-lg">
-                      {meta.price}
-                    </span>
+                    <span className="text-brand-500 font-black text-lg">{meta.price}</span>
                     <span className="text-zinc-500 text-[10px] font-bold uppercase">
                       {meta.currency || "USD"}
                     </span>
@@ -278,22 +272,24 @@ export default function App() {
           ) : (
             <div className="p-8 bg-zinc-900/30 border border-dashed border-zinc-800 rounded-2xl mb-4 text-center">
               <span className="text-2xl block mb-2 opacity-20">🔍</span>
-              <p className="text-xs text-zinc-500 font-medium italic">
-                Scanning page details...
-              </p>
+              <p className="text-xs text-zinc-500 font-medium italic">Scanning page details...</p>
             </div>
           )}
 
           <div className="space-y-4 px-1">
             <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest font-black text-zinc-600 ml-1">
+              <label
+                htmlFor="wishlist-select"
+                className="text-[10px] uppercase tracking-widest font-black text-zinc-600 ml-1"
+              >
                 Select Wishlist
               </label>
               <div className="relative">
                 <select
+                  id="wishlist-select"
                   value={selectedList}
                   onChange={(e) => setSelectedList(e.target.value)}
-                  className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 transition-all font-medium appearance-none cursor-pointer"
+                  className="w-full bg-zinc-800 text-white rounded-lg p-3 pr-10 appearance-none outline-hidden focus:ring-2 focus:ring-brand-400 border border-zinc-700 font-medium"
                 >
                   {wishlists.map((wl) => (
                     <option key={wl.id} value={wl.id}>
@@ -308,6 +304,7 @@ export default function App() {
             </div>
 
             <button
+              type="button"
               onClick={handleAdd}
               disabled={loading || !selectedList}
               className="w-full bg-linear-to-br from-brand-400 to-brand-600 text-black font-black py-4 rounded-xl hover:shadow-[0_0_30px_rgba(255,193,7,0.4)] transition-all active:scale-95 disabled:opacity-50 mt-2 shadow-2xl relative overflow-hidden group"
@@ -328,9 +325,7 @@ export default function App() {
       </main>
 
       <footer className="p-3 border-t border-zinc-900 bg-zinc-950/50 text-center">
-        <p className="text-[10px] text-zinc-600 font-medium">
-          WishTracker Extension v1.2.0 • 🎁
-        </p>
+        <p className="text-[10px] text-zinc-600 font-medium">WishTracker Extension v1.2.0 • 🎁</p>
       </footer>
     </div>
   )

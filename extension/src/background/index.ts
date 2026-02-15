@@ -8,7 +8,7 @@ chrome.runtime.onInstalled.addListener(() => {
 })
 
 // Handle context menu clicks
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+chrome.contextMenus.onClicked.addListener((info, _tab) => {
   if (info.menuItemId === "add-to-wishtracker") {
     // Open popup or separate window to add item
     // Since we cannot programmatically open the extension popup (action),

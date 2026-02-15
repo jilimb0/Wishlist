@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react"
+import { Ionicons } from "@expo/vector-icons"
+import type React from "react"
+import { useState } from "react"
 import {
-  View,
+  ActivityIndicator,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
+  View,
 } from "react-native"
-import { styles as theme } from "../theme" // We'll need a theme file or just inline styles
-import { Ionicons } from "@expo/vector-icons"
 import { Privacy } from "../types"
 
 interface WishlistFormProps {
@@ -58,9 +57,7 @@ export const WishlistForm: React.FC<WishlistFormProps> = ({
   const [description, setDescription] = useState(initialData?.description || "")
   const [emoji, setEmoji] = useState(initialData?.emoji || "🎁")
   // @ts-ignore
-  const [privacy, setPrivacy] = useState<Privacy>(
-    initialData?.privacy || Privacy.PUBLIC,
-  )
+  const [privacy, setPrivacy] = useState<Privacy>(initialData?.privacy || Privacy.PUBLIC)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 
   const privacyOptions = [
@@ -111,10 +108,7 @@ export const WishlistForm: React.FC<WishlistFormProps> = ({
               {EMOJI_OPTIONS.map((e) => (
                 <TouchableOpacity
                   key={e}
-                  style={[
-                    styles.emojiOption,
-                    emoji === e && styles.emojiOptionSelected,
-                  ]}
+                  style={[styles.emojiOption, emoji === e && styles.emojiOptionSelected]}
                   onPress={() => {
                     setEmoji(e)
                     setShowEmojiPicker(false)
@@ -162,17 +156,11 @@ export const WishlistForm: React.FC<WishlistFormProps> = ({
           {privacyOptions.map((option) => (
             <TouchableOpacity
               key={option.id}
-              style={[
-                styles.privacyOption,
-                privacy === option.id && styles.privacyOptionSelected,
-              ]}
+              style={[styles.privacyOption, privacy === option.id && styles.privacyOptionSelected]}
               onPress={() => setPrivacy(option.id as Privacy)}
             >
               <View
-                style={[
-                  styles.privacyIcon,
-                  privacy === option.id && styles.privacyIconSelected,
-                ]}
+                style={[styles.privacyIcon, privacy === option.id && styles.privacyIconSelected]}
               >
                 <Ionicons
                   name={option.icon as any}
@@ -182,16 +170,9 @@ export const WishlistForm: React.FC<WishlistFormProps> = ({
               </View>
               <View style={styles.privacyText}>
                 <Text style={styles.privacyLabel}>{option.label}</Text>
-                <Text style={styles.privacyDescription}>
-                  {option.description}
-                </Text>
+                <Text style={styles.privacyDescription}>{option.description}</Text>
               </View>
-              <View
-                style={[
-                  styles.radio,
-                  privacy === option.id && styles.radioSelected,
-                ]}
-              >
+              <View style={[styles.radio, privacy === option.id && styles.radioSelected]}>
                 {privacy === option.id && <View style={styles.radioInner} />}
               </View>
             </TouchableOpacity>

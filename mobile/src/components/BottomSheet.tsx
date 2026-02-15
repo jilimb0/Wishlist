@@ -1,15 +1,15 @@
-import React from "react"
+import { Ionicons } from "@expo/vector-icons"
+import type React from "react"
 import {
-  View,
-  Text,
-  Modal as RNModal,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
   KeyboardAvoidingView,
   Platform,
+  Modal as RNModal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
 
 interface BottomSheetProps {
   isOpen: boolean
@@ -18,19 +18,9 @@ interface BottomSheetProps {
   children: React.ReactNode
 }
 
-export const BottomSheet: React.FC<BottomSheetProps> = ({
-  isOpen,
-  onClose,
-  title,
-  children,
-}) => {
+export const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose, title, children }) => {
   return (
-    <RNModal
-      visible={isOpen}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-    >
+    <RNModal visible={isOpen} transparent animationType="slide" onRequestClose={onClose}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}

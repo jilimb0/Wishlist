@@ -1,8 +1,8 @@
-import { Injectable, BadRequestException } from "@nestjs/common"
+import * as dns from "node:dns"
+import { isIP } from "node:net"
+import { promisify } from "node:util"
+import { BadRequestException, Injectable } from "@nestjs/common"
 import axios from "axios"
-import * as dns from "dns"
-import { promisify } from "util"
-import { isIP } from "net"
 
 const lookup = promisify(dns.lookup)
 
@@ -68,13 +68,8 @@ export class ScraperService {
 
       const jsonLd = this.extractJsonLdPrice(html)
       const price =
-        jsonLd?.price ||
-        this.parsePrice(this.extractMeta(html, "product:price:amount")) ||
-        null
-      const currency =
-        jsonLd?.currency ||
-        this.extractMeta(html, "product:price:currency") ||
-        "USD"
+        jsonLd?.price || this.parsePrice(this.extractMeta(html, "product:price:amount")) || null
+      const currency = jsonLd?.currency || this.extractMeta(html, "product:price:currency") || "USD"
 
       return {
         title: title.trim(),
@@ -92,9 +87,7 @@ export class ScraperService {
     try {
       const parsed = new URL(url)
       if (!["http:", "https:"].includes(parsed.protocol)) {
-        throw new BadRequestException(
-          "Only HTTP and HTTPS protocols are supported",
-        )
+        throw new BadRequestException("Only HTTP and HTTPS protocols are supported")
       }
       return parsed
     } catch (e) {
@@ -118,7 +111,7 @@ export class ScraperService {
       if (this.isPrivateIp(address)) {
         throw new BadRequestException("Access to internal network is blocked")
       }
-    } catch (e) {
+    } catch (_e) {
       // If DNS resolution fails, let axios handle it (likely invalid host)
     }
   }
@@ -151,19 +144,13 @@ export class ScraperService {
   }
 
   private extractItemProp(html: string, property: string): string | null {
-    const regex = new RegExp(
-      `<[^>]+itemprop=["']${property}["'][^>]+content=["']([^"']+)["']`,
-      "i",
-    )
+    const regex = new RegExp(`<[^>]+itemprop=["']${property}["'][^>]+content=["']([^"']+)["']`, "i")
     const match = html.match(regex)
     return match ? match[1] : null
   }
 
   private extractLinkHref(html: string, rel: string): string | null {
-    const regex = new RegExp(
-      `<link[^>]+rel=["']${rel}["'][^>]+href=["']([^"']+)["']`,
-      "i",
-    )
+    const regex = new RegExp(`<link[^>]+rel=["']${rel}["'][^>]+href=["']([^"']+)["']`, "i")
     const match = html.match(regex)
     return match ? match[1] : null
   }
@@ -184,33 +171,31 @@ export class ScraperService {
   private parsePrice(priceStr: string | null): number | null {
     if (!priceStr) return null
     const cleaned = priceStr.replace(/[^\d.]/g, "")
-    const price = parseFloat(cleaned)
-    return isNaN(price) ? null : price
+    const price = Number.parseFloat(cleaned)
+    return Number.isNaN(price) ? null : price
   }
 
-  private extractJsonLdPrice(
-    html: string,
-  ): { price: number; currency: string } | null {
+  private extractJsonLdPrice(html: string): { price: number; currency: string } | null {
     try {
-      const regex =
-        /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi
-      let match
-      while ((match = regex.exec(html)) !== null) {
+      const regex = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi
+      let match = regex.exec(html)
+      while (match !== null) {
         try {
           const data = JSON.parse(match[1])
           const offers = data.offers || data.mainEntity?.offers
           if (offers) {
-            const price = parseFloat(offers.price || offers.lowPrice)
+            const price = Number.parseFloat(offers.price || offers.lowPrice)
             const currency = offers.priceCurrency
-            if (!isNaN(price) && currency) {
+            if (!Number.isNaN(price) && currency) {
               return { price, currency }
             }
           }
-        } catch (e) {
+        } catch (_e) {
           // Continue to next script tag
         }
+        match = regex.exec(html)
       }
-    } catch (e) {
+    } catch (_e) {
       // Ignore outer errors
     }
     return null
@@ -219,7 +204,7 @@ export class ScraperService {
   private resolveUrl(base: string, relative: string): string {
     try {
       return new URL(relative, base).href
-    } catch (e) {
+    } catch (_e) {
       return relative
     }
   }

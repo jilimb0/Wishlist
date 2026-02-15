@@ -1,17 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Body,
-  Param,
-  Query,
-} from "@nestjs/common"
-import { WishlistsService } from "./wishlists.service"
-import { CreateWishlistDto, UpdateWishlistDto } from "./dto/wishlist.dto"
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
 import { Public } from "../auth/public.decorator"
+import type { CreateWishlistDto, UpdateWishlistDto } from "./dto/wishlist.dto"
+import type { WishlistsService } from "./wishlists.service"
 
 @Controller("api")
 export class WishlistsController {
@@ -23,10 +14,7 @@ export class WishlistsController {
   }
 
   @Post("wishlists")
-  async create(
-    @CurrentUser("id") userId: string,
-    @Body() dto: CreateWishlistDto,
-  ) {
+  async create(@CurrentUser("id") userId: string, @Body() dto: CreateWishlistDto) {
     return this.wishlistsService.create(userId, dto)
   }
 
@@ -63,8 +51,8 @@ export class WishlistsController {
   ) {
     return this.wishlistsService.discover(
       search,
-      limit ? parseInt(limit, 10) : 20,
-      offset ? parseInt(offset, 10) : 0,
+      limit ? Number.parseInt(limit, 10) : 20,
+      offset ? Number.parseInt(offset, 10) : 0,
     )
   }
 

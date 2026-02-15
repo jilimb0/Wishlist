@@ -13,7 +13,11 @@
     "prisma:migrate:prod": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "prisma:seed": "ts-node prisma/seed.ts",
-    "dev": "nest start --watch"
+    "dev": "nest start --watch",
+    "format": "biome format --write .",
+    "lint": "biome lint --write .",
+    "check": "biome check --write .",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.13",
