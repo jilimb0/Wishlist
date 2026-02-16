@@ -14,9 +14,7 @@ export class FriendsService {
 
   async sendRequest(userId: string, friendId: string) {
     if (userId === friendId) {
-      throw new BadRequestException(
-        "You cannot send a friend request to yourself",
-      )
+      throw new BadRequestException("You cannot send a friend request to yourself")
     }
 
     const existingFriendship = await this.prisma.friendship.findFirst({
@@ -59,6 +57,24 @@ export class FriendsService {
         where: { id: requestId },
         data: { status: FriendshipStatus.ACCEPTED },
       })
+    }
+
+    return this.prisma.friendship.delete({
+      where: { id: requestId },
+    })
+  }
+
+  async cancelRequest(userId: string, requestId: string) {
+    const request = await this.prisma.friendship.findUnique({
+      where: { id: requestId },
+    })
+
+    if (!request || request.userId !== userId) {
+      throw new NotFoundException("Friend request not found")
+    }
+
+    if (request.status !== FriendshipStatus.PENDING) {
+      throw new BadRequestException("Request already processed")
     }
 
     return this.prisma.friendship.delete({
@@ -188,10 +204,7 @@ export class FriendsService {
       where: { id: friendshipId },
     })
 
-    if (
-      !friendship ||
-      (friendship.userId !== userId && friendship.friendId !== userId)
-    ) {
+    if (!friendship || (friendship.userId !== userId && friendship.friendId !== userId)) {
       throw new NotFoundException("Friendship or request not found")
     }
 
@@ -202,8 +215,7 @@ export class FriendsService {
 
   async createInvitation(inviterId: string, email: string) {
     const token =
-      Math.random().toString(36).substring(2, 15) +
-      Math.random().toString(36).substring(2, 15)
+      Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     const expiresAt = new Date()
     expiresAt.setDate(expiresAt.getDate() + 7) // 7 days expiry
 
@@ -217,9 +229,7 @@ export class FriendsService {
     })
 
     // In a real app, send email here. For now, log it.
-    console.log(
-      `[INVITE] To: ${email}, Link: http://localhost:3011/register?token=${token}`,
-    )
+    console.log(`[INVITE] To: ${email}, Link: http://localhost:3011/register?token=${token}`)
 
     return invitation
   }

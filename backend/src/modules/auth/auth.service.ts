@@ -70,19 +70,14 @@ export class AuthService {
       throw new UnauthorizedException("User not found. Please register.")
     }
 
-    const isPasswordValid = await bcrypt.compare(
-      dto.password,
-      user.passwordHash,
-    )
+    const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash)
 
     if (!isPasswordValid) {
       this.logger.warn(`[LOGIN] Invalid password for: ${email}`)
       throw new UnauthorizedException("Wrong password")
     }
 
-    this.logger.warn(
-      `[LOGIN] Password valid. Generating token for ID: ${user.id}`,
-    )
+    this.logger.warn(`[LOGIN] Password valid. Generating token for ID: ${user.id}`)
 
     const token = this.generateToken(user.id, user.email)
     this.logger.log(`Logged in user: ${user.email} (ID: ${user.id})`)
@@ -114,8 +109,7 @@ export class AuthService {
 
     // Generate simple token (random string)
     const resetToken =
-      Math.random().toString(36).substring(2, 15) +
-      Math.random().toString(36).substring(2, 15)
+      Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     // Expires in 1 hour
     const resetTokenExpires = new Date(Date.now() + 3600000)
 
@@ -163,10 +157,7 @@ export class AuthService {
     return { message: "Password reset successful" }
   }
 
-  async changePassword(
-    userId: string,
-    dto: { oldPassword?: string; newPassword: string },
-  ) {
+  async changePassword(userId: string, dto: { oldPassword?: string; newPassword: string }) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     })
@@ -178,15 +169,10 @@ export class AuthService {
       if (!dto.oldPassword) {
         throw new BadRequestException("Current password is required")
       }
-      const isPasswordValid = await bcrypt.compare(
-        dto.oldPassword,
-        user.passwordHash,
-      )
+      const isPasswordValid = await bcrypt.compare(dto.oldPassword, user.passwordHash)
       if (isPasswordValid) {
         if (dto.oldPassword === dto.newPassword) {
-          throw new BadRequestException(
-            "New password must be different from current password",
-          )
+          throw new BadRequestException("New password must be different from current password")
         }
       } else {
         throw new BadRequestException("Invalid current password")

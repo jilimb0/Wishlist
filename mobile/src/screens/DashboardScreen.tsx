@@ -1,35 +1,40 @@
 import { Ionicons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
+import { LinearGradient } from "expo-linear-gradient"
 import { StatusBar } from "expo-status-bar"
 import { useState } from "react"
-import {
-  FlatList,
-  RefreshControl,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native"
+import { FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
 import Toast from "react-native-toast-message"
-import { BottomSheet } from "../components/BottomSheet"
-import { Modal } from "../components/Modal"
+import { GlassBottomSheet } from "../components/GlassBottomSheet"
+import { GlassCard } from "../components/GlassCard"
+import { GlassModal } from "../components/GlassModal"
 import { UserAvatar } from "../components/UserAvatar"
 import { WishlistForm } from "../components/WishlistForm"
 import { useAuth } from "../context/AuthContext"
-import { useCreateWishlist, useDeleteWishlist, useMyWishlists } from "../hooks/api"
+import {
+  useCreateWishlist,
+  useDeleteWishlist,
+  useMyWishlists,
+  useNotifications,
+} from "../hooks/api"
+import { useI18n } from "../i18n/context"
+import { colors, fontSize, fontWeight, radius, spacing } from "../theme"
 import type { Wishlist } from "../types"
 
 export default function DashboardScreen() {
   const { user } = useAuth()
   const navigation = useNavigation<any>()
   const { data: wishlists, isLoading, refetch } = useMyWishlists()
+  const { data: notificationsData } = useNotifications(10)
+  const { t } = useI18n()
+
+  const unreadCount = notificationsData?.notifications.filter((n) => !n.isRead).length || 0
 
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [wishlistToDelete, setWishlistToDelete] = useState<string | null>(null)
 
   const createMutation = useCreateWishlist()
-  // @ts-ignore
   const deleteMutation = useDeleteWishlist()
 
   const handleCreate = (data: any) => {
@@ -38,14 +43,14 @@ export default function DashboardScreen() {
         setIsCreateOpen(false)
         Toast.show({
           type: "success",
-          text1: "Wishlist created",
-          text2: "Start adding your wishes!",
+          text1: t("wishlist.created"),
+          text2: t("wishlist.created_subtitle"),
         })
       },
       onError: (err: any) => {
         Toast.show({
           type: "error",
-          text1: "Error",
+          text1: t("common.error"),
           text2: err.message,
         })
       },
@@ -59,80 +64,105 @@ export default function DashboardScreen() {
         setWishlistToDelete(null)
         Toast.show({
           type: "success",
-          text1: "Wishlist deleted",
+          text1: t("wishlist.deleted"),
         })
       },
     })
   }
 
   const renderWishlistCard = ({ item }: { item: Wishlist }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() =>
-        navigation.navigate("WishlistDetail", {
-          wishlistId: item.id,
-          title: item.title, // pass title for immediate header update
-        })
-      }
-    >
-      <View style={styles.cardHeader}>
-        <View style={styles.emojiContainer}>
-          <Text style={styles.cardEmoji}>{item.emoji}</Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => setWishlistToDelete(item.id)}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Ionicons name="trash-outline" size={20} color="#52525b" />
-        </TouchableOpacity>
-      </View>
+    <View style={styles.cardOuter}>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() =>
+          navigation.navigate("WishlistDetail", {
+            wishlistId: item.id,
+            title: item.title,
+          })
+        }
+        style={styles.cardTouchable}
+      >
+        <GlassCard style={styles.card}>
+          <View style={styles.cardHeader}>
+            <View style={styles.cardTitleRow}>
+              <Text style={styles.cardEmoji}>{item.emoji}</Text>
+              <Text style={styles.cardTitle} numberOfLines={1}>
+                {item.title}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => setWishlistToDelete(item.id)}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Ionicons name="trash-outline" size={18} color="#52525b" />
+            </TouchableOpacity>
+          </View>
 
-      <Text style={styles.cardTitle} numberOfLines={1}>
-        {item.title}
-      </Text>
+          <View style={styles.cardFooter}>
+            <Text style={styles.cardCount}>
+              {t("dashboard.item_count", { count: item._count?.items || 0 })}
+            </Text>
 
-      <View style={styles.cardFooter}>
-        <Text style={styles.cardCount}>{item._count?.items || 0} items</Text>
-
-        <View style={styles.privacyBadge}>
-          <Ionicons
-            name={
-              item.privacy === "PUBLIC"
-                ? "globe-outline"
-                : item.privacy === "FRIENDS"
-                  ? "people-outline"
-                  : "lock-closed-outline"
-            }
-            size={12}
-            color="#71717a"
-          />
-        </View>
-      </View>
-    </TouchableOpacity>
+            <View style={styles.privacyBadge}>
+              <Ionicons
+                name={
+                  item.privacy === "PUBLIC"
+                    ? "globe-outline"
+                    : item.privacy === "FRIENDS"
+                      ? "people-outline"
+                      : "lock-closed-outline"
+                }
+                size={12}
+                color="rgba(255,255,255,0.4)"
+              />
+            </View>
+          </View>
+        </GlassCard>
+      </TouchableOpacity>
+    </View>
   )
 
   const ListHeader = () => (
     <View style={styles.header}>
       <View>
-        <Text style={styles.welcomeText}>Welcome back,</Text>
+        <Text style={styles.welcomeText}>{t("dashboard.welcome")}</Text>
         <Text style={styles.userName}>{user?.displayName}</Text>
       </View>
-      <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-        <UserAvatar user={user} size="md" />
-      </TouchableOpacity>
+      <View style={styles.headerRight}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Notifications")}
+          style={styles.notificationButton}
+        >
+          <Ionicons name="notifications-outline" size={24} color="#f5f5f5" />
+          {unreadCount > 0 && (
+            <View style={styles.notificationBadge}>
+              <Text style={styles.notificationBadgeText}>
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+          <UserAvatar user={user} size="md" />
+        </TouchableOpacity>
+      </View>
     </View>
   )
 
-  // Empty State
   const EmptyState = () => (
     <View style={styles.emptyState}>
       <Text style={styles.emptyEmoji}>✨</Text>
-      <Text style={styles.emptyTitle}>No wishlists yet</Text>
-      <Text style={styles.emptySubtitle}>
-        Create your first wishlist and start tracking the things you love
-      </Text>
+      <Text style={styles.emptyTitle}>{t("dashboard.mobile_empty_title")}</Text>
+      <Text style={styles.emptySubtitle}>{t("dashboard.mobile_empty_subtitle")}</Text>
       <TouchableOpacity style={styles.emptyButton} onPress={() => setIsCreateOpen(true)}>
-        <Text style={styles.emptyButtonText}>Create Wishlist</Text>
+        <LinearGradient
+          colors={["#fbbf24", "#f59e0b"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.emptyButtonGradient}
+        >
+          <Text style={styles.emptyButtonText}>{t("dashboard.create_wishlist")}</Text>
+        </LinearGradient>
       </TouchableOpacity>
     </View>
   )
@@ -149,7 +179,7 @@ export default function DashboardScreen() {
         ListHeaderComponent={ListHeader}
         ListEmptyComponent={!isLoading ? EmptyState : null}
         numColumns={2}
-        columnWrapperStyle={{ justifyContent: "space-between" }}
+        columnWrapperStyle={styles.columnWrapper}
         refreshControl={
           <RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor="#fbbf24" />
         }
@@ -158,32 +188,34 @@ export default function DashboardScreen() {
       {/* FAB */}
       {wishlists && wishlists.length > 0 && (
         <TouchableOpacity style={styles.fab} onPress={() => setIsCreateOpen(true)}>
-          <Ionicons name="add" size={32} color="#000" />
+          <LinearGradient colors={["#fbbf24", "#f59e0b"]} style={styles.fabGradient}>
+            <Ionicons name="add" size={32} color="#000" />
+          </LinearGradient>
         </TouchableOpacity>
       )}
 
       {/* Create Wishlist Sheet */}
-      <BottomSheet
+      <GlassBottomSheet
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
-        title="New Wishlist"
+        title={t("form.new_wishlist")}
       >
         <WishlistForm
           onSubmit={handleCreate}
           isLoading={createMutation.isPending}
-          submitLabel="Create Wishlist"
+          submitLabel={t("form.create")}
         />
-      </BottomSheet>
+      </GlassBottomSheet>
 
       {/* Delete Confirmation Modal */}
-      <Modal
+      <GlassModal
         isOpen={!!wishlistToDelete}
         onClose={() => setWishlistToDelete(null)}
-        title="Delete Wishlist"
+        title={t("wishlist.delete_title")}
         footer={
           <View style={styles.modalFooter}>
             <TouchableOpacity style={styles.cancelButton} onPress={() => setWishlistToDelete(null)}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.cancelButtonText}>{t("common.cancel")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.deleteButton}
@@ -191,16 +223,14 @@ export default function DashboardScreen() {
               disabled={deleteMutation.isPending}
             >
               <Text style={styles.deleteButtonText}>
-                {deleteMutation.isPending ? "Deleting..." : "Delete Permanently"}
+                {deleteMutation.isPending ? t("common.deleting") : t("common.delete")}
               </Text>
             </TouchableOpacity>
           </View>
         }
       >
-        <Text style={styles.modalText}>
-          Are you sure you want to delete this wishlist? This action cannot be undone.
-        </Text>
-      </Modal>
+        <Text style={styles.modalText}>{t("wishlist.delete_confirm")}</Text>
+      </GlassModal>
     </SafeAreaView>
   )
 }
@@ -208,60 +238,93 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#0a0a0a",
+    backgroundColor: colors.background.primary,
   },
   listContent: {
-    padding: 16,
-    paddingBottom: 100, // Space for FAB
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xs,
+    paddingBottom: 90,
+  },
+  columnWrapper: {
+    gap: spacing.md,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
-    width: "100%", // For column wrapper
+    marginBottom: spacing.md,
+    width: "100%",
+    paddingTop: spacing.md,
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+  },
+  notificationButton: {
+    position: "relative",
+  },
+  notificationBadge: {
+    position: "absolute",
+    top: -2,
+    right: -2,
+    backgroundColor: colors.status.error,
+    minWidth: 16,
+    height: 16,
+    borderRadius: radius.full,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: colors.background.primary,
+  },
+  notificationBadgeText: {
+    color: colors.text.primary,
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.bold,
   },
   welcomeText: {
-    fontSize: 14,
-    color: "#a1a1aa",
-    marginBottom: 4,
+    fontSize: fontSize.base,
+    color: colors.text.tertiary,
+    marginBottom: spacing.xs,
   },
   userName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
+    fontSize: fontSize["2xl"],
+    fontWeight: fontWeight.bold,
+    color: colors.text.primary,
+    letterSpacing: -0.5,
+  },
+  cardOuter: {
+    flex: 1,
+    marginBottom: spacing.md,
+  },
+  cardTouchable: {
+    flex: 1,
   },
   card: {
-    backgroundColor: "#18181b",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    width: "48%", // 2 columns
-    borderWidth: 1,
-    borderColor: "#27272a",
+    flex: 1,
   },
   cardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
-  emojiContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: "#27272a",
-    justifyContent: "center",
+  cardTitleRow: {
+    flexDirection: "row",
     alignItems: "center",
+    gap: spacing.sm,
+    flex: 1,
+    marginRight: spacing.sm,
   },
   cardEmoji: {
-    fontSize: 20,
+    fontSize: fontSize.xl,
   },
   cardTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
-    marginBottom: 12,
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.text.primary,
+    flex: 1,
+    letterSpacing: -0.3,
   },
   cardFooter: {
     flexDirection: "row",
@@ -269,32 +332,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cardCount: {
-    fontSize: 12,
-    color: "#71717a",
+    fontSize: fontSize.sm,
+    color: "rgba(255,255,255,0.5)",
   },
   privacyBadge: {
     width: 24,
     height: 24,
-    borderRadius: 12,
-    backgroundColor: "#27272a",
+    borderRadius: radius.lg,
+    backgroundColor: "rgba(255,255,255,0.06)",
     justifyContent: "center",
     alignItems: "center",
   },
   fab: {
     position: "absolute",
-    bottom: 24,
-    right: 24,
+    bottom: 85,
+    right: spacing["2xl"],
+    borderRadius: 28,
+    shadowColor: "#fbbf24",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  fabGradient: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#fbbf24",
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#fbbf24",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
   },
   emptyState: {
     flex: 1,
@@ -303,64 +368,67 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
   },
   emptyEmoji: {
-    fontSize: 64,
-    marginBottom: 16,
+    fontSize: fontSize["3xl"] + 32,
+    marginBottom: spacing.lg,
     opacity: 0.8,
   },
   emptyTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 8,
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.bold,
+    color: colors.text.primary,
+    marginBottom: spacing.sm,
+    letterSpacing: -0.3,
   },
   emptySubtitle: {
-    fontSize: 14,
-    color: "#a1a1aa",
+    fontSize: fontSize.base,
+    color: colors.text.tertiary,
     textAlign: "center",
     maxWidth: 260,
-    marginBottom: 24,
+    marginBottom: spacing["2xl"],
   },
   emptyButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: "#fbbf24",
+    borderRadius: radius.full,
+    overflow: "hidden",
+  },
+  emptyButtonGradient: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: 28,
+    borderRadius: radius.full,
   },
   emptyButtonText: {
-    color: "#fbbf24",
-    fontWeight: "600",
-    fontSize: 14,
+    color: "#000",
+    fontWeight: fontWeight.bold,
+    fontSize: fontSize.base,
   },
   modalFooter: {
     flexDirection: "row",
-    gap: 12,
+    gap: spacing.md,
   },
   cancelButton: {
     flex: 1,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: "#27272a",
+    padding: spacing.md,
+    borderRadius: radius.lg,
+    backgroundColor: "rgba(255,255,255,0.06)",
     alignItems: "center",
   },
   cancelButtonText: {
-    color: "#fff",
-    fontWeight: "600",
+    color: colors.text.primary,
+    fontWeight: fontWeight.semibold,
   },
   deleteButton: {
     flex: 1,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: "#ef4444",
+    padding: spacing.md,
+    borderRadius: radius.lg,
+    backgroundColor: colors.status.error,
     alignItems: "center",
   },
   deleteButtonText: {
-    color: "#fff",
-    fontWeight: "600",
+    color: colors.text.primary,
+    fontWeight: fontWeight.semibold,
   },
   modalText: {
-    color: "#d4d4d8",
-    fontSize: 16,
+    color: colors.text.secondary,
+    fontSize: fontSize.md,
     lineHeight: 24,
   },
 })

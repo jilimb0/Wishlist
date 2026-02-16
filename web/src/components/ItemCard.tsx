@@ -1,5 +1,5 @@
 import { useI18n } from "@/i18n/context"
-import type { User, Item } from "@/types"
+import type { Item, User } from "@/types"
 import { useState } from "react"
 
 interface ItemCardProps {
@@ -122,8 +122,7 @@ export function ItemCard({
           <div className="flex flex-col items-center justify-center h-full p-3 bg-zinc-900/95 backdrop-blur-xl border border-red-500/30 rounded-2xl text-center gap-3">
             <span className="text-xl">🗑️</span>
             <p className="text-[10px] font-bold text-zinc-300 leading-snug">
-              {t("common.delete")}{" "}
-              <span className="text-white font-black">«{item.title}»</span>?
+              {t("common.delete")} <span className="text-white font-black">«{item.title}»</span>?
             </p>
             <div className="flex w-full gap-2">
               <button

@@ -3,12 +3,14 @@ import type React from "react"
 import { useState } from "react"
 import {
   ActivityIndicator,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native"
+import { colors, fontSize, fontWeight, radius, spacing } from "../theme"
 import { Privacy } from "../types"
 
 interface WishlistFormProps {
@@ -91,7 +93,7 @@ export const WishlistForm: React.FC<WishlistFormProps> = ({
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Emoji Picker */}
       <View style={styles.section}>
         <Text style={styles.label}>Choose an emoji</Text>
@@ -191,31 +193,32 @@ export const WishlistForm: React.FC<WishlistFormProps> = ({
           <Text style={styles.buttonText}>{submitLabel}</Text>
         )}
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 20,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing["4xl"],
   },
   section: {
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   label: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#d4d4d8",
-    marginBottom: 8,
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.medium,
+    color: colors.text.secondary,
+    marginBottom: spacing.sm,
   },
   input: {
-    backgroundColor: "#27272a",
+    backgroundColor: colors.background.tertiary,
     borderWidth: 1,
-    borderColor: "#3f3f46",
-    borderRadius: 8,
-    padding: 12,
-    color: "#ffffff",
-    fontSize: 16,
+    borderColor: colors.border.secondary,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    color: colors.text.primary,
+    fontSize: fontSize.md,
   },
   textArea: {
     height: 80,
@@ -226,109 +229,109 @@ const styles = StyleSheet.create({
   selectedEmoji: {
     width: 60,
     height: 60,
-    borderRadius: 12,
-    backgroundColor: "#27272a",
+    borderRadius: radius.lg,
+    backgroundColor: colors.background.tertiary,
     borderWidth: 1,
-    borderColor: "#3f3f46",
+    borderColor: colors.border.secondary,
     justifyContent: "center",
     alignItems: "center",
   },
   emojiText: {
-    fontSize: 32,
+    fontSize: fontSize["3xl"],
   },
   emojiGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginTop: 12,
-    gap: 8,
+    marginTop: spacing.md,
+    gap: spacing.sm,
   },
   emojiOption: {
     width: 44,
     height: 44,
-    borderRadius: 8,
+    borderRadius: radius.md,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#27272a",
+    backgroundColor: colors.background.tertiary,
   },
   emojiOptionSelected: {
-    backgroundColor: "rgba(251, 191, 36, 0.2)",
+    backgroundColor: colors.accent.secondary,
     borderWidth: 1,
-    borderColor: "#fbbf24",
+    borderColor: colors.accent.primary,
   },
   emojiOptionText: {
-    fontSize: 24,
+    fontSize: fontSize["2xl"],
   },
   privacyContainer: {
-    gap: 12,
+    gap: spacing.md,
   },
   privacyOption: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#27272a",
-    borderRadius: 12,
-    padding: 12,
+    backgroundColor: colors.background.tertiary,
+    borderRadius: radius.lg,
+    padding: spacing.md,
     borderWidth: 1,
     borderColor: "transparent",
   },
   privacyOptionSelected: {
-    borderColor: "#fbbf24",
-    backgroundColor: "rgba(251, 191, 36, 0.05)",
+    borderColor: colors.accent.primary,
+    backgroundColor: colors.accent.secondary,
   },
   privacyIcon: {
     width: 40,
     height: 40,
-    borderRadius: 8,
-    backgroundColor: "#3f3f46",
+    borderRadius: radius.md,
+    backgroundColor: colors.border.secondary,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 12,
+    marginRight: spacing.md,
   },
   privacyIconSelected: {
-    backgroundColor: "rgba(251, 191, 36, 0.2)",
+    backgroundColor: colors.accent.secondary,
   },
   privacyText: {
     flex: 1,
   },
   privacyLabel: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "500",
+    color: colors.text.primary,
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.medium,
   },
   privacyDescription: {
-    color: "#71717a",
-    fontSize: 13,
+    color: colors.text.quaternary,
+    fontSize: fontSize.sm,
   },
   radio: {
     width: 20,
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: "#52525b",
+    borderColor: colors.border.tertiary,
     justifyContent: "center",
     alignItems: "center",
   },
   radioSelected: {
-    borderColor: "#fbbf24",
+    borderColor: colors.accent.primary,
   },
   radioInner: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#fbbf24",
+    backgroundColor: colors.accent.primary,
   },
   button: {
-    backgroundColor: "#fbbf24",
-    borderRadius: 8,
-    padding: 14,
+    backgroundColor: colors.accent.primary,
+    borderRadius: radius.md,
+    padding: spacing.base,
     alignItems: "center",
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   buttonDisabled: {
     opacity: 0.7,
   },
   buttonText: {
     color: "#000000",
-    fontWeight: "bold",
-    fontSize: 16,
+    fontWeight: fontWeight.bold,
+    fontSize: fontSize.md,
   },
 })

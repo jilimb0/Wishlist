@@ -2,14 +2,16 @@ import { Ionicons } from "@expo/vector-icons"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
+import { BlurView } from "expo-blur"
 import { useAuth } from "../context/AuthContext"
 
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native"
-import { useNotifications } from "../hooks/api"
+import { ActivityIndicator, StyleSheet, View } from "react-native"
+import { useI18n } from "../i18n/context"
 import DashboardScreen from "../screens/DashboardScreen"
 import DiscoverScreen from "../screens/DiscoverScreen"
 import FollowingScreen from "../screens/FollowingScreen"
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen"
+import FriendsScreen from "../screens/FriendsScreen"
 // Screens
 import LoginScreen from "../screens/LoginScreen"
 import NotificationsScreen from "../screens/NotificationsScreen"
@@ -18,6 +20,7 @@ import PublicProfileScreen from "../screens/PublicProfileScreen"
 import RegisterScreen from "../screens/RegisterScreen"
 import ResetPasswordScreen from "../screens/ResetPasswordScreen"
 import WishlistDetailScreen from "../screens/WishlistDetailScreen"
+import { colors, glass, spacing } from "../theme"
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -39,23 +42,39 @@ function AuthStack() {
   )
 }
 
-function MainTabs({ navigation }: any) {
-  const { data } = useNotifications(10)
-  const unreadCount = data?.notifications.filter((n) => !n.isRead).length || 0
+function MainTabs() {
+  const { t } = useI18n()
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#0a0a0a",
-          borderTopColor: "#18181b",
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          backgroundColor: glass.background.primary,
+          borderTopColor: glass.border.subtle,
+          borderTopWidth: 1,
+          height: 70,
+          paddingBottom: spacing.md,
+          paddingTop: spacing.sm,
+          paddingHorizontal: spacing.sm,
+          position: "absolute",
+          elevation: 0,
         },
-        tabBarActiveTintColor: "#ffc107",
-        tabBarInactiveTintColor: "#71717a",
+        tabBarBackground: () => (
+          <BlurView intensity={60} tint="dark" style={StyleSheet.absoluteFill} />
+        ),
+        tabBarActiveTintColor: colors.accent.primary,
+        tabBarInactiveTintColor: "rgba(255,255,255,0.3)",
+        tabBarItemStyle: {
+          paddingHorizontal: 0,
+          marginHorizontal: 2,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: "600",
+          letterSpacing: 0.2,
+          marginBottom: 2,
+        },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: keyof typeof Ionicons.glyphMap
 
@@ -79,43 +98,24 @@ function MainTabs({ navigation }: any) {
         name="Dashboard"
         component={DashboardScreen}
         options={{
-          headerShown: true,
-          headerStyle: { backgroundColor: "#0a0a0a" },
-          headerTitleStyle: { color: "#fff", fontWeight: "800" },
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Notifications")}
-              style={{ marginRight: 15, position: "relative" }}
-            >
-              <Ionicons name="notifications-outline" size={24} color="#f5f5f5" />
-              {unreadCount > 0 && (
-                <View
-                  style={{
-                    position: "absolute",
-                    top: -2,
-                    right: -2,
-                    backgroundColor: "#ef4444",
-                    minWidth: 16,
-                    height: 16,
-                    borderRadius: 8,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderWidth: 2,
-                    borderColor: "#0a0a0a",
-                  }}
-                >
-                  <Text style={{ color: "white", fontSize: 8, fontWeight: "900" }}>
-                    {unreadCount > 9 ? "!" : unreadCount}
-                  </Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          ),
+          tabBarLabel: t("nav.my_lists"),
         }}
       />
-      <Tab.Screen name="Discover" component={DiscoverScreen} />
-      <Tab.Screen name="Following" component={FollowingScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen
+        name="Discover"
+        component={DiscoverScreen}
+        options={{ tabBarLabel: t("nav.discover") }}
+      />
+      <Tab.Screen
+        name="Following"
+        component={FollowingScreen}
+        options={{ tabBarLabel: t("nav.following") }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ tabBarLabel: t("nav.profile") }}
+      />
     </Tab.Navigator>
   )
 }
@@ -127,23 +127,51 @@ function AuthenticatedStack() {
         headerStyle: { backgroundColor: "#0a0a0a" },
         headerTintColor: "#fff",
         contentStyle: { backgroundColor: "#0a0a0a" },
+        headerBackTitleVisible: false,
       }}
     >
       <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
       <Stack.Screen
         name="WishlistDetail"
         component={WishlistDetailScreen}
-        options={{ title: "Wishlist" }}
+        options={{
+          title: "Wishlist",
+          headerBlurEffect: "dark",
+          headerTransparent: true,
+          headerStyle: { backgroundColor: "rgba(10, 10, 10, 0.8)" },
+        }}
       />
       <Stack.Screen
         name="PublicProfile"
         component={PublicProfileScreen}
-        options={{ title: "Profile" }}
+        options={{
+          title: "Profile",
+          headerBlurEffect: "dark",
+          headerTransparent: true,
+          headerStyle: { backgroundColor: "rgba(10, 10, 10, 0.8)" },
+        }}
       />
       <Stack.Screen
         name="Notifications"
         component={NotificationsScreen}
-        options={{ presentation: "modal", title: "Notifications" }}
+        options={{
+          presentation: "modal",
+          title: "Notifications",
+          headerBlurEffect: "dark",
+          headerTransparent: true,
+          headerStyle: { backgroundColor: "rgba(10, 10, 10, 0.8)" },
+        }}
+      />
+      <Stack.Screen
+        name="Friends"
+        component={FriendsScreen}
+        options={{
+          presentation: "modal",
+          title: "Friends",
+          headerBlurEffect: "dark",
+          headerTransparent: true,
+          headerStyle: { backgroundColor: "rgba(10, 10, 10, 0.8)" },
+        }}
       />
     </Stack.Navigator>
   )

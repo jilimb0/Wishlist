@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Query,
-  UseGuards,
-} from "@nestjs/common"
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard"
 // biome-ignore lint/style/useImportType: DI requirement
@@ -19,10 +10,7 @@ export class FriendsController {
   constructor(private friendsService: FriendsService) {}
 
   @Post("request/:id")
-  async sendRequest(
-    @CurrentUser("id") userId: string,
-    @Param("id") friendId: string,
-  ) {
+  async sendRequest(@CurrentUser("id") userId: string, @Param("id") friendId: string) {
     return this.friendsService.sendRequest(userId, friendId)
   }
 
@@ -33,6 +21,11 @@ export class FriendsController {
     @Body("accept") accept: boolean,
   ) {
     return this.friendsService.respondToRequest(userId, requestId, accept)
+  }
+
+  @Delete("request/:id")
+  async cancelRequest(@CurrentUser("id") userId: string, @Param("id") requestId: string) {
+    return this.friendsService.cancelRequest(userId, requestId)
   }
 
   @Get("me")
@@ -46,26 +39,17 @@ export class FriendsController {
   }
 
   @Get("search")
-  async searchUsers(
-    @CurrentUser("id") userId: string,
-    @Query("q") query: string,
-  ) {
+  async searchUsers(@CurrentUser("id") userId: string, @Query("q") query: string) {
     return this.friendsService.searchUsers(query, userId)
   }
 
   @Post("invite")
-  async invite(
-    @CurrentUser("id") userId: string,
-    @Body("email") email: string,
-  ) {
+  async invite(@CurrentUser("id") userId: string, @Body("email") email: string) {
     return this.friendsService.createInvitation(userId, email)
   }
 
   @Delete(":id")
-  async removeFriendship(
-    @CurrentUser("id") userId: string,
-    @Param("id") friendshipId: string,
-  ) {
+  async removeFriendship(@CurrentUser("id") userId: string, @Param("id") friendshipId: string) {
     return this.friendsService.removeFriendship(userId, friendshipId)
   }
 }

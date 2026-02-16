@@ -6,6 +6,7 @@ import { useState } from "react"
 import {
   ActivityIndicator,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -15,6 +16,7 @@ import {
 } from "react-native"
 import Toast from "react-native-toast-message"
 import { useScrape, useUploadItemImage } from "../hooks/api"
+import { colors, fontSize, fontWeight, radius, spacing } from "../theme"
 
 interface ItemFormProps {
   initialData?: any
@@ -32,7 +34,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({
   const [url, setUrl] = useState(initialData?.url || "")
   const [title, setTitle] = useState(initialData?.title || "")
   const [description, setDescription] = useState(initialData?.description || "")
-  const [price, setPrice] = useState(initialData?.currentPrice?.toString() || "")
+  const [price, setPrice] = useState(initialData?.price?.toString() || "")
   const [currency, setCurrency] = useState(initialData?.currency || "USD")
   const [imageUrl, setImageUrl] = useState(initialData?.imageUrl || "")
   const [imageUrlInput, setImageUrlInput] = useState("")
@@ -96,18 +98,19 @@ export const ItemForm: React.FC<ItemFormProps> = ({
   }
 
   const handleSubmit = () => {
+    const finalImageUrl = imageUrl || imageUrlInput
     onSubmit({
       url,
       title,
       description,
-      imageUrl: imageUrl || imageUrlInput,
-      currentPrice: price ? Number.parseFloat(price) : null,
+      ...(finalImageUrl ? { imageUrl: finalImageUrl } : {}),
+      price: price ? Number.parseFloat(price) : undefined,
       currency,
     })
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* URL Input with Scrape Button */}
       <View style={styles.section}>
         <Text style={styles.label}>Product URL</Text>
@@ -222,74 +225,75 @@ export const ItemForm: React.FC<ItemFormProps> = ({
           <Text style={styles.buttonText}>{submitLabel}</Text>
         )}
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 20,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing["4xl"],
   },
   section: {
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
   },
   label: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#d4d4d8",
-    marginBottom: 8,
+    fontSize: fontSize.base,
+    fontWeight: fontWeight.medium,
+    color: colors.text.secondary,
+    marginBottom: spacing.sm,
   },
   input: {
-    backgroundColor: "#27272a",
+    backgroundColor: colors.background.tertiary,
     borderWidth: 1,
-    borderColor: "#3f3f46",
-    borderRadius: 8,
-    padding: 12,
-    color: "#ffffff",
-    fontSize: 16,
+    borderColor: colors.border.secondary,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    color: colors.text.primary,
+    fontSize: fontSize.md,
   },
   iconButton: {
-    padding: 12,
+    padding: spacing.md,
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 8,
-    backgroundColor: "#27272a",
-    borderRadius: 8,
-    borderColor: "#3f3f46",
+    marginLeft: spacing.sm,
+    backgroundColor: colors.background.tertiary,
+    borderRadius: radius.md,
+    borderColor: colors.border.secondary,
     borderWidth: 1,
   },
   scrapeButton: {
-    marginTop: 8,
-    backgroundColor: "#fbbf24",
-    padding: 8,
-    borderRadius: 6,
+    marginTop: spacing.sm,
+    backgroundColor: colors.accent.primary,
+    padding: spacing.sm,
+    borderRadius: radius.sm,
     alignSelf: "flex-start",
   },
   scrapeButtonText: {
     color: "#000",
-    fontWeight: "600",
-    fontSize: 12,
+    fontWeight: fontWeight.semibold,
+    fontSize: fontSize.sm,
   },
   imageOptionRow: {
     flexDirection: "row",
     alignItems: "center",
   },
   orText: {
-    color: "#71717a",
-    marginHorizontal: 12,
-    fontSize: 12,
-    fontWeight: "bold",
+    color: colors.text.quaternary,
+    marginHorizontal: spacing.md,
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.bold,
   },
   uploadButton: {
     width: 48,
     height: 48,
-    borderRadius: 8,
-    backgroundColor: "#27272a",
-    borderColor: "#3f3f46",
+    borderRadius: radius.md,
+    backgroundColor: colors.background.tertiary,
+    borderColor: colors.border.secondary,
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -298,9 +302,9 @@ const styles = StyleSheet.create({
     position: "relative",
     width: "100%",
     height: 200,
-    borderRadius: 12,
+    borderRadius: radius.lg,
     overflow: "hidden",
-    backgroundColor: "#27272a",
+    backgroundColor: colors.background.tertiary,
   },
   previewImage: {
     width: "100%",
@@ -309,24 +313,24 @@ const styles = StyleSheet.create({
   },
   removeImage: {
     position: "absolute",
-    top: 8,
-    right: 8,
+    top: spacing.sm,
+    right: spacing.sm,
     backgroundColor: "rgba(0,0,0,0.5)",
-    borderRadius: 12,
+    borderRadius: radius.lg,
   },
   button: {
-    backgroundColor: "#fbbf24",
-    borderRadius: 8,
-    padding: 14,
+    backgroundColor: colors.accent.primary,
+    borderRadius: radius.md,
+    padding: spacing.base,
     alignItems: "center",
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   buttonDisabled: {
     opacity: 0.7,
   },
   buttonText: {
     color: "#000000",
-    fontWeight: "bold",
-    fontSize: 16,
+    fontWeight: fontWeight.bold,
+    fontSize: fontSize.md,
   },
 })

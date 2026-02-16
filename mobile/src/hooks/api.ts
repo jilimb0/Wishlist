@@ -434,6 +434,27 @@ export function useRespondFriendRequest() {
   })
 }
 
+export function useCancelFriendRequest() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/friends/request/${id}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["friends", "pending"] })
+    },
+  })
+}
+
+export function useRemoveFriendship() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (friendshipId: string) => api.delete(`/friends/${friendshipId}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["friends"] })
+      qc.invalidateQueries({ queryKey: ["friends", "pending"] })
+    },
+  })
+}
+
 export function useSearchUsers(query: string) {
   return useQuery({
     queryKey: ["users", "search", query],
@@ -445,5 +466,33 @@ export function useSearchUsers(query: string) {
 export function useInviteFriend() {
   return useMutation({
     mutationFn: (email: string) => api.post("/friends/invite", { email }),
+  })
+}
+
+// ─── Subscription Aliases ─────────────────────────────────
+// Clearer names for subscription operations
+
+export function useSubscribeToWishlist() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (wishlistId: string) =>
+      api.post(`/wishlists/${wishlistId}/subscribe`, { notifyNewItems: true }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["subscriptions"] })
+      qc.invalidateQueries({ queryKey: ["wishlist"] })
+      qc.invalidateQueries({ queryKey: ["following"] })
+    },
+  })
+}
+
+export function useUnsubscribeFromWishlist() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (subscriptionId: string) => api.delete(`/subscriptions/${subscriptionId}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["subscriptions"] })
+      qc.invalidateQueries({ queryKey: ["wishlist"] })
+      qc.invalidateQueries({ queryKey: ["following"] })
+    },
   })
 }

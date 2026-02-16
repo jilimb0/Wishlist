@@ -68,6 +68,7 @@ export interface Wishlist {
   _count?: { items: number }
   subscriptionId?: string
   subscriptionStatus?: string
+  subscriptions?: Array<{ id: string; userId: string; status: string }>
 }
 
 export interface Item {
@@ -78,6 +79,7 @@ export interface Item {
   url: string
   imageUrl: string | null
   currentPrice: number | null
+  price?: number | null
   currency: string
   trackPrice: boolean
   priority: number

@@ -1,6 +1,6 @@
 export const translations: Record<string, Record<string, string>> = {
   en: {
-    // Navbar
+    // Navbar / Tabs
     "nav.my_lists": "My Lists",
     "nav.following": "Following",
     "nav.discover": "Discover",
@@ -19,6 +19,7 @@ export const translations: Record<string, Record<string, string>> = {
     "dashboard.create_wishlist": "Create Wishlist",
     "dashboard.item_count": "{{count}} items",
     "dashboard.pending": "Pending Approval",
+    "dashboard.welcome": "Welcome back,",
 
     // Wishlist Detail
     "wishlist.public": "Public",
@@ -37,10 +38,27 @@ export const translations: Record<string, Record<string, string>> = {
     "wishlist.reserved": "RESERVED",
     "wishlist.view_link": "View Link ↗",
     "wishlist.reserve": "Reserve",
+    "wishlist.cancel_reserve": "Cancel Reserve",
     "wishlist.cancel": "Cancel",
     "wishlist.remove_item": "Remove Item",
     "wishlist.delete_confirm":
       "Are you sure you want to delete this wishlist? This action cannot be undone.",
+    "wishlist.empty_owner_title": "No items yet",
+    "wishlist.empty_owner_subtitle": "Add your first wish by tapping the + button",
+    "wishlist.empty_visitor_title": "This wishlist is empty",
+    "wishlist.empty_visitor_subtitle": "Check back later for updates",
+    "wishlist.reserved_by_me": "Reserved",
+    "wishlist.taken": "Taken",
+    "wishlist.item_added": "Item added",
+    "wishlist.item_removed": "Item removed",
+    "wishlist.updated": "Wishlist updated",
+    "wishlist.deleted": "Wishlist deleted",
+    "wishlist.created": "Wishlist created",
+    "wishlist.created_subtitle": "Start adding your wishes!",
+    "wishlist.remove_item_confirm": "Are you sure you want to remove this item?",
+    "wishlist.add_item_title": "Add Item",
+    "wishlist.edit_title": "Edit Wishlist",
+    "wishlist.delete_title": "Delete Wishlist",
 
     // Profile
     "profile.settings": "Profile Settings",
@@ -57,31 +75,86 @@ export const translations: Record<string, Record<string, string>> = {
     "profile.update_password": "Update Password",
     "profile.invite": "Invite a Friend",
     "profile.invite_btn": "Invite",
+    "profile.user_not_found": "User not found",
+    "profile.back_to_discover": "← Back to Discover",
+    "profile.public_wishlists": "Public Wishlists",
+    "profile.no_public_wishlists": "{{name}} hasn't shared any public wishlists yet.",
+    "profile.settings_section": "Settings",
+    "profile.account_section": "Account",
+    "profile.currency": "Currency",
+    "profile.language": "Language",
+    "profile.notifications": "Notifications",
+    "profile.sign_out": "Sign Out",
+    "profile.sign_out_confirm": "Are you sure you want to sign out?",
+    "profile.edit_name": "Edit Name",
+    "profile.name_empty": "Name cannot be empty",
+    "profile.name_updated": "Name updated",
+    "profile.name_update_failed": "Failed to update name",
+    "profile.avatar_updated": "Avatar updated",
+    "profile.avatar_update_failed": "Failed to update avatar",
+    "profile.currency_updated": "Currency updated",
+    "profile.language_updated": "Language updated",
+    "profile.select_currency": "Select Currency",
+    "profile.select_language": "Select Language",
+    "profile.version": "Version 1.0.0",
+    "profile.enter_name": "Enter your name",
 
     // Discover
     "discover.title": "Discover",
+    "discover.search_placeholder": "Search...",
     "discover.search_placeholder_lists": "Search wishlists...",
     "discover.search_placeholder_users": "Search users by name or email...",
     "discover.mobile_search": "Search people...",
     "discover.mobile_empty_title": "Find friends & family",
     "discover.mobile_empty_subtitle": "Search by name or email to discover their wishlists",
     "discover.tab_wishlists": "Wishlists",
-    "discover.tab_users": "Users",
+    "discover.tab_users": "People",
     "discover.no_results_lists": "No wishlists found",
     "discover.no_results_users": "No users found",
     "discover.add_friend": "Add Friend",
     "discover.friend_request_sent": "Request Sent",
-
-    // Public Profile
-    "profile.user_not_found": "User not found",
-    "profile.back_to_discover": "← Back to Discover",
-    "profile.public_wishlists": "Public Wishlists",
-    "profile.no_public_wishlists": "{{name}} hasn't shared any public wishlists yet.",
+    "discover.request_sent_success": "Friend request sent",
+    "discover.request_error": "Failed to send request",
+    "discover.pending": "Pending",
 
     // Following
     "following.title": "Following",
     "following.empty_title": "Nothing here yet",
     "following.empty_subtitle": "Follow friends' wishlists to see them here",
+    "following.empty": "You haven't followed any wishlists yet.",
+
+    // Friends
+    "friends.title": "Friends",
+    "friends.incoming": "Incoming Requests",
+    "friends.outgoing": "Outgoing Requests",
+    "friends.empty_title": "No friends yet",
+    "friends.empty_subtitle": "Find them in Discover!",
+    "friends.wants_friend": "Wants to be your friend",
+    "friends.request_sent": "Request sent",
+    "friends.accept": "Accept",
+    "friends.decline": "Decline",
+    "friends.cancel_request": "Cancel Request",
+    "friends.remove": "Remove Friend",
+    "friends.request_accepted": "Friend request accepted",
+    "friends.request_declined": "Friend request declined",
+    "friends.request_cancelled": "Request cancelled",
+    "friends.removed": "Removed from friends",
+
+    // Notifications
+    "notifications.title": "Notifications",
+    "notifications.empty": "No notifications yet",
+    "notifications.mark_all_read": "Mark all as read",
+
+    // Auth
+    "auth.sign_in": "Sign In",
+    "auth.sign_up": "Sign Up",
+    "auth.email": "Email",
+    "auth.password": "Password",
+    "auth.forgot_password": "Forgot your password?",
+    "auth.no_account": "Don't have an account?",
+    "auth.have_account": "Already have an account?",
+    "auth.fill_fields": "Please fill in all fields",
+    "auth.sign_in_subtitle": "Sign in to your account",
 
     // Forms
     "form.title": "Title",
@@ -108,11 +181,16 @@ export const translations: Record<string, Record<string, string>> = {
 
     // Common
     "common.cancel": "Cancel",
-    "common.delete": "Delete Permanently",
+    "common.delete": "Delete",
     "common.loading": "Loading...",
+    "common.update": "Update",
+    "common.save": "Save",
+    "common.remove": "Remove",
+    "common.error": "Error",
+    "common.deleting": "Deleting...",
   },
   ru: {
-    // Navbar
+    // Navbar / Tabs
     "nav.my_lists": "Мои списки",
     "nav.following": "Подписки",
     "nav.discover": "Поиск",
@@ -130,6 +208,7 @@ export const translations: Record<string, Record<string, string>> = {
     "dashboard.create_wishlist": "Создать вишлист",
     "dashboard.item_count": "{{count}} предметов",
     "dashboard.pending": "Ожидает подтверждения",
+    "dashboard.welcome": "С возвращением,",
 
     // Wishlist Detail
     "wishlist.public": "Публичный",
@@ -148,10 +227,27 @@ export const translations: Record<string, Record<string, string>> = {
     "wishlist.reserved": "ЗАРЕЗЕРВИРОВАНО",
     "wishlist.view_link": "Перейти ↗",
     "wishlist.reserve": "Забронировать",
+    "wishlist.cancel_reserve": "Отменить бронь",
     "wishlist.cancel": "Отменить",
     "wishlist.remove_item": "Удалить",
     "wishlist.delete_confirm":
       "Вы уверены, что хотите удалить этот вишлист? Это действие необратимо.",
+    "wishlist.empty_owner_title": "Предметов пока нет",
+    "wishlist.empty_owner_subtitle": "Добавьте первое желание, нажав кнопку +",
+    "wishlist.empty_visitor_title": "Этот вишлист пуст",
+    "wishlist.empty_visitor_subtitle": "Загляните позже за обновлениями",
+    "wishlist.reserved_by_me": "Забронировано",
+    "wishlist.taken": "Занято",
+    "wishlist.item_added": "Предмет добавлен",
+    "wishlist.item_removed": "Предмет удалён",
+    "wishlist.updated": "Вишлист обновлён",
+    "wishlist.deleted": "Вишлист удалён",
+    "wishlist.created": "Вишлист создан",
+    "wishlist.created_subtitle": "Начните добавлять желания!",
+    "wishlist.remove_item_confirm": "Вы уверены, что хотите удалить этот предмет?",
+    "wishlist.add_item_title": "Добавить предмет",
+    "wishlist.edit_title": "Редактировать вишлист",
+    "wishlist.delete_title": "Удалить вишлист",
 
     // Profile
     "profile.settings": "Настройки профиля",
@@ -168,9 +264,33 @@ export const translations: Record<string, Record<string, string>> = {
     "profile.update_password": "Обновить пароль",
     "profile.invite": "Пригласить друга",
     "profile.invite_btn": "Пригласить",
+    "profile.user_not_found": "Пользователь не найден",
+    "profile.back_to_discover": "← Вернуться к поиску",
+    "profile.public_wishlists": "Публичные вишлисты",
+    "profile.no_public_wishlists": "{{name}} пока не поделился публичными вишлистами.",
+    "profile.settings_section": "Настройки",
+    "profile.account_section": "Аккаунт",
+    "profile.currency": "Валюта",
+    "profile.language": "Язык",
+    "profile.notifications": "Уведомления",
+    "profile.sign_out": "Выйти",
+    "profile.sign_out_confirm": "Вы уверены, что хотите выйти?",
+    "profile.edit_name": "Изменить имя",
+    "profile.name_empty": "Имя не может быть пустым",
+    "profile.name_updated": "Имя обновлено",
+    "profile.name_update_failed": "Не удалось обновить имя",
+    "profile.avatar_updated": "Аватар обновлён",
+    "profile.avatar_update_failed": "Не удалось обновить аватар",
+    "profile.currency_updated": "Валюта обновлена",
+    "profile.language_updated": "Язык обновлён",
+    "profile.select_currency": "Выберите валюту",
+    "profile.select_language": "Выберите язык",
+    "profile.version": "Версия 1.0.0",
+    "profile.enter_name": "Введите ваше имя",
 
     // Discover
     "discover.title": "Поиск",
+    "discover.search_placeholder": "Поиск...",
     "discover.search_placeholder_lists": "Поиск вишлистов...",
     "discover.search_placeholder_users": "Поиск людей по имени или email...",
     "discover.mobile_search": "Поиск людей...",
@@ -182,17 +302,48 @@ export const translations: Record<string, Record<string, string>> = {
     "discover.no_results_users": "Пользователи не найдены",
     "discover.add_friend": "Добавить",
     "discover.friend_request_sent": "Запрос отправлен",
-
-    // Public Profile
-    "profile.user_not_found": "Пользователь не найден",
-    "profile.back_to_discover": "← Вернуться к поиску",
-    "profile.public_wishlists": "Публичные вишлисты",
-    "profile.no_public_wishlists": "{{name}} пока не поделился публичными вишлистами.",
+    "discover.request_sent_success": "Запрос в друзья отправлен",
+    "discover.request_error": "Не удалось отправить запрос",
+    "discover.pending": "Ожидание",
 
     // Following
     "following.title": "Подписки",
     "following.empty_title": "Пока ничего",
     "following.empty_subtitle": "Подпишитесь на вишлисты друзей, чтобы видеть их здесь",
+    "following.empty": "Вы ещё не подписаны ни на один вишлист.",
+
+    // Friends
+    "friends.title": "Друзья",
+    "friends.incoming": "Входящие заявки",
+    "friends.outgoing": "Исходящие заявки",
+    "friends.empty_title": "Друзей пока нет",
+    "friends.empty_subtitle": "Найдите их в Поиске!",
+    "friends.wants_friend": "Хочет дружить с вами",
+    "friends.request_sent": "Заявка отправлена",
+    "friends.accept": "Принять",
+    "friends.decline": "Отклонить",
+    "friends.cancel_request": "Отменить запрос",
+    "friends.remove": "Удалить из друзей",
+    "friends.request_accepted": "Заявка принята",
+    "friends.request_declined": "Заявка отклонена",
+    "friends.request_cancelled": "Запрос отменён",
+    "friends.removed": "Удалён из друзей",
+
+    // Notifications
+    "notifications.title": "Уведомления",
+    "notifications.empty": "Уведомлений пока нет",
+    "notifications.mark_all_read": "Отметить все как прочитанные",
+
+    // Auth
+    "auth.sign_in": "Войти",
+    "auth.sign_up": "Регистрация",
+    "auth.email": "Email",
+    "auth.password": "Пароль",
+    "auth.forgot_password": "Забыли пароль?",
+    "auth.no_account": "Нет аккаунта?",
+    "auth.have_account": "Уже есть аккаунт?",
+    "auth.fill_fields": "Заполните все поля",
+    "auth.sign_in_subtitle": "Войдите в свой аккаунт",
 
     // Forms
     "form.title": "Название",
@@ -219,7 +370,12 @@ export const translations: Record<string, Record<string, string>> = {
 
     // Common
     "common.cancel": "Отмена",
-    "common.delete": "Удалить навсегда",
+    "common.delete": "Удалить",
     "common.loading": "Загрузка...",
+    "common.update": "Обновить",
+    "common.save": "Сохранить",
+    "common.remove": "Удалить",
+    "common.error": "Ошибка",
+    "common.deleting": "Удаление...",
   },
 }

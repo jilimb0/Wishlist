@@ -5,76 +5,154 @@ import { useState } from "react"
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import Toast from "react-native-toast-message"
+import { GlassCard } from "../components/GlassCard"
 import { UserAvatar } from "../components/UserAvatar"
-import { useDiscover, useSearchUsers, useSendFriendRequest } from "../hooks/api"
+import { useAuth } from "../context/AuthContext"
+import {
+  useDiscover,
+  useFriends,
+  usePendingFriends,
+  useSearchUsers,
+  useSendFriendRequest,
+  useSubscribeToWishlist,
+  useUnsubscribeFromWishlist,
+} from "../hooks/api"
+import { useI18n } from "../i18n/context"
 
 export default function DiscoverScreen() {
+  const { user } = useAuth()
   const [activeTab, setActiveTab] = useState<"wishlists" | "users">("wishlists")
   const [search, setSearch] = useState("")
-  const [query, setQuery] = useState("") // Debounced or actual query
   const navigation = useNavigation<any>()
+  const { t } = useI18n()
 
-  // Hooks
-  const { data: discoverData, isLoading: _isLoadingDiscover } = useDiscover(query)
-  const { data: _usersData, isLoading: _isLoadingUsers } = useSearchUsers(query)
+  const { data: discoverData } = useDiscover(search)
+  const { data: usersData } = useSearchUsers(search)
+  const { data: friends } = useFriends()
+  const { data: pendingRequests } = usePendingFriends()
   const sendRequestMutation = useSendFriendRequest()
+  const subscribeMutation = useSubscribeToWishlist()
+  const unsubscribeMutation = useUnsubscribeFromWishlist()
 
-  const handleSearch = () => {
-    setQuery(search)
-  }
+  const filteredWishlists = (discoverData?.wishlists || []).filter((wishlist: any) => {
+    if (wishlist.userId === user?.id) return false
+    if (wishlist.subscriptions?.some((sub: any) => sub.userId === user?.id)) return false
+    return true
+  })
 
   const handleSendRequest = (userId: string) => {
     sendRequestMutation.mutate(userId, {
-      onSuccess: () => Toast.show({ type: "success", text1: "Friend request sent" }),
-      onError: () => Toast.show({ type: "error", text1: "Failed to send request" }),
+      onSuccess: () =>
+        Toast.show({
+          type: "success",
+          text1: t("discover.request_sent_success"),
+        }),
+      onError: () => Toast.show({ type: "error", text1: t("discover.request_error") }),
     })
   }
 
-  const renderWishlist = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => navigation.navigate("WishlistDetail", { wishlistId: item.id })}
-    >
-      <View style={styles.cardHeader}>
-        <Text style={styles.cardEmoji}>{item.emoji}</Text>
-      </View>
-      <Text style={styles.cardTitle}>{item.title}</Text>
-      <View style={styles.cardFooter}>
-        <UserAvatar user={item.user} size="sm" />
-        <Text style={styles.cardOwner}>{item.user.displayName}</Text>
-      </View>
-    </TouchableOpacity>
-  )
+  const renderWishlist = ({ item }: { item: any }) => {
+    const userSubscription = item.subscriptions?.find((sub: any) => sub.userId === user?.id)
+    const isSubscribed = !!userSubscription
+    const isOwner = item.userId === user?.id
 
-  const renderUser = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={styles.userCard}
-      onPress={() => navigation.navigate("PublicProfile", { userId: item.id })}
-    >
-      <UserAvatar user={item} size="md" />
-      <View style={styles.userInfo}>
-        <Text style={styles.userName}>{item.displayName}</Text>
-      </View>
-      <TouchableOpacity style={styles.addButton} onPress={() => handleSendRequest(item.id)}>
-        <Ionicons name="person-add-outline" size={20} color="#000" />
+    return (
+      <TouchableOpacity
+        activeOpacity={0.7}
+        style={{ flex: 1, maxWidth: "48%" }}
+        onPress={() => navigation.navigate("WishlistDetail", { wishlistId: item.id })}
+      >
+        <GlassCard style={styles.card}>
+          <View style={styles.cardHeader}>
+            <View style={styles.cardTitleRow}>
+              <Text style={styles.cardEmoji}>{item.emoji}</Text>
+              <Text style={styles.cardTitle} numberOfLines={1}>
+                {item.title}
+              </Text>
+            </View>
+            {!isOwner && (
+              <TouchableOpacity
+                onPress={(e) => {
+                  e.stopPropagation()
+                  if (isSubscribed && userSubscription) {
+                    unsubscribeMutation.mutate(userSubscription.id)
+                  } else {
+                    subscribeMutation.mutate(item.id)
+                  }
+                }}
+              >
+                <Ionicons
+                  name={isSubscribed ? "bookmark" : "bookmark-outline"}
+                  size={20}
+                  color="#fbbf24"
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.cardFooter}>
+            <UserAvatar user={item.user} size="xs" />
+            <Text style={styles.cardOwner}>{item.user?.displayName}</Text>
+          </View>
+        </GlassCard>
       </TouchableOpacity>
-    </TouchableOpacity>
-  )
+    )
+  }
+
+  const renderUser = ({ item }: { item: any }) => {
+    const isFriend = friends?.some((f: any) => f.id === item.id)
+    const hasPendingRequest = pendingRequests?.some(
+      (req: any) => req.user?.id === item.id || req.friendId === item.id,
+    )
+
+    return (
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => navigation.navigate("PublicProfile", { userId: item.id })}
+      >
+        <GlassCard style={styles.userCard}>
+          <View style={styles.userCardInner}>
+            <UserAvatar user={item} size="md" />
+            <View style={styles.userInfo}>
+              <Text style={styles.userName}>{item.displayName}</Text>
+            </View>
+            {isFriend ? (
+              <View style={styles.friendBadge}>
+                <Ionicons name="checkmark-circle" size={24} color="#10b981" />
+              </View>
+            ) : hasPendingRequest ? (
+              <View style={styles.pendingBadge}>
+                <Text style={styles.pendingText}>{t("discover.pending")}</Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={(e) => {
+                  e.stopPropagation()
+                  handleSendRequest(item.id)
+                }}
+              >
+                <Ionicons name="person-add-outline" size={18} color="#000" />
+              </TouchableOpacity>
+            )}
+          </View>
+        </GlassCard>
+      </TouchableOpacity>
+    )
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
       <View style={styles.header}>
-        <Text style={styles.title}>Discover</Text>
+        <Text style={styles.title}>{t("discover.title")}</Text>
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#71717a" />
+          <Ionicons name="search" size={20} color="rgba(255,255,255,0.3)" />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search..."
-            placeholderTextColor="#71717a"
+            placeholder={t("discover.search_placeholder")}
+            placeholderTextColor="rgba(255,255,255,0.3)"
             value={search}
             onChangeText={setSearch}
-            onSubmitEditing={handleSearch}
             returnKeyType="search"
           />
         </View>
@@ -84,7 +162,7 @@ export default function DiscoverScreen() {
             onPress={() => setActiveTab("wishlists")}
           >
             <Text style={[styles.tabText, activeTab === "wishlists" && styles.activeTabText]}>
-              Wishlists
+              {t("discover.tab_wishlists")}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -92,7 +170,7 @@ export default function DiscoverScreen() {
             onPress={() => setActiveTab("users")}
           >
             <Text style={[styles.tabText, activeTab === "users" && styles.activeTabText]}>
-              People
+              {t("discover.tab_users")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -100,21 +178,27 @@ export default function DiscoverScreen() {
 
       {activeTab === "wishlists" ? (
         <FlatList
-          data={discoverData?.wishlists || []}
+          key="wishlists"
+          data={filteredWishlists}
           renderItem={renderWishlist}
           keyExtractor={(item) => item.id}
           numColumns={2}
           contentContainerStyle={styles.list}
           columnWrapperStyle={{ gap: 12 }}
-          ListEmptyComponent={<Text style={styles.emptyText}>No wishlists found</Text>}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>{t("discover.no_results_lists")}</Text>
+          }
         />
       ) : (
         <FlatList
+          key="users"
           data={usersData || []}
           renderItem={renderUser}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
-          ListEmptyComponent={<Text style={styles.emptyText}>No users found</Text>}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>{t("discover.no_results_users")}</Text>
+          }
         />
       )}
     </SafeAreaView>
@@ -135,19 +219,22 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     marginBottom: 16,
+    letterSpacing: -0.5,
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#27272a",
-    borderRadius: 12,
-    paddingHorizontal: 12,
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderRadius: 16,
+    paddingHorizontal: 14,
     height: 48,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.06)",
   },
   searchInput: {
     flex: 1,
-    marginLeft: 8,
+    marginLeft: 10,
     color: "#fff",
     fontSize: 16,
   },
@@ -165,7 +252,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#fbbf24",
   },
   tabText: {
-    color: "#71717a",
+    color: "rgba(255,255,255,0.35)",
     fontSize: 16,
     fontWeight: "600",
   },
@@ -182,22 +269,20 @@ const styles = StyleSheet.create({
   },
   // Wishlist Card
   card: {
-    flex: 1,
-    backgroundColor: "#18181b",
-    borderRadius: 16,
-    padding: 16,
     marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#27272a",
   },
   cardHeader: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: "#27272a",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 12,
+  },
+  cardTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
+    marginRight: 8,
   },
   cardEmoji: {
     fontSize: 20,
@@ -206,7 +291,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#fff",
-    marginBottom: 12,
+    flex: 1,
+    letterSpacing: -0.3,
   },
   cardFooter: {
     flexDirection: "row",
@@ -215,18 +301,15 @@ const styles = StyleSheet.create({
   },
   cardOwner: {
     fontSize: 12,
-    color: "#71717a",
+    color: "rgba(255,255,255,0.4)",
   },
   // User Card
   userCard: {
+    marginBottom: 10,
+  },
+  userCardInner: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#18181b",
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#27272a",
   },
   userInfo: {
     flex: 1,
@@ -236,6 +319,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
     fontSize: 16,
+    letterSpacing: -0.3,
   },
   addButton: {
     width: 36,
@@ -244,5 +328,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#fbbf24",
     justifyContent: "center",
     alignItems: "center",
+  },
+  friendBadge: {
+    width: 36,
+    height: 36,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  pendingBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 18,
+    backgroundColor: "rgba(255,255,255,0.06)",
+  },
+  pendingText: {
+    color: "#a1a1aa",
+    fontSize: 12,
+    fontWeight: "600",
   },
 })

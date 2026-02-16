@@ -7,7 +7,7 @@ interface UserAvatarProps {
     displayName: string
     avatarUrl?: string | null
   } | null
-  size?: "sm" | "md" | "lg" | "xl" | "2xl"
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl"
   className?: string // kept for compatibility if needed, but not used with StyleSheet
 }
 
@@ -24,6 +24,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ user, size = "md" }) => 
   const initials = getInitials(user?.displayName || "User")
 
   const sizeStyles = {
+    xs: { width: 24, height: 24, fontSize: 10 },
     sm: { width: 32, height: 32, fontSize: 12 },
     md: { width: 40, height: 40, fontSize: 14 },
     lg: { width: 64, height: 64, fontSize: 24 },

@@ -28,8 +28,8 @@ function scrapePage() {
   const url = window.location.href
 
   // Try to find price
-  let price: string | undefined | null = null
-  let currency: string | undefined | null = null
+  let price: number | null = null
+  let currency: string | null = null
   const priceMeta = getMeta("og:price:amount") || getMeta("product:price:amount")
   const currencyMeta = getMeta("og:price:currency") || getMeta("product:price:currency")
 

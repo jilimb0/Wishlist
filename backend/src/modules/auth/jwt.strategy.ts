@@ -34,9 +34,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * @returns User object if valid, throws UnauthorizedException otherwise
    */
   async validate(payload: JwtPayload) {
-    this.logger.warn(
-      `[STRATEGY] Validating token payload: ${JSON.stringify(payload)}`,
-    )
+    this.logger.warn(`[STRATEGY] Validating token payload: ${JSON.stringify(payload)}`)
     const { sub, email: _email } = payload
 
     if (!sub) {

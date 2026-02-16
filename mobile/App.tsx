@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { StatusBar } from "expo-status-bar"
 import { SafeAreaProvider } from "react-native-safe-area-context"
-import Toast from "react-native-toast-message"
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message"
 import { AuthProvider } from "./src/context/AuthContext"
 import { I18nProvider } from "./src/i18n/context"
 import AppNavigator from "./src/navigation/AppNavigator"
@@ -15,6 +15,69 @@ const queryClient = new QueryClient({
   },
 })
 
+const toastConfig = {
+  success: (props: any) => (
+    <BaseToast
+      {...props}
+      style={{
+        borderLeftColor: "#fbbf24",
+        backgroundColor: "#18181b",
+        borderLeftWidth: 5,
+      }}
+      contentContainerStyle={{ paddingHorizontal: 15 }}
+      text1Style={{
+        fontSize: 15,
+        fontWeight: "600",
+        color: "#fff",
+      }}
+      text2Style={{
+        fontSize: 13,
+        color: "#a1a1aa",
+      }}
+    />
+  ),
+  error: (props: any) => (
+    <ErrorToast
+      {...props}
+      style={{
+        borderLeftColor: "#ef4444",
+        backgroundColor: "#18181b",
+        borderLeftWidth: 5,
+      }}
+      contentContainerStyle={{ paddingHorizontal: 15 }}
+      text1Style={{
+        fontSize: 15,
+        fontWeight: "600",
+        color: "#fff",
+      }}
+      text2Style={{
+        fontSize: 13,
+        color: "#a1a1aa",
+      }}
+    />
+  ),
+  info: (props: any) => (
+    <BaseToast
+      {...props}
+      style={{
+        borderLeftColor: "#3b82f6",
+        backgroundColor: "#18181b",
+        borderLeftWidth: 5,
+      }}
+      contentContainerStyle={{ paddingHorizontal: 15 }}
+      text1Style={{
+        fontSize: 15,
+        fontWeight: "600",
+        color: "#fff",
+      }}
+      text2Style={{
+        fontSize: 13,
+        color: "#a1a1aa",
+      }}
+    />
+  ),
+}
+
 export default function App() {
   return (
     <SafeAreaProvider>
@@ -23,7 +86,7 @@ export default function App() {
           <I18nProvider>
             <StatusBar style="light" />
             <AppNavigator />
-            <Toast />
+            <Toast config={toastConfig} topOffset={60} />
           </I18nProvider>
         </AuthProvider>
       </QueryClientProvider>

@@ -1,34 +1,67 @@
+import { Ionicons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
 import { StatusBar } from "expo-status-bar"
 import { FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { GlassCard } from "../components/GlassCard"
 import { UserAvatar } from "../components/UserAvatar"
-import { useMySubscriptions } from "../hooks/api"
+import {
+  useMySubscriptions,
+  useSubscribeToWishlist,
+  useUnsubscribeFromWishlist,
+} from "../hooks/api"
+import { useI18n } from "../i18n/context"
 
 export default function FollowingScreen() {
   const { data: subscriptions, isLoading, refetch } = useMySubscriptions()
   const navigation = useNavigation<any>()
+  const subscribeMutation = useSubscribeToWishlist()
+  const unsubscribeMutation = useUnsubscribeFromWishlist()
+  const { t } = useI18n()
 
   const renderItem = ({ item }: { item: any }) => {
     const { wishlist } = item
+    const isSubscribed = !!item.id
+
     return (
       <TouchableOpacity
-        style={styles.card}
+        activeOpacity={0.7}
+        style={{ flex: 1, maxWidth: "48%" }}
         onPress={() => navigation.navigate("WishlistDetail", { wishlistId: wishlist.id })}
       >
-        <View style={styles.cardHeader}>
-          <Text style={styles.emoji}>{wishlist.emoji}</Text>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>Following</Text>
+        <GlassCard style={styles.card}>
+          <View style={styles.cardHeader}>
+            <View style={styles.cardTitleRow}>
+              <Text style={styles.emoji}>{wishlist.emoji}</Text>
+              <Text style={styles.title} numberOfLines={1}>
+                {wishlist.title}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={(e) => {
+                e.stopPropagation()
+                if (isSubscribed && item.id) {
+                  unsubscribeMutation.mutate(item.id)
+                } else {
+                  subscribeMutation.mutate(wishlist.id)
+                }
+              }}
+            >
+              <Ionicons
+                name={isSubscribed ? "bookmark" : "bookmark-outline"}
+                size={20}
+                color="#fbbf24"
+              />
+            </TouchableOpacity>
           </View>
-        </View>
 
-        <Text style={styles.title}>{wishlist.title}</Text>
-
-        <View style={styles.footer}>
-          <UserAvatar user={wishlist.user} size="xs" />
-          <Text style={styles.ownerName}>by {wishlist.user.displayName}</Text>
-        </View>
+          <View style={styles.footer}>
+            <UserAvatar user={wishlist.user} size="xs" />
+            <Text style={styles.ownerName}>
+              {t("wishlist.by", { name: wishlist.user.displayName })}
+            </Text>
+          </View>
+        </GlassCard>
       </TouchableOpacity>
     )
   }
@@ -37,7 +70,7 @@ export default function FollowingScreen() {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Following</Text>
+        <Text style={styles.headerTitle}>{t("following.title")}</Text>
       </View>
 
       <FlatList
@@ -52,7 +85,9 @@ export default function FollowingScreen() {
         }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>You haven't followed any wishlists yet.</Text>
+            <Ionicons name="heart-outline" size={64} color="rgba(255,255,255,0.1)" />
+            <Text style={styles.emptyTitle}>{t("following.empty_title")}</Text>
+            <Text style={styles.emptySubtitle}>{t("following.empty_subtitle")}</Text>
           </View>
         }
       />
@@ -72,18 +107,13 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     color: "#fff",
+    letterSpacing: -0.5,
   },
   list: {
     padding: 16,
   },
   card: {
-    flex: 1,
-    backgroundColor: "#18181b",
-    borderRadius: 16,
-    padding: 16,
     marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#27272a",
   },
   cardHeader: {
     flexDirection: "row",
@@ -91,25 +121,22 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginBottom: 12,
   },
+  cardTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
+    marginRight: 8,
+  },
   emoji: {
-    fontSize: 24,
-  },
-  badge: {
-    backgroundColor: "rgba(251, 191, 36, 0.1)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  badgeText: {
-    color: "#fbbf24",
-    fontSize: 10,
-    fontWeight: "600",
+    fontSize: 20,
   },
   title: {
     fontSize: 16,
     fontWeight: "600",
     color: "#fff",
-    marginBottom: 12,
+    flex: 1,
+    letterSpacing: -0.3,
   },
   footer: {
     flexDirection: "row",
@@ -118,14 +145,26 @@ const styles = StyleSheet.create({
   },
   ownerName: {
     fontSize: 12,
-    color: "#71717a",
+    color: "rgba(255,255,255,0.4)",
   },
   empty: {
-    padding: 32,
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 80,
   },
-  emptyText: {
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#fff",
+    marginTop: 16,
+    letterSpacing: -0.3,
+  },
+  emptySubtitle: {
+    fontSize: 14,
     color: "#71717a",
+    marginTop: 8,
     textAlign: "center",
+    maxWidth: 260,
   },
 })

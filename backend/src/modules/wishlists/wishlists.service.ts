@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common"
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common"
 import { Privacy, type SubscriptionStatus } from "@prisma/client"
 // biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"
@@ -57,35 +53,30 @@ export class WishlistsService {
           },
           orderBy: { createdAt: "desc" },
         },
+        subscriptions: {
+          select: {
+            id: true,
+            userId: true,
+            status: true,
+          },
+        },
       },
     })
 
     if (!wishlist) throw new NotFoundException("Wishlist not found")
 
     // Privacy check
-    if (
-      wishlist.privacy === Privacy.PRIVATE &&
-      wishlist.userId !== currentUserId
-    ) {
+    if (wishlist.privacy === Privacy.PRIVATE && wishlist.userId !== currentUserId) {
       throw new ForbiddenException("This wishlist is private")
     }
 
-    if (
-      wishlist.privacy === Privacy.FRIENDS &&
-      wishlist.userId !== currentUserId
-    ) {
-      if (!currentUserId)
-        throw new ForbiddenException("This wishlist is for friends only")
+    if (wishlist.privacy === Privacy.FRIENDS && wishlist.userId !== currentUserId) {
+      if (!currentUserId) throw new ForbiddenException("This wishlist is for friends only")
 
-      const isFriend = await this.friendsService.isFriend(
-        currentUserId,
-        wishlist.userId,
-      )
+      const isFriend = await this.friendsService.isFriend(currentUserId, wishlist.userId)
 
       if (!isFriend) {
-        throw new ForbiddenException(
-          "This wishlist is for approved friends only",
-        )
+        throw new ForbiddenException("This wishlist is for approved friends only")
       }
     }
 
@@ -116,9 +107,7 @@ export class WishlistsService {
             id: item.reservation.id,
             status: item.reservation.status,
             isAnonymous: item.reservation.isAnonymous,
-            userId: item.reservation.isAnonymous
-              ? undefined
-              : item.reservation.userId,
+            userId: item.reservation.isAnonymous ? undefined : item.reservation.userId,
             isReserved: true,
           },
         }
@@ -149,14 +138,10 @@ export class WishlistsService {
     })
 
     if (!wishlist) throw new NotFoundException("Wishlist not found")
-    if (wishlist.userId !== userId)
-      throw new ForbiddenException("Not your wishlist")
+    if (wishlist.userId !== userId) throw new ForbiddenException("Not your wishlist")
 
     // If privacy changed to PRIVATE, remove all subscriptions
-    if (
-      dto.privacy === Privacy.PRIVATE &&
-      wishlist.privacy !== Privacy.PRIVATE
-    ) {
+    if (dto.privacy === Privacy.PRIVATE && wishlist.privacy !== Privacy.PRIVATE) {
       await this.prisma.subscription.deleteMany({
         where: { wishlistId },
       })
@@ -174,8 +159,7 @@ export class WishlistsService {
     })
 
     if (!wishlist) throw new NotFoundException("Wishlist not found")
-    if (wishlist.userId !== userId)
-      throw new ForbiddenException("Not your wishlist")
+    if (wishlist.userId !== userId) throw new ForbiddenException("Not your wishlist")
 
     await this.prisma.wishlist.delete({ where: { id: wishlistId } })
     return { success: true }
@@ -208,6 +192,13 @@ export class WishlistsService {
           items: {
             take: 4, // Preview items
             select: { imageUrl: true },
+          },
+          subscriptions: {
+            select: {
+              id: true,
+              userId: true,
+              status: true,
+            },
           },
         },
         orderBy: { updatedAt: "desc" },

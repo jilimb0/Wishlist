@@ -5,6 +5,7 @@ import { translations } from "./translations"
 
 interface I18nContextType {
   language: string
+  locale: string
   t: (key: string, params?: Record<string, string | number>) => string
   formatPrice: (amount: number, originalCurrency?: string) => string
 }
@@ -67,7 +68,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   )
 
   return (
-    <I18nContext.Provider value={{ language, t, formatPrice }}>{children}</I18nContext.Provider>
+    <I18nContext.Provider value={{ language, locale: language, t, formatPrice }}>
+      {children}
+    </I18nContext.Provider>
   )
 }
 

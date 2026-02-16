@@ -24,10 +24,7 @@ export class SubscriptionsController {
   }
 
   @Delete("subscriptions/:id")
-  async unsubscribe(
-    @Param("id") id: string,
-    @CurrentUser("id") userId: string,
-  ) {
+  async unsubscribe(@Param("id") id: string, @CurrentUser("id") userId: string) {
     return this.subscriptionsService.unsubscribe(id, userId)
   }
 

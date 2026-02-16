@@ -1,11 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 // Replace with your actual backend URL.
-// For Android Emulator use "http://10.0.2.2:3000/api"
-// For iOS Simulator use "http://localhost:3000/api"
+// For Android Emulator use "http://10.0.2.2:3010/api"
+// For iOS Simulator use "http://localhost:3010/api"
 // Replace with your machine's IP address if testing on a real device
 // or use a tunneling service like ngrok for external access.
-const API_BASE = "http://192.168.100.7:3000/api"
+const API_BASE = "http://localhost:3010/api"
 
 class ApiClient {
   private token: string | null = null
@@ -50,23 +50,45 @@ class ApiClient {
       headers.Authorization = `Bearer ${this.token}`
     }
 
-    const response = await fetch(`${API_BASE}${endpoint}`, {
-      ...options,
-      headers,
-    })
+    // Create abort controller for timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
 
-    if (response.status === 401) {
-      await this.setToken(null)
-      // Navigation to login should be handled by the AuthContext/Navigation state
-      throw new Error("Unauthorized")
+    try {
+      console.log(`[API] ${options.method || "GET"} ${API_BASE}${endpoint}`)
+
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        ...options,
+        headers,
+        signal: controller.signal,
+      })
+
+      clearTimeout(timeoutId)
+
+      console.log(`[API] Response status: ${response.status}`)
+
+      if (response.status === 401) {
+        await this.setToken(null)
+        throw new Error("Unauthorized")
+      }
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}))
+        throw new Error(error.message || `Request failed: ${response.status}`)
+      }
+
+      return response.json()
+    } catch (error: any) {
+      clearTimeout(timeoutId)
+
+      if (error.name === "AbortError") {
+        console.error("[API] Request timeout")
+        throw new Error("Request timeout - please check your connection")
+      }
+
+      console.error("[API] Request failed:", error.message)
+      throw error
     }
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}))
-      throw new Error(error.message || `Request failed: ${response.status}`)
-    }
-
-    return response.json()
   }
 
   get<T>(endpoint: string) {

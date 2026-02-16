@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from "@nestjs/common"
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
 import { Public } from "../auth/public.decorator"
 // biome-ignore lint/style/useImportType: validation requirement
@@ -25,10 +16,7 @@ export class WishlistsController {
   }
 
   @Post("wishlists")
-  async create(
-    @CurrentUser("id") userId: string,
-    @Body() dto: CreateWishlistDto,
-  ) {
+  async create(@CurrentUser("id") userId: string, @Body() dto: CreateWishlistDto) {
     return this.wishlistsService.create(userId, dto)
   }
 

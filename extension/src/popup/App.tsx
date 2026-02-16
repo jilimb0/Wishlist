@@ -33,7 +33,7 @@ export default function App() {
   // but we use localStorage token, so user needs to login in extension separately
   // OR we can try to message the web app if open. For MVP: separate login/token input)
   useEffect(() => {
-    chrome.storage.local.get(["token"], (result) => {
+    chrome.storage.local.get(["token"], (result: { token?: string }) => {
       if (result.token) {
         setToken(result.token)
         fetchWishlists(result.token)
@@ -46,9 +46,13 @@ export default function App() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const activeTab = tabs[0]
       if (activeTab?.id) {
-        chrome.tabs.sendMessage(activeTab.id, { action: "scrape" }, (response) => {
-          if (response) setMeta(response)
-        })
+        chrome.tabs.sendMessage(
+          activeTab.id,
+          { action: "scrape" },
+          (response: ScrapedData | null) => {
+            if (response) setMeta(response)
+          },
+        )
       }
     })
   }, [])

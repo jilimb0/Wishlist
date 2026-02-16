@@ -30,10 +30,7 @@ export class UsersController {
   }
 
   @Patch("me")
-  async updateMe(
-    @CurrentUser("id") userId: string,
-    @Body() dto: UpdateUserDto,
-  ) {
+  async updateMe(@CurrentUser("id") userId: string, @Body() dto: UpdateUserDto) {
     return this.usersService.update(userId, dto)
   }
 
@@ -61,10 +58,7 @@ export class UsersController {
       limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
     }),
   )
-  async uploadAvatar(
-    @CurrentUser("id") userId: string,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
+  async uploadAvatar(@CurrentUser("id") userId: string, @UploadedFile() file: Express.Multer.File) {
     const avatarUrl = `/uploads/${file.filename}`
     return this.usersService.updateAvatar(userId, avatarUrl)
   }

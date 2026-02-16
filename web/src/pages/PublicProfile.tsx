@@ -23,9 +23,7 @@ export default function PublicProfilePage() {
   const { id } = useParams<{ id: string }>()
   const { data: me } = useMe()
   const { data: user, isLoading: userLoading, error } = usePublicProfile(id!)
-  const { data: wishlists, isLoading: wishlistsLoading } = useDiscoverByUser(
-    id!,
-  )
+  const { data: wishlists, isLoading: wishlistsLoading } = useDiscoverByUser(id!)
   const friends = useFriends()
   const pendingFriends = usePendingFriends()
   const sendFriendRequest = useSendFriendRequest()
@@ -57,13 +55,8 @@ export default function PublicProfilePage() {
   if (error || !user) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-xl font-bold text-red-400">
-          {t("profile.user_not_found")}
-        </h2>
-        <Link
-          to="/discover"
-          className="text-brand-400 hover:underline mt-2 inline-block"
-        >
+        <h2 className="text-xl font-bold text-red-400">{t("profile.user_not_found")}</h2>
+        <Link to="/discover" className="text-brand-400 hover:underline mt-2 inline-block">
           {t("profile.back_to_discover")}
         </Link>
       </div>
@@ -117,9 +110,7 @@ export default function PublicProfilePage() {
         </div>
 
         <div className="space-y-1">
-          <h1 className="text-3xl font-black text-zinc-100 tracking-tight">
-            {user.displayName}
-          </h1>
+          <h1 className="text-3xl font-black text-zinc-100 tracking-tight">{user.displayName}</h1>
           <p className="text-zinc-500 font-medium">{user.email}</p>
         </div>
 
@@ -136,12 +127,8 @@ export default function PublicProfilePage() {
                 }}
                 className="group px-6 py-2 bg-zinc-800 text-zinc-400 text-xs font-black uppercase tracking-widest rounded-xl border border-zinc-700 active:scale-95 transition-all hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20"
               >
-                <span className="block group-hover:hidden">
-                  {t("profile.friends")}
-                </span>
-                <span className="hidden group-hover:block">
-                  {t("common.remove")}
-                </span>
+                <span className="block group-hover:hidden">{t("profile.friends")}</span>
+                <span className="hidden group-hover:block">{t("common.remove")}</span>
               </button>
             ) : isPending ? (
               <div className="flex flex-col items-center gap-2">
@@ -151,10 +138,7 @@ export default function PublicProfilePage() {
                 <button
                   type="button"
                   onClick={() =>
-                    handleRemoveFriend(
-                      pendingRequest.id,
-                      t("discover.cancel_request_confirm"),
-                    )
+                    handleRemoveFriend(pendingRequest.id, t("discover.cancel_request_confirm"))
                   }
                   className="text-[10px] font-bold text-zinc-500 hover:text-red-400 transition-colors"
                 >
@@ -203,9 +187,7 @@ export default function PublicProfilePage() {
         ) : (
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {wishlists.map((wl: any) => {
-              const subscription = subscriptions.data?.find(
-                (s) => s.wishlistId === wl.id,
-              )
+              const subscription = subscriptions.data?.find((s) => s.wishlistId === wl.id)
               const isSubscribed = !!subscription
 
               return (
@@ -221,15 +203,13 @@ export default function PublicProfilePage() {
                         e.stopPropagation()
                         if (isSubscribed) {
                           unsubscribe.mutate(subscription!.id, {
-                            onSuccess: () =>
-                              toast.success(`${t("wishlist.unfollow")}!`),
+                            onSuccess: () => toast.success(`${t("wishlist.unfollow")}!`),
                           })
                         } else {
                           subscribe.mutate(
                             { wishlistId: wl.id },
                             {
-                              onSuccess: () =>
-                                toast.success(`${t("wishlist.follow")}!`),
+                              onSuccess: () => toast.success(`${t("wishlist.follow")}!`),
                             },
                           )
                         }
@@ -240,9 +220,7 @@ export default function PublicProfilePage() {
                           : "text-brand-400 hover:text-brand-300 hover:bg-brand-400/5"
                       }`}
                     >
-                      {isSubscribed
-                        ? t("wishlist.unfollow")
-                        : t("wishlist.follow")}
+                      {isSubscribed ? t("wishlist.unfollow") : t("wishlist.follow")}
                     </button>
                   }
                 />
