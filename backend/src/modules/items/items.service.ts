@@ -38,6 +38,7 @@ export class ItemsService {
         wishlistId,
         title: dto.title || dto.url || "Untitled Item",
         description: dto.description,
+        status: dto.status || "ACTIVE",
         url: dto.url || "",
         imageUrl: dto.imageUrl,
         currentPrice: dto.price,
@@ -93,6 +94,7 @@ export class ItemsService {
       data: {
         title: dto.title,
         description: dto.description,
+        status: dto.status,
         url: dto.url,
         imageUrl: dto.imageUrl,
         currentPrice: dto.price,

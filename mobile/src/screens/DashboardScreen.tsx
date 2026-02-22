@@ -39,12 +39,16 @@ export default function DashboardScreen() {
 
   const handleCreate = (data: any) => {
     createMutation.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (createdWishlist) => {
         setIsCreateOpen(false)
         Toast.show({
           type: "success",
           text1: t("wishlist.created"),
           text2: t("wishlist.created_subtitle"),
+        })
+        navigation.navigate("WishlistDetail", {
+          wishlistId: createdWishlist.id,
+          title: createdWishlist.title,
         })
       },
       onError: (err: any) => {

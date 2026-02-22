@@ -52,6 +52,12 @@ export function WishlistCard({
                   {t(`wishlist.${wishlist.privacy.toLowerCase()}`)}
                 </span>
               )}
+              {wishlist.type && (
+                <span className="flex items-center gap-1.5 shrink-0">
+                  <span className="w-1 h-1 rounded-full bg-zinc-700" />
+                  <span className="truncate">Type: {wishlist.type}</span>
+                </span>
+              )}
             </p>
           </div>
         </div>

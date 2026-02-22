@@ -12,6 +12,10 @@ export class CreateWishlistDto {
 
   @IsOptional()
   @IsString()
+  type?: string
+
+  @IsOptional()
+  @IsString()
   emoji?: string
 
   @IsEnum(Privacy)
@@ -26,6 +30,10 @@ export class UpdateWishlistDto {
   @IsOptional()
   @IsString()
   description?: string
+
+  @IsOptional()
+  @IsString()
+  type?: string
 
   @IsOptional()
   @IsString()

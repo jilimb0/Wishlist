@@ -1,12 +1,4 @@
-import { useI18n } from "@/i18n/context"
 import { Link, useLocation } from "react-router-dom"
-
-const tabs = [
-  { path: "/", icon: "home", labelKey: "nav.my_lists" },
-  { path: "/discover", icon: "discover", labelKey: "nav.discover" },
-  { path: "/following", icon: "following", labelKey: "nav.following" },
-  { path: "/profile", icon: "profile", labelKey: "nav.profile" },
-] as const
 
 function TabIcon({ type, active }: { type: string; active: boolean }) {
   const color = active ? "#FFC107" : "#71717a"
@@ -29,7 +21,7 @@ function TabIcon({ type, active }: { type: string; active: boolean }) {
           <polyline points="9 22 9 12 15 12 15 22" stroke={active ? "#0a0a0a" : color} />
         </svg>
       )
-    case "discover":
+    case "lists":
       return (
         <svg
           width="24"
@@ -41,25 +33,10 @@ function TabIcon({ type, active }: { type: string; active: boolean }) {
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <title>discover</title>
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-      )
-    case "following":
-      return (
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill={active ? color : "none"}
-          stroke={color}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <title>following</title>
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          <title>lists</title>
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <line x1="7" y1="9" x2="17" y2="9" />
+          <line x1="7" y1="13" x2="14" y2="13" />
         </svg>
       )
     case "profile":
@@ -86,10 +63,17 @@ function TabIcon({ type, active }: { type: string; active: boolean }) {
 
 export function MobileNav() {
   const location = useLocation()
-  const { t } = useI18n()
+  const lastActiveWishlistId = localStorage.getItem("lastActiveWishlistId")
+  const mainPath = lastActiveWishlistId ? `/wishlists/${lastActiveWishlistId}` : "/"
+  const tabs = [
+    { path: mainPath, icon: "home", label: "Main" },
+    { path: "/lists", icon: "lists", label: "Lists" },
+    { path: "/profile", icon: "profile", label: "Profile" },
+  ] as const
 
   const isActive = (path: string) => {
-    if (path === "/") return location.pathname === "/"
+    if (path.startsWith("/wishlists/")) return location.pathname.startsWith("/wishlists/")
+    if (path === "/lists") return location.pathname === "/lists"
     return location.pathname.startsWith(path)
   }
 
@@ -101,7 +85,7 @@ export function MobileNav() {
           <Link key={tab.path} to={tab.path} className="mobile-nav-tab">
             <TabIcon type={tab.icon} active={active} />
             <span className={`mobile-nav-label ${active ? "mobile-nav-label--active" : ""}`}>
-              {t(tab.labelKey)}
+              {tab.label}
             </span>
           </Link>
         )

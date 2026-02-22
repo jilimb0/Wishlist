@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsNumber, IsOptional, IsString, IsUrl, Max, Min } from "class-validator"
+import { IsBoolean, IsIn, IsInt, IsNumber, IsOptional, IsString, IsUrl, Max, Min } from "class-validator"
 
 export class CreateItemDto {
   @IsOptional()
@@ -12,6 +12,10 @@ export class CreateItemDto {
   @IsOptional()
   @IsString()
   description?: string
+
+  @IsOptional()
+  @IsIn(["ACTIVE", "COMPLETED"])
+  status?: "ACTIVE" | "COMPLETED"
 
   @IsOptional()
   @IsUrl()
@@ -34,6 +38,10 @@ export class UpdateItemDto {
   @IsOptional()
   @IsString()
   description?: string
+
+  @IsOptional()
+  @IsIn(["ACTIVE", "COMPLETED"])
+  status?: "ACTIVE" | "COMPLETED"
 
   @IsOptional()
   @IsInt()

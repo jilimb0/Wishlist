@@ -15,7 +15,8 @@ import {
   useWishlist,
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { toast } from "react-hot-toast"
 import { Link, useNavigate, useParams } from "react-router-dom"
 
 export default function WishlistDetailPage() {
@@ -38,10 +39,39 @@ export default function WishlistDetailPage() {
   const [editingItem, setEditingItem] = useState<any | null>(null)
   const [deleteWishlistId, setDeleteWishlistId] = useState<string | null>(null)
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<"GRID" | "LIST">("GRID")
+  const [sortMode, setSortMode] = useState<"NEWEST" | "OLDEST" | "TITLE" | "PRICE">("NEWEST")
 
   const updateItem = useUpdateItem()
 
   const isOwner = wishlist?.userId === user?.id
+
+  const handleShare = async () => {
+    if (!wishlist) return
+    const shareUrl = `${window.location.origin}/wishlists/${wishlist.id}`
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: wishlist.title,
+          text: `Check out this wishlist: ${wishlist.title}`,
+          url: shareUrl,
+        })
+        return
+      }
+
+      await navigator.clipboard.writeText(shareUrl)
+      toast.success("Wishlist link copied")
+    } catch (_error) {
+      toast.error("Could not share wishlist")
+    }
+  }
+
+  useEffect(() => {
+    if (wishlist?.id) {
+      localStorage.setItem("lastActiveWishlistId", wishlist.id)
+    }
+  }, [wishlist?.id])
 
   if (isLoading) {
     return (
@@ -55,7 +85,7 @@ export default function WishlistDetailPage() {
     return (
       <div className="text-center py-12 space-y-4">
         <p className="text-red-400">{(error as Error).message || "Could not load wishlist"}</p>
-        <Link to="/" className="text-brand-400 hover:underline text-sm">
+        <Link to="/lists" className="text-brand-400 hover:underline text-sm">
           ← Back to dashboard
         </Link>
       </div>
@@ -85,7 +115,7 @@ export default function WishlistDetailPage() {
               onClick={() => {
                 if (deleteWishlistId) {
                   deleteWishlist.mutate(deleteWishlistId, {
-                    onSuccess: () => navigate("/"),
+                    onSuccess: () => navigate("/lists"),
                   })
                 }
               }}
@@ -180,6 +210,30 @@ export default function WishlistDetailPage() {
         </div>
 
         <div className="flex gap-1.5 shrink-0">
+          <button
+            type="button"
+            onClick={handleShare}
+            className="p-2 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 rounded-xl transition-all active:scale-95"
+            title="Share"
+          >
+            <div className="text-zinc-400">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-label="Share"
+              >
+                <title>Share</title>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M8.59 13.51l6.83 3.98m0-10.98l-6.83 3.98m8.83-5.49a2 2 0 11-4 0 2 2 0 014 0zm0 14a2 2 0 11-4 0 2 2 0 014 0zM7 12a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+            </div>
+          </button>
           {isOwner ? (
             <>
               <button
@@ -262,6 +316,7 @@ export default function WishlistDetailPage() {
         <WishlistForm
           initial={{
             title: wishlist.title,
+            type: wishlist.type || "",
             description: wishlist.description || "",
             emoji: wishlist.emoji || "🎁",
             privacy: wishlist.privacy,
@@ -319,10 +374,21 @@ export default function WishlistDetailPage() {
           {t("wishlist.no_items")}
         </div>
       ) : (
-        <ItemsGrid
+        <ItemsView
           items={wishlist.items}
           isOwner={isOwner}
           user={user}
+          viewMode={viewMode}
+          sortMode={sortMode}
+          onChangeViewMode={setViewMode}
+          onChangeSortMode={setSortMode}
+          onToggleStatus={(item: any) =>
+            updateItem.mutate({
+              id: item.id,
+              wishlistId: wishlist.id,
+              status: item.status === "COMPLETED" ? "ACTIVE" : "COMPLETED",
+            })
+          }
           onEdit={setEditingItem}
           onRemove={(id: string) => deleteItem.mutate(id)}
           onReserve={(id: string) => reserveItem.mutate({ itemId: id })}
@@ -333,31 +399,165 @@ export default function WishlistDetailPage() {
   )
 }
 
-function ItemsGrid({ items, isOwner, user, onEdit, onRemove, onReserve, onCancelReserve }: any) {
+function ItemsView({
+  items,
+  isOwner,
+  user,
+  viewMode,
+  sortMode,
+  onChangeViewMode,
+  onChangeSortMode,
+  onToggleStatus,
+  onEdit,
+  onRemove,
+  onReserve,
+  onCancelReserve,
+}: any) {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
-  const totalPages = Math.ceil(items.length / itemsPerPage)
+  const sortedItems = [...items].sort((a, b) => {
+    if (sortMode === "TITLE") return a.title.localeCompare(b.title)
+    if (sortMode === "PRICE") return (b.currentPrice || 0) - (a.currentPrice || 0)
+    if (sortMode === "OLDEST") {
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    }
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  })
+
+  const totalPages = Math.ceil(sortedItems.length / itemsPerPage)
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem)
+  const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem)
 
   return (
     <div className="h-full flex flex-col min-h-0">
-      <div className="flex-1 overflow-y-auto min-h-0 scrollbar-hide pb-4">
-        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
-          {currentItems.map((item: any) => (
-            <ItemCard
-              key={item.id}
-              item={item}
-              isOwner={isOwner}
-              user={user}
-              onEdit={onEdit}
-              onRemove={onRemove}
-              onReserve={onReserve}
-              onCancelReserve={onCancelReserve}
-            />
-          ))}
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onChangeViewMode("GRID")}
+            className={`px-2.5 py-1.5 text-xs rounded-lg border transition-colors ${
+              viewMode === "GRID"
+                ? "bg-brand-500/20 border-brand-500/40 text-brand-300"
+                : "bg-zinc-900/50 border-zinc-800 text-zinc-400"
+            }`}
+          >
+            Grid
+          </button>
+          <button
+            type="button"
+            onClick={() => onChangeViewMode("LIST")}
+            className={`px-2.5 py-1.5 text-xs rounded-lg border transition-colors ${
+              viewMode === "LIST"
+                ? "bg-brand-500/20 border-brand-500/40 text-brand-300"
+                : "bg-zinc-900/50 border-zinc-800 text-zinc-400"
+            }`}
+          >
+            List
+          </button>
         </div>
+
+        <select
+          value={sortMode}
+          onChange={(e) =>
+            onChangeSortMode(e.target.value as "NEWEST" | "OLDEST" | "TITLE" | "PRICE")
+          }
+          className="px-2.5 py-1.5 text-xs rounded-lg bg-zinc-900/50 border border-zinc-800 text-zinc-300 focus:outline-none focus:border-zinc-700"
+        >
+          <option value="NEWEST">Newest</option>
+          <option value="OLDEST">Oldest</option>
+          <option value="TITLE">Title</option>
+          <option value="PRICE">Price</option>
+        </select>
+      </div>
+
+      <div className="flex-1 overflow-y-auto min-h-0 scrollbar-hide pb-4">
+        {viewMode === "GRID" ? (
+          <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
+            {currentItems.map((item: any) => (
+              <ItemCard
+                key={item.id}
+                item={item}
+                isOwner={isOwner}
+                user={user}
+                onToggleStatus={onToggleStatus}
+                onEdit={onEdit}
+                onRemove={onRemove}
+                onReserve={onReserve}
+                onCancelReserve={onCancelReserve}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {currentItems.map((item: any) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-between gap-3 p-3 rounded-xl border border-zinc-800 bg-zinc-900/50"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span
+                    className={`w-3 h-3 rounded-full ${
+                      item.status === "COMPLETED"
+                        ? "bg-green-500"
+                        : item.reservation?.isReserved
+                          ? "bg-yellow-500"
+                          : "bg-zinc-600"
+                    }`}
+                    title={item.status === "COMPLETED" ? "Completed" : "Active"}
+                  />
+                  <p className={`text-sm truncate ${item.status === "COMPLETED" ? "text-zinc-500 line-through" : "text-zinc-100"}`}>
+                    {item.title}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {isOwner && (
+                    <button
+                      type="button"
+                      onClick={() => onToggleStatus(item)}
+                      className="px-2.5 py-1.5 text-[11px] rounded-lg border border-green-500/20 text-green-400 hover:bg-green-500/10"
+                    >
+                      {item.status === "COMPLETED" ? "Undo" : "Done"}
+                    </button>
+                  )}
+                  {!isOwner && !item.reservation?.isReserved && (
+                    <button
+                      type="button"
+                      onClick={() => onReserve(item.id)}
+                      className="px-2.5 py-1.5 text-[11px] rounded-lg border border-zinc-700 text-zinc-300 hover:border-brand-500/40 hover:text-brand-300"
+                    >
+                      Reserve
+                    </button>
+                  )}
+                  {isOwner && (
+                    <button
+                      type="button"
+                      onClick={() => onEdit(item)}
+                      className="px-2.5 py-1.5 text-[11px] rounded-lg border border-zinc-700 text-zinc-300 hover:text-white"
+                    >
+                      Edit
+                    </button>
+                  )}
+                  {(isOwner || (item.reservation?.id && item.reservation?.userId === user?.id)) && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        item.reservation?.id && item.reservation?.userId === user?.id
+                          ? onCancelReserve(item.reservation.id)
+                          : onRemove(item.id)
+                      }
+                      className="px-2.5 py-1.5 text-[11px] rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10"
+                    >
+                      {item.reservation?.id && item.reservation?.userId === user?.id
+                        ? "Unreserve"
+                        : "Delete"}
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {totalPages > 1 && (

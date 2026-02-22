@@ -19,6 +19,11 @@ export class WishlistsService {
       where: { userId },
       include: {
         _count: { select: { items: true } },
+        items: {
+          select: {
+            status: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     })

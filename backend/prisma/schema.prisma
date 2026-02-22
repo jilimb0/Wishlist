@@ -36,6 +36,11 @@ enum FriendshipStatus {
   ACCEPTED
 }
 
+enum ItemStatus {
+  ACTIVE
+  COMPLETED
+}
+
 // ─── Models ─────────────────────────────────────────────────────────
 
 model User {
@@ -103,6 +108,7 @@ model Wishlist {
   userId      String   @map("user_id") @db.Uuid
   title       String   @db.VarChar(200)
   description String?
+  type        String?  @db.VarChar(100)
   emoji       String   @default("🎁") @db.VarChar(10)
   privacy     Privacy  @default(PRIVATE)
   createdAt   DateTime @default(now()) @map("created_at")
@@ -121,6 +127,7 @@ model Item {
   wishlistId   String   @map("wishlist_id") @db.Uuid
   title        String   @db.VarChar(500)
   description  String?
+  status       ItemStatus @default(ACTIVE)
   url          String
   imageUrl     String?  @map("image_url")
   currentPrice Decimal? @map("current_price") @db.Decimal(10, 2)

@@ -6,6 +6,7 @@ import DashboardPage from "./pages/Dashboard"
 import DiscoverPage from "./pages/Discover"
 import FollowingPage from "./pages/Following"
 import ForgotPasswordPage from "./pages/ForgotPassword"
+import HomePage from "./pages/Home"
 import LoginPage from "./pages/Login"
 import ProfilePage from "./pages/Profile"
 import PublicProfilePage from "./pages/PublicProfile"
@@ -60,7 +61,8 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<DashboardPage />} />
+          <Route index element={<HomePage />} />
+          <Route path="lists" element={<DashboardPage />} />
           <Route path="wishlists/:id" element={<WishlistDetailPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="discover" element={<DiscoverPage />} />

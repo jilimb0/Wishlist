@@ -2,26 +2,140 @@ import { WishlistForm } from "@/components/Forms"
 import { Modal } from "@/components/Modal"
 import { WishlistCard } from "@/components/WishlistCard"
 import {
+  useAddItem,
+  useDiscover,
   useCreateWishlist,
   useDeleteWishlist,
+  useMe,
   useMySubscriptions,
   useMyWishlists,
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
-import { useState } from "react"
+import type { Wishlist } from "@/types"
+import { useMemo, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 
 export default function DashboardPage() {
   const [showForm, setShowForm] = useState(false)
+  const navigate = useNavigate()
   const wishlists = useMyWishlists()
-  const _subscriptions = useMySubscriptions()
+  const subscriptions = useMySubscriptions()
+  const { data: me } = useMe()
+  const { data: discoverData } = useDiscover("", 50)
   const createWishlist = useCreateWishlist()
+  const addItem = useAddItem()
   const deleteWishlist = useDeleteWishlist()
   const [deleteWishlistId, setDeleteWishlistId] = useState<string | null>(null)
+  const [search, setSearch] = useState("")
+  const [typeFilter, setTypeFilter] = useState("ALL")
+  const [stateFilter, setStateFilter] = useState<"ALL" | "ACTIVE" | "COMPLETED">("ALL")
+  const [sortBy, setSortBy] = useState<"NEWEST" | "OLDEST" | "TITLE">("NEWEST")
   const { t } = useI18n()
+
+  const followingCount = subscriptions.data?.length || 0
+  const discoverCount =
+    discoverData?.wishlists?.filter(
+      (wl) => wl.user?.id !== me?.id && !subscriptions.data?.some((s) => s.wishlistId === wl.id),
+    ).length || 0
+
+  const filteredWishlists = useMemo(() => {
+    const list = [...(wishlists.data || [])]
+
+    const filtered = list.filter((wl) => {
+      const matchesType = typeFilter === "ALL" || (wl.type || "Other") === typeFilter
+      const matchesSearch =
+        !search.trim() ||
+        wl.title.toLowerCase().includes(search.trim().toLowerCase()) ||
+        (wl.description || "").toLowerCase().includes(search.trim().toLowerCase()) ||
+        (wl.type || "").toLowerCase().includes(search.trim().toLowerCase())
+      const isCompleted = !!wl.items?.length && wl.items.every((item) => item.status === "COMPLETED")
+      const matchesState =
+        stateFilter === "ALL" ||
+        (stateFilter === "COMPLETED" ? isCompleted : !isCompleted)
+
+      return matchesType && matchesSearch && matchesState
+    })
+
+    filtered.sort((a: Wishlist, b: Wishlist) => {
+      if (sortBy === "TITLE") return a.title.localeCompare(b.title)
+      if (sortBy === "OLDEST") {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    })
+
+    return filtered
+  }, [wishlists.data, typeFilter, stateFilter, search, sortBy])
+
+  const typeOptions = useMemo(() => {
+    const values = new Set((wishlists.data || []).map((wl) => wl.type || "Other"))
+    return ["ALL", ...Array.from(values)]
+  }, [wishlists.data])
 
   return (
     <div className="flex flex-col h-full">
       <section className="flex flex-col h-full">
+        <div className="mb-4">
+          <h1 className="text-xl font-bold text-white">All Wishlists</h1>
+          <div className="mt-3 flex items-center gap-2">
+            <Link
+              to="/discover"
+              className="px-3 py-1.5 text-xs font-bold uppercase tracking-widest rounded-lg border border-zinc-800 bg-zinc-900/60 text-zinc-300 hover:text-white hover:border-zinc-700 transition-colors inline-flex items-center gap-2"
+            >
+              Discover
+              <span className="px-1.5 py-0.5 text-[10px] leading-none rounded-md bg-brand-500/20 text-brand-400 border border-brand-500/30">
+                {discoverCount}
+              </span>
+            </Link>
+            <Link
+              to="/following"
+              className="px-3 py-1.5 text-xs font-bold uppercase tracking-widest rounded-lg border border-zinc-800 bg-zinc-900/60 text-zinc-300 hover:text-white hover:border-zinc-700 transition-colors inline-flex items-center gap-2"
+            >
+              Following
+              <span className="px-1.5 py-0.5 text-[10px] leading-none rounded-md bg-zinc-800 text-zinc-300 border border-zinc-700">
+                {followingCount}
+              </span>
+            </Link>
+          </div>
+          <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search wishlists..."
+              className="w-full px-3 py-2 text-sm rounded-lg bg-zinc-900/60 border border-zinc-800 text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-700"
+            />
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="w-full px-3 py-2 text-sm rounded-lg bg-zinc-900/60 border border-zinc-800 text-zinc-200 focus:outline-none focus:border-zinc-700"
+            >
+              {typeOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt === "ALL" ? "All types" : opt}
+                </option>
+              ))}
+            </select>
+            <select
+              value={stateFilter}
+              onChange={(e) => setStateFilter(e.target.value as "ALL" | "ACTIVE" | "COMPLETED")}
+              className="w-full px-3 py-2 text-sm rounded-lg bg-zinc-900/60 border border-zinc-800 text-zinc-200 focus:outline-none focus:border-zinc-700"
+            >
+              <option value="ALL">All states</option>
+              <option value="ACTIVE">Active</option>
+              <option value="COMPLETED">Completed</option>
+            </select>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as "NEWEST" | "OLDEST" | "TITLE")}
+              className="w-full px-3 py-2 text-sm rounded-lg bg-zinc-900/60 border border-zinc-800 text-zinc-200 focus:outline-none focus:border-zinc-700 md:col-span-3"
+            >
+              <option value="NEWEST">Sort: Newest first</option>
+              <option value="OLDEST">Sort: Oldest first</option>
+              <option value="TITLE">Sort: Title A-Z</option>
+            </select>
+          </div>
+        </div>
+
         {/* Create Wishlist Modal */}
         <Modal
           isOpen={showForm}
@@ -31,11 +145,22 @@ export default function DashboardPage() {
           centered
         >
           <WishlistForm
-            onSubmit={(data: any) =>
-              createWishlist.mutate(data, {
-                onSuccess: () => setShowForm(false),
+            onSubmit={(data: any) => {
+              const { firstWishTitle, ...wishlistData } = data
+              return createWishlist.mutate(wishlistData, {
+                onSuccess: (createdWishlist) => {
+                  if (firstWishTitle?.trim()) {
+                    addItem.mutate({
+                      wishlistId: createdWishlist.id,
+                      title: firstWishTitle.trim(),
+                      url: "",
+                    })
+                  }
+                  setShowForm(false)
+                  navigate(`/wishlists/${createdWishlist.id}`)
+                },
               })
-            }
+            }}
             isLoading={createWishlist.isPending}
             mobileMode={window.innerWidth < 768}
           />
@@ -88,7 +213,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {wishlists.data?.map((wl: any) => (
+            {filteredWishlists.map((wl: any) => (
               <WishlistCard
                 key={wl.id}
                 wishlist={wl}
@@ -108,6 +233,11 @@ export default function DashboardPage() {
                 }
               />
             ))}
+            {!filteredWishlists.length && (
+              <div className="col-span-full text-center py-10 text-zinc-500 border border-dashed border-zinc-800 rounded-2xl">
+                No wishlists match current filters
+              </div>
+            )}
 
             {/* Floating Action Button */}
             <button

@@ -6,6 +6,7 @@ interface ItemCardProps {
   item: Item
   isOwner: boolean
   user: User | null
+  onToggleStatus?: (item: Item) => void
   onEdit?: (item: Item) => void
   onRemove?: (id: string) => void
   onReserve?: (id: string) => void
@@ -16,6 +17,7 @@ export function ItemCard({
   item,
   isOwner,
   user,
+  onToggleStatus,
   onEdit,
   onRemove,
   onReserve,
@@ -76,7 +78,9 @@ export function ItemCard({
             <div className="p-2.5 flex flex-col flex-1 min-w-0">
               <div className="flex-1 min-w-0 mb-2">
                 <h3 className="text-xs font-black text-zinc-100 line-clamp-2 leading-snug group-hover:text-white transition-colors">
-                  {item.title}
+                  <span className={item.status === "COMPLETED" ? "line-through text-zinc-500" : ""}>
+                    {item.title}
+                  </span>
                 </h3>
                 {item.currentPrice && (
                   <p className="text-[10px] font-black text-brand-400 mt-0.5">
@@ -111,6 +115,21 @@ export function ItemCard({
                       {t("wishlist.reserve")}
                     </button>
                   )}
+                </div>
+              )}
+              {isOwner && (
+                <div className="mt-auto flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => onToggleStatus?.(item)}
+                    className={`px-2 py-1 text-[9px] rounded-lg border transition-colors ${
+                      item.status === "COMPLETED"
+                        ? "bg-green-500/10 border-green-500/30 text-green-400"
+                        : "bg-zinc-800 border-zinc-700 text-zinc-400 hover:text-zinc-200"
+                    }`}
+                  >
+                    {item.status === "COMPLETED" ? "Completed" : "Mark done"}
+                  </button>
                 </div>
               )}
             </div>

@@ -30,10 +30,20 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  const isActive = (path: string) =>
-    location.pathname === path
+  const lastActiveWishlistId = localStorage.getItem("lastActiveWishlistId")
+  const mainPath = lastActiveWishlistId ? `/wishlists/${lastActiveWishlistId}` : "/"
+
+  const isActive = (path: string) => {
+    if (path.startsWith("/wishlists/")) {
+      return location.pathname.startsWith("/wishlists/")
+        ? "text-brand-400 border-b-2 border-brand-400"
+        : "text-zinc-400 hover:text-white"
+    }
+
+    return (path === "/" && location.pathname === "/") || location.pathname === path
       ? "text-brand-400 border-b-2 border-brand-400"
       : "text-zinc-400 hover:text-white"
+  }
 
   const handleSettingChange = (field: "language" | "currency", value: string) => {
     updateProfile.mutate(
@@ -66,20 +76,14 @@ export function Navbar() {
           </Link>
 
           <nav className="flex items-center gap-4 sm:gap-6 text-sm font-medium">
-            <Link to="/" className={`pb-0.5 transition-colors shrink-0 ${isActive("/")}`}>
-              {t("nav.my_lists")}
+            <Link to={mainPath} className={`pb-0.5 transition-colors shrink-0 ${isActive(mainPath)}`}>
+              Main
             </Link>
-            <Link
-              to="/following"
-              className={`pb-0.5 transition-colors shrink-0 ${isActive("/following")}`}
-            >
-              {t("nav.following")}
+            <Link to="/lists" className={`pb-0.5 transition-colors shrink-0 ${isActive("/lists")}`}>
+              Lists
             </Link>
-            <Link
-              to="/discover"
-              className={`pb-0.5 transition-colors shrink-0 ${isActive("/discover")}`}
-            >
-              {t("nav.discover")}
+            <Link to="/profile" className={`pb-0.5 transition-colors shrink-0 ${isActive("/profile")}`}>
+              {t("nav.profile")}
             </Link>
           </nav>
         </div>

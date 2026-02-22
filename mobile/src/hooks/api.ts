@@ -90,6 +90,7 @@ export function useCreateWishlist() {
   return useMutation({
     mutationFn: (data: {
       title: string
+      type?: string
       description?: string
       emoji?: string
       privacy: string
@@ -141,6 +142,7 @@ export function useAddItem() {
       imageUrl?: string
       price?: number
       currency?: string
+      status?: "ACTIVE" | "COMPLETED"
     }) => api.post<Item>(`/wishlists/${wishlistId}/items`, data),
     onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ["wishlist", vars.wishlistId] }),
   })

@@ -17,6 +17,11 @@ export enum NotificationType {
   RESERVATION = "RESERVATION",
 }
 
+export enum ItemStatus {
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+}
+
 export enum FriendshipStatus {
   PENDING = "PENDING",
   ACCEPTED = "ACCEPTED",
@@ -66,6 +71,7 @@ export interface Wishlist {
   userId: string
   title: string
   description: string | null
+  type?: string | null
   emoji: string
   privacy: Privacy | "PRIVATE" | "FRIENDS" | "PUBLIC" // Compatibility with string unions
   createdAt: string
@@ -82,6 +88,7 @@ export interface Item {
   wishlistId: string
   title: string
   description: string | null
+  status: ItemStatus | "ACTIVE" | "COMPLETED"
   url: string
   imageUrl: string | null
   currentPrice: number | null

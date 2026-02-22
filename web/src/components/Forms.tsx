@@ -8,12 +8,15 @@ import { useScrape, useUploadItemImage } from "../hooks/api"
 interface WishlistFormProps {
   onSubmit: (data: {
     title: string
+    type?: string
+    firstWishTitle?: string
     description?: string
     emoji?: string
     privacy: string
   }) => void
   initial?: {
     title: string
+    type?: string
     description?: string
     emoji?: string
     privacy: string
@@ -66,6 +69,8 @@ const PRIVACY_OPTIONS = [
 
 export function WishlistForm({ onSubmit, initial, isLoading, mobileMode }: WishlistFormProps) {
   const [title, setTitle] = useState(initial?.title || "")
+  const [type, setType] = useState(initial?.type || "")
+  const [firstWishTitle, setFirstWishTitle] = useState("")
   const [description, setDescription] = useState(initial?.description || "")
   const [emoji, setEmoji] = useState(initial?.emoji || "🎁")
   const [privacy, setPrivacy] = useState(initial?.privacy || "PRIVATE")
@@ -75,7 +80,14 @@ export function WishlistForm({ onSubmit, initial, isLoading, mobileMode }: Wishl
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit({ title, description: description || undefined, emoji, privacy })
+    onSubmit({
+      title,
+      type: type || undefined,
+      firstWishTitle: firstWishTitle || undefined,
+      description: description || undefined,
+      emoji,
+      privacy,
+    })
   }
 
   useEffect(() => {
@@ -121,6 +133,34 @@ export function WishlistForm({ onSubmit, initial, isLoading, mobileMode }: Wishl
           placeholder={t("form.title_placeholder")}
           required
         />
+
+        {/* Description */}
+        <div>
+          <label htmlFor="wishlist-type" className="block text-sm font-medium text-zinc-400 mb-2">
+            Type (optional)
+          </label>
+          <Input
+            id="wishlist-type"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            placeholder="Birthday, Home, Gifts..."
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="wishlist-first-wish"
+            className="block text-sm font-medium text-zinc-400 mb-2"
+          >
+            First wish (optional)
+          </label>
+          <Input
+            id="wishlist-first-wish"
+            value={firstWishTitle}
+            onChange={(e) => setFirstWishTitle(e.target.value)}
+            placeholder="Add first wish title"
+          />
+        </div>
 
         {/* Description */}
         <div>
@@ -229,6 +269,32 @@ export function WishlistForm({ onSubmit, initial, isLoading, mobileMode }: Wishl
       </div>
 
       <div>
+        <label htmlFor="wishlist-type-desktop" className="block text-sm font-medium text-zinc-300 mb-1">
+          Type (optional)
+        </label>
+        <Input
+          id="wishlist-type-desktop"
+          value={type}
+          onChange={(e) => setType(e.target.value)}
+          placeholder="Birthday, Home, Gifts..."
+        />
+      </div>
+
+      {!initial && (
+        <div>
+          <label htmlFor="wishlist-first-wish-desktop" className="block text-sm font-medium text-zinc-300 mb-1">
+            First wish (optional)
+          </label>
+          <Input
+            id="wishlist-first-wish-desktop"
+            value={firstWishTitle}
+            onChange={(e) => setFirstWishTitle(e.target.value)}
+            placeholder="Add first wish title"
+          />
+        </div>
+      )}
+
+      <div>
         <span className="block text-sm font-medium text-zinc-300 mb-1">{t("form.privacy")}</span>
         <div className="grid grid-cols-3 gap-3">
           {(["PRIVATE", "FRIENDS", "PUBLIC"] as const).map((p) => (
@@ -269,6 +335,7 @@ interface ItemFormProps {
     title?: string
     imageUrl?: string
     price?: number
+    status?: "ACTIVE" | "COMPLETED"
   }) => void
   initial?: {
     id: string
@@ -277,6 +344,7 @@ interface ItemFormProps {
     imageUrl?: string
     currentPrice?: number
     currency?: string
+    status?: "ACTIVE" | "COMPLETED"
   }
   isLoading?: boolean
 }
@@ -287,6 +355,7 @@ export function ItemForm({ wishlistId, onSubmit, initial, isLoading }: ItemFormP
   const [url, setUrl] = useState(initial?.url || "")
   const [imageUrl, setImageUrl] = useState(initial?.imageUrl || "")
   const [price, setPrice] = useState(initial?.currentPrice ? String(initial.currentPrice) : "")
+  const [status, setStatus] = useState<"ACTIVE" | "COMPLETED">(initial?.status || "ACTIVE")
   const [isUrl, setIsUrl] = useState(initial?.url?.startsWith("http") || !!initial?.url || false)
   const { user } = useAuth()
   const [currency, _setCurrency] = useState(initial?.currency || user?.currency || "USD")
@@ -350,6 +419,7 @@ export function ItemForm({ wishlistId, onSubmit, initial, isLoading }: ItemFormP
       title: isUrl ? title || input : input || title,
       imageUrl: imageUrl || undefined,
       price: price ? Number.parseFloat(price) : undefined,
+      status,
     })
 
     if (!initial) {
@@ -483,6 +553,21 @@ export function ItemForm({ wishlistId, onSubmit, initial, isLoading }: ItemFormP
               </button>
             </div>
           )}
+
+          <div>
+            <label htmlFor="item-status" className="block text-sm font-medium text-zinc-300 mb-1">
+              Status
+            </label>
+            <select
+              id="item-status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as "ACTIVE" | "COMPLETED")}
+              className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-brand-500/50"
+            >
+              <option value="ACTIVE">Active</option>
+              <option value="COMPLETED">Completed</option>
+            </select>
+          </div>
         </div>
       )}
 
