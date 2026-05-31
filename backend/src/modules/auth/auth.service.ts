@@ -5,16 +5,17 @@ import {
   Logger,
   UnauthorizedException,
 } from "@nestjs/common"
+// biome-ignore lint/style/useImportType: DI requirement
 import { ConfigService } from "@nestjs/config"
 // biome-ignore lint/style/useImportType: DI requirement
 import { JwtService } from "@nestjs/jwt"
 import * as bcrypt from "bcrypt"
 // biome-ignore lint/style/useImportType: DI requirement
+import { PrismaService } from "../../prisma/prisma.service"
+// biome-ignore lint/style/useImportType: DI requirement
 import { FriendsService } from "../friends/friends.service"
 // biome-ignore lint/style/useImportType: DI requirement
 import { MailService } from "../mail/mail.service"
-// biome-ignore lint/style/useImportType: DI requirement
-import { PrismaService } from "../../prisma/prisma.service"
 // biome-ignore lint/style/useImportType: validation requirement
 import { LoginDto, RegisterDto } from "./dto/auth.dto"
 

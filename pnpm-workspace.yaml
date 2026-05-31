@@ -4,6 +4,10 @@ packages:
   - "mobile"
   - "extension"
   - "packages/*"
+
+overrides:
+  metro-cache: "0.80.12"
+  "@types/react": "18.2.79"
 allowBuilds:
   '@biomejs/biome': true
   '@nestjs/core': true
@@ -11,6 +15,7 @@ allowBuilds:
   '@scarf/scarf': true
   bcrypt: true
   esbuild: true
+  lefthook: true
   prisma: true
 onlyBuiltDependencies:
   - "@biomejs/biome"
@@ -18,4 +23,8 @@ onlyBuiltDependencies:
   - "@prisma/engines"
   - "bcrypt"
   - "esbuild"
+  - "lefthook"
   - "prisma"
+
+settings:
+  confirmModulesPurge: false

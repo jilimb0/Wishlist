@@ -16,16 +16,14 @@
     "check": "biome check --write backend web mobile extension packages/shared .plans",
     "check:ci": "biome check backend web mobile extension packages/shared .plans",
     "type-check": "pnpm --filter @wishtracker/shared run build && pnpm --filter @wishtracker/shared run type-check && pnpm --filter wishtracker-backend run type-check && pnpm --filter wishtracker-web run type-check && pnpm --filter wishtracker-extension run type-check",
-    "type-check:mobile": "pnpm --filter wishtracker-mobile run type-check"
+    "type-check:mobile": "pnpm --filter wishtracker-mobile run type-check",
+    "postinstall": "pnpm db:generate",
+    "prepare": "lefthook install",
+    "validate": "pnpm run check:ci && pnpm run type-check && pnpm run test"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "typescript": "^5.7.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "metro-cache": "0.80.12",
-      "@types/react": "18.2.79"
-    }
+    "typescript": "^5.7.3",
+    "lefthook": "^1.11.0"
   }
 }

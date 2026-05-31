@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common"
-import { ConfigService } from "@nestjs/config"
+import type { ConfigService } from "@nestjs/config"
 import { FriendshipStatus } from "@prisma/client"
 // biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"

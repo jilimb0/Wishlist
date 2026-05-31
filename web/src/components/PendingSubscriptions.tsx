@@ -1,8 +1,4 @@
-import {
-  useApproveSubscription,
-  usePendingSubscriptions,
-  useRejectSubscription,
-} from "@/hooks/api"
+import { useApproveSubscription, usePendingSubscriptions, useRejectSubscription } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
 import { UserAvatar } from "./UserAvatar"
 
@@ -17,9 +13,7 @@ export function PendingSubscriptions() {
   }
 
   if (!pending?.length) {
-    return (
-      <p className="text-sm text-zinc-500 italic">{t("subscriptions.no_pending")}</p>
-    )
+    return <p className="text-sm text-zinc-500 italic">{t("subscriptions.no_pending")}</p>
   }
 
   return (

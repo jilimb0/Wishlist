@@ -2,9 +2,9 @@ import { ConflictException } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
 import { JwtService } from "@nestjs/jwt"
 import { Test, type TestingModule } from "@nestjs/testing"
+import { PrismaService } from "../../prisma/prisma.service"
 import { FriendsService } from "../friends/friends.service"
 import { MailService } from "../mail/mail.service"
-import { PrismaService } from "../../prisma/prisma.service"
 import { AuthService } from "./auth.service"
 
 describe("AuthService", () => {

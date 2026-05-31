@@ -88,9 +88,7 @@ export function ItemCard({
                     {formatPrice(item.currentPrice, item.currency)}
                   </p>
                 )}
-                {isOwner && (
-                  <ItemPriceHistory itemId={item.id} enabled={item.trackPrice} />
-                )}
+                {isOwner && <ItemPriceHistory itemId={item.id} enabled={item.trackPrice} />}
               </div>
 
               {!isOwner && (
