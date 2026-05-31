@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common"
+import { Injectable, Logger, Optional } from "@nestjs/common"
 import type { ConfigService } from "@nestjs/config"
 import * as nodemailer from "nodemailer"
 
@@ -14,8 +14,8 @@ export class MailService {
   private readonly logger = new Logger(MailService.name)
   private transporter: nodemailer.Transporter | null = null
 
-  constructor(private config: ConfigService) {
-    const host = this.config.get<string>("mail.smtp.host")
+  constructor(@Optional() private config: ConfigService) {
+    const host = this.config?.get<string>("mail.smtp.host")
     if (host) {
       this.transporter = nodemailer.createTransport({
         host,
@@ -30,7 +30,7 @@ export class MailService {
   }
 
   async send(options: SendMailOptions): Promise<void> {
-    const from = this.config.get<string>("mail.from")!
+    const from = this.config?.get<string>("mail.from") ?? "noreply@wishtracker.app"
 
     if (!this.transporter) {
       this.logger.warn(`[MAIL:dev] To: ${options.to} | ${options.subject}`)
