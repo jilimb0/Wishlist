@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common"
-import type { PrismaService } from "../../prisma/prisma.service"
+// biome-ignore lint/style/useImportType: DI requirement
+import { PrismaService } from "../../prisma/prisma.service"
 // biome-ignore lint/style/useImportType: validation requirement
 import { UpdateUserDto } from "./dto/update-user.dto"
 
