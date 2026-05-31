@@ -1,4 +1,9 @@
-const API_BASE = "/api"
+const APP_BASE = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL.slice(0, -1)
+  : import.meta.env.BASE_URL
+
+const API_ORIGIN = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "")
+const API_BASE = API_ORIGIN ? `${API_ORIGIN}/api` : "/api"
 
 class ApiClient {
   private token: string | null = null
@@ -40,8 +45,13 @@ class ApiClient {
 
     if (response.status === 401) {
       this.setToken(null)
-      if (!window.location.pathname.startsWith("/login")) {
-        window.location.href = "/login"
+      const publicPaths = ["/login", "/register", "/forgot-password", "/reset-password"]
+      const pathWithoutBase = window.location.pathname.startsWith(APP_BASE)
+        ? window.location.pathname.slice(APP_BASE.length) || "/"
+        : window.location.pathname
+      const isPublicPage = publicPaths.some((p) => pathWithoutBase.startsWith(p))
+      if (!isPublicPage) {
+        window.location.href = `${APP_BASE}/login`
       }
       throw new Error("Unauthorized")
     }

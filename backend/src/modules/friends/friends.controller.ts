@@ -1,13 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common"
+import { Body, Controller, Delete, Get, Param, Post, Query } from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
-import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard"
+import { Public } from "../auth/public.decorator"
 // biome-ignore lint/style/useImportType: DI requirement
 import { FriendsService } from "./friends.service"
 
 @Controller("api/friends")
-@UseGuards(JwtAuthGuard)
 export class FriendsController {
   constructor(private friendsService: FriendsService) {}
+
+  @Public()
+  @Get("invitations/:token")
+  async previewInvitation(@Param("token") token: string) {
+    return this.friendsService.getInvitationByToken(token)
+  }
 
   @Post("request/:id")
   async sendRequest(@CurrentUser("id") userId: string, @Param("id") friendId: string) {

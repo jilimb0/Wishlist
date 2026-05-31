@@ -12,4 +12,14 @@ export class AppController {
       version: "1.0.0",
     }
   }
+
+  @Public()
+  @Get("api/health")
+  health() {
+    return {
+      status: "ok",
+      service: "wishtracker-api",
+      timestamp: new Date().toISOString(),
+    }
+  }
 }

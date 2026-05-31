@@ -1,6 +1,42 @@
-.pnpm-store
-.vscode
-node_modules
-dist
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+**/dist/
+**/build/
+backend/dist/
+extension/dist/
+
+# Environment & secrets
 .env
+.env.*
+!.env.example
+
+# Logs & OS
 *.log
+.DS_Store
+**/.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Test & tooling
+coverage/
+*.tsbuildinfo
+
+# Backend runtime
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Xcode user state (keep project, ignore local settings)
+**/xcuserdata/
+**/*.xcuserstate
+
+# Expo
+mobile/.expo/
+
+.plans/

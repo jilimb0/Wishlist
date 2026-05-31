@@ -36,6 +36,11 @@ export interface User {
   language: string
   currency: string
   createdAt: string
+  friendshipId?: string
+  friendship?: {
+    id: string
+    status: FriendshipStatus | "PENDING" | "ACCEPTED"
+  } | null
 }
 
 export interface Friendship {

@@ -118,12 +118,16 @@ npx prisma migrate reset
 
 - `POST /api/scrape` — Parse product URL (Protected against SSRF)
 
+### Health
+
+- `GET /api/health` — Liveness check for deploy probes
+
 ## Security Features
 
 - **Rate Limiting**: Applied to Auth endpoints.
 - **SSRF Protection**: Scraper blocks internal IP ranges.
 - **Response Sanitization**: Uses DTOs to exclude sensitive data (password hashes).
-- **Helmet & CORS**: Configured for security and extension support.
+- **Helmet & CORS**: Helmet enabled; CORS permissive in dev (tighten for production).
 
 ## Project Structure
 

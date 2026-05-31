@@ -1,11 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import Constants from "expo-constants"
 
-// Replace with your actual backend URL.
-// For Android Emulator use "http://10.0.2.2:3010/api"
-// For iOS Simulator use "http://localhost:3010/api"
-// Replace with your machine's IP address if testing on a real device
-// or use a tunneling service like ngrok for external access.
-const API_BASE = "http://localhost:3010/api"
+// Configure via EXPO_PUBLIC_API_URL or mobile/app.config.js extra.apiUrl
+// Android emulator: http://10.0.2.2:3010/api | iOS simulator: http://localhost:3010/api
+const API_BASE =
+  Constants.expoConfig?.extra?.apiUrl ||
+  process.env.EXPO_PUBLIC_API_URL ||
+  "http://localhost:3010/api"
 
 class ApiClient {
   private token: string | null = null

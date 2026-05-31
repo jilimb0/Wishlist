@@ -43,6 +43,7 @@ export class ItemsService {
         imageUrl: dto.imageUrl,
         currentPrice: dto.price,
         currency: userCurrency,
+        trackPrice: dto.trackPrice ?? false,
       },
     })
 

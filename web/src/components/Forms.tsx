@@ -269,7 +269,10 @@ export function WishlistForm({ onSubmit, initial, isLoading, mobileMode }: Wishl
       </div>
 
       <div>
-        <label htmlFor="wishlist-type-desktop" className="block text-sm font-medium text-zinc-300 mb-1">
+        <label
+          htmlFor="wishlist-type-desktop"
+          className="block text-sm font-medium text-zinc-300 mb-1"
+        >
           Type (optional)
         </label>
         <Input
@@ -282,7 +285,10 @@ export function WishlistForm({ onSubmit, initial, isLoading, mobileMode }: Wishl
 
       {!initial && (
         <div>
-          <label htmlFor="wishlist-first-wish-desktop" className="block text-sm font-medium text-zinc-300 mb-1">
+          <label
+            htmlFor="wishlist-first-wish-desktop"
+            className="block text-sm font-medium text-zinc-300 mb-1"
+          >
             First wish (optional)
           </label>
           <Input
@@ -336,6 +342,7 @@ interface ItemFormProps {
     imageUrl?: string
     price?: number
     status?: "ACTIVE" | "COMPLETED"
+    trackPrice?: boolean
   }) => void
   initial?: {
     id: string
@@ -345,6 +352,7 @@ interface ItemFormProps {
     currentPrice?: number
     currency?: string
     status?: "ACTIVE" | "COMPLETED"
+    trackPrice?: boolean
   }
   isLoading?: boolean
 }
@@ -356,6 +364,7 @@ export function ItemForm({ wishlistId, onSubmit, initial, isLoading }: ItemFormP
   const [imageUrl, setImageUrl] = useState(initial?.imageUrl || "")
   const [price, setPrice] = useState(initial?.currentPrice ? String(initial.currentPrice) : "")
   const [status, setStatus] = useState<"ACTIVE" | "COMPLETED">(initial?.status || "ACTIVE")
+  const [trackPrice, setTrackPrice] = useState(initial?.trackPrice ?? false)
   const [isUrl, setIsUrl] = useState(initial?.url?.startsWith("http") || !!initial?.url || false)
   const { user } = useAuth()
   const [currency, _setCurrency] = useState(initial?.currency || user?.currency || "USD")
@@ -420,6 +429,7 @@ export function ItemForm({ wishlistId, onSubmit, initial, isLoading }: ItemFormP
       imageUrl: imageUrl || undefined,
       price: price ? Number.parseFloat(price) : undefined,
       status,
+      trackPrice,
     })
 
     if (!initial) {
@@ -568,6 +578,16 @@ export function ItemForm({ wishlistId, onSubmit, initial, isLoading }: ItemFormP
               <option value="COMPLETED">Completed</option>
             </select>
           </div>
+
+          <label className="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={trackPrice}
+              onChange={(e) => setTrackPrice(e.target.checked)}
+              className="rounded border-zinc-600"
+            />
+            Track price changes
+          </label>
         </div>
       )}
 

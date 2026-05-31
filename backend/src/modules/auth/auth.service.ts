@@ -5,9 +5,14 @@ import {
   Logger,
   UnauthorizedException,
 } from "@nestjs/common"
+import { ConfigService } from "@nestjs/config"
 // biome-ignore lint/style/useImportType: DI requirement
 import { JwtService } from "@nestjs/jwt"
 import * as bcrypt from "bcrypt"
+// biome-ignore lint/style/useImportType: DI requirement
+import { FriendsService } from "../friends/friends.service"
+// biome-ignore lint/style/useImportType: DI requirement
+import { MailService } from "../mail/mail.service"
 // biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"
 // biome-ignore lint/style/useImportType: validation requirement
@@ -18,6 +23,9 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private mail: MailService,
+    private config: ConfigService,
+    private friendsService: FriendsService,
   ) {}
 
   private readonly logger = new Logger(AuthService.name)
@@ -51,6 +59,10 @@ export class AuthService {
         createdAt: true,
       },
     })
+
+    if (dto.inviteToken) {
+      await this.friendsService.redeemInvitation(user.id, email, dto.inviteToken)
+    }
 
     const token = this.generateToken(user.id, user.email)
     this.logger.log(`Registered user: ${user.email} (ID: ${user.id})`)
@@ -121,8 +133,19 @@ export class AuthService {
       },
     })
 
-    // Log the token for dev testing
-    this.logger.warn(`[PASSWORD RESET] Token for ${email}: ${resetToken}`)
+    const appUrl = this.config.get<string>("appUrl") || "http://localhost:3011"
+    const link = `${appUrl}/reset-password?token=${resetToken}`
+
+    await this.mail.send({
+      to: user.email,
+      subject: "Reset your WishTracker password",
+      html: `<p>Reset your password:</p><p><a href="${link}">${link}</a></p>`,
+      text: `Reset password: ${link}`,
+    })
+
+    if (this.config.get<string>("nodeEnv") === "development") {
+      this.logger.debug(`[PASSWORD RESET] Dev link for ${email}: ${link}`)
+    }
 
     return { message: "If email exists, reset instructions sent." }
   }

@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: wishtracker-backend
+    env: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: wishtracker-postgres
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: APP_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: PRICE_TRACKING_ENABLED
+        sync: false
+      - key: PRICE_TRACKING_CRON
+        sync: false
+
+databases:
+  - name: wishtracker-postgres
+    plan: free

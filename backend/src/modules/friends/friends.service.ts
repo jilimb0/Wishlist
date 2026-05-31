@@ -4,13 +4,20 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common"
+import { ConfigService } from "@nestjs/config"
 import { FriendshipStatus } from "@prisma/client"
 // biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"
+// biome-ignore lint/style/useImportType: DI requirement
+import { MailService } from "../mail/mail.service"
 
 @Injectable()
 export class FriendsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mail: MailService,
+    private config: ConfigService,
+  ) {}
 
   async sendRequest(userId: string, friendId: string) {
     if (userId === friendId) {
@@ -214,23 +221,99 @@ export class FriendsService {
   }
 
   async createInvitation(inviterId: string, email: string) {
+    const normalizedEmail = email.toLowerCase()
     const token =
       Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 7) // 7 days expiry
+    expiresAt.setDate(expiresAt.getDate() + 7)
+
+    const inviter = await this.prisma.user.findUnique({
+      where: { id: inviterId },
+      select: { displayName: true },
+    })
 
     const invitation = await this.prisma.invitation.create({
       data: {
         inviterId,
-        email,
+        email: normalizedEmail,
         token,
         expiresAt,
       },
     })
 
-    // In a real app, send email here. For now, log it.
-    console.log(`[INVITE] To: ${email}, Link: http://localhost:3011/register?token=${token}`)
+    const appUrl = this.config.get<string>("appUrl") || "http://localhost:3011"
+    const link = `${appUrl}/register?token=${token}`
 
-    return invitation
+    await this.mail.send({
+      to: normalizedEmail,
+      subject: `${inviter?.displayName || "Someone"} invited you to WishTracker`,
+      html: `<p>You were invited to join WishTracker.</p><p><a href="${link}">Accept invitation</a></p>`,
+      text: `Join WishTracker: ${link}`,
+    })
+
+    return { ...invitation, inviteLink: link }
+  }
+
+  async getInvitationByToken(token: string) {
+    const invitation = await this.prisma.invitation.findUnique({
+      where: { token },
+      include: {
+        inviter: { select: { id: true, displayName: true, avatarUrl: true } },
+      },
+    })
+
+    if (!invitation) throw new NotFoundException("Invitation not found")
+    if (invitation.isUsed) throw new BadRequestException("Invitation already used")
+    if (invitation.expiresAt < new Date()) throw new BadRequestException("Invitation expired")
+
+    return {
+      email: invitation.email,
+      expiresAt: invitation.expiresAt,
+      inviter: invitation.inviter,
+    }
+  }
+
+  async redeemInvitation(userId: string, email: string, token: string) {
+    const invitation = await this.prisma.invitation.findUnique({ where: { token } })
+
+    if (!invitation) throw new NotFoundException("Invitation not found")
+    if (invitation.isUsed) throw new BadRequestException("Invitation already used")
+    if (invitation.expiresAt < new Date()) throw new BadRequestException("Invitation expired")
+    if (invitation.email !== email.toLowerCase()) {
+      throw new BadRequestException("Email does not match invitation")
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.invitation.update({
+        where: { id: invitation.id },
+        data: { isUsed: true },
+      })
+
+      const existing = await tx.friendship.findFirst({
+        where: {
+          OR: [
+            { userId: invitation.inviterId, friendId: userId },
+            { userId, friendId: invitation.inviterId },
+          ],
+        },
+      })
+
+      if (!existing) {
+        await tx.friendship.create({
+          data: {
+            userId: invitation.inviterId,
+            friendId: userId,
+            status: FriendshipStatus.ACCEPTED,
+          },
+        })
+      } else if (existing.status === FriendshipStatus.PENDING) {
+        await tx.friendship.update({
+          where: { id: existing.id },
+          data: { status: FriendshipStatus.ACCEPTED },
+        })
+      }
+    })
+
+    return { success: true }
   }
 }

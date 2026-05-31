@@ -1,7 +1,7 @@
+import { NotificationType } from "@wishtracker/shared"
 import { DateTime } from "luxon"
 import { useMarkAllAsRead, useMarkAsRead, useNotifications } from "../hooks/api"
 import { useI18n } from "../i18n/context"
-import { NotificationType } from "../shared"
 
 interface NotificationCenterProps {
   onClose: () => void

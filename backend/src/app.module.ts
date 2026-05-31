@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common"
 import { ConfigModule } from "@nestjs/config"
 import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core"
+import { ScheduleModule } from "@nestjs/schedule"
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler"
 
 import { JwtAuthGuard } from "./common/guards/jwt-auth.guard"
@@ -11,6 +12,8 @@ import { PrismaModule } from "./prisma/prisma.module"
 import { AppController } from "./app.controller"
 import { AuthModule } from "./modules/auth/auth.module"
 import { FriendsModule } from "./modules/friends/friends.module"
+import { MailModule } from "./modules/mail/mail.module"
+import { PriceTrackingModule } from "./modules/price-tracking/price-tracking.module"
 import { ItemsModule } from "./modules/items/items.module"
 import { NotificationsModule } from "./modules/notifications/notifications.module"
 import { ReservationsModule } from "./modules/reservations/reservations.module"
@@ -28,6 +31,8 @@ import { WishlistsModule } from "./modules/wishlists/wishlists.module"
     ThrottlerModule.forRoot({
       throttlers: [{ ttl: 60000, limit: 30 }], // 30 req/min default
     }),
+    ScheduleModule.forRoot(),
+    MailModule,
     PrismaModule,
     AuthModule,
     UsersModule,
@@ -38,6 +43,7 @@ import { WishlistsModule } from "./modules/wishlists/wishlists.module"
     NotificationsModule,
     ScraperModule,
     FriendsModule,
+    PriceTrackingModule,
   ],
   controllers: [AppController],
   providers: [

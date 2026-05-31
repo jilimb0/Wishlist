@@ -1,4 +1,14 @@
-import { IsBoolean, IsIn, IsInt, IsNumber, IsOptional, IsString, IsUrl, Max, Min } from "class-validator"
+import {
+  IsBoolean,
+  IsIn,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Max,
+  Min,
+} from "class-validator"
 
 export class CreateItemDto {
   @IsOptional()
@@ -28,6 +38,10 @@ export class CreateItemDto {
   @IsOptional()
   @IsString()
   currency?: string
+
+  @IsOptional()
+  @IsBoolean()
+  trackPrice?: boolean
 }
 
 export class UpdateItemDto {

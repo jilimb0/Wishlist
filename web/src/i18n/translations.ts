@@ -151,6 +151,11 @@ export const translations: Record<string, Record<string, string>> = {
     "common.update": "Update",
     "common.save": "Save",
     "common.remove": "Remove",
+    "common.approve": "Approve",
+    "common.reject": "Reject",
+
+    "subscriptions.pending_title": "Follow requests",
+    "subscriptions.no_pending": "No pending follow requests",
 
     // Notifications
     "notifications.title": "Notifications",
@@ -309,6 +314,11 @@ export const translations: Record<string, Record<string, string>> = {
     "common.update": "Обновить",
     "common.save": "Сохранить",
     "common.remove": "Удалить",
+    "common.approve": "Принять",
+    "common.reject": "Отклонить",
+
+    "subscriptions.pending_title": "Запросы на подписку",
+    "subscriptions.no_pending": "Нет ожидающих запросов",
 
     // Notifications
     "notifications.title": "Уведомления",

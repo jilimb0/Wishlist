@@ -76,13 +76,19 @@ export function Navbar() {
           </Link>
 
           <nav className="flex items-center gap-4 sm:gap-6 text-sm font-medium">
-            <Link to={mainPath} className={`pb-0.5 transition-colors shrink-0 ${isActive(mainPath)}`}>
+            <Link
+              to={mainPath}
+              className={`pb-0.5 transition-colors shrink-0 ${isActive(mainPath)}`}
+            >
               Main
             </Link>
             <Link to="/lists" className={`pb-0.5 transition-colors shrink-0 ${isActive("/lists")}`}>
               Lists
             </Link>
-            <Link to="/profile" className={`pb-0.5 transition-colors shrink-0 ${isActive("/profile")}`}>
+            <Link
+              to="/profile"
+              className={`pb-0.5 transition-colors shrink-0 ${isActive("/profile")}`}
+            >
               {t("nav.profile")}
             </Link>
           </nav>

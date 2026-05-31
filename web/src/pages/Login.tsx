@@ -42,7 +42,7 @@ export default function LoginPage() {
           <p className="text-zinc-500 text-sm">Sign in to your account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} noValidate className="space-y-6">
           {error && (
             <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg px-3 py-2 text-sm animate-in fade-in slide-in-from-top-1">
               {error}
@@ -62,7 +62,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
+                disableValidation
                 placeholder="you@example.com"
               />
             </div>
@@ -84,7 +84,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
+                disableValidation
                 placeholder="••••••••"
               />
             </div>

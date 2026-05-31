@@ -3,9 +3,9 @@ import { Modal } from "@/components/Modal"
 import { WishlistCard } from "@/components/WishlistCard"
 import {
   useAddItem,
-  useDiscover,
   useCreateWishlist,
   useDeleteWishlist,
+  useDiscover,
   useMe,
   useMySubscriptions,
   useMyWishlists,
@@ -48,10 +48,10 @@ export default function DashboardPage() {
         wl.title.toLowerCase().includes(search.trim().toLowerCase()) ||
         (wl.description || "").toLowerCase().includes(search.trim().toLowerCase()) ||
         (wl.type || "").toLowerCase().includes(search.trim().toLowerCase())
-      const isCompleted = !!wl.items?.length && wl.items.every((item) => item.status === "COMPLETED")
+      const isCompleted =
+        !!wl.items?.length && wl.items.every((item) => item.status === "COMPLETED")
       const matchesState =
-        stateFilter === "ALL" ||
-        (stateFilter === "COMPLETED" ? isCompleted : !isCompleted)
+        stateFilter === "ALL" || (stateFilter === "COMPLETED" ? isCompleted : !isCompleted)
 
       return matchesType && matchesSearch && matchesState
     })

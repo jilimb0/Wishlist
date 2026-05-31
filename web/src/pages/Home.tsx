@@ -16,9 +16,7 @@ export default function HomePage() {
     }
 
     const lastActiveWishlistId = localStorage.getItem("lastActiveWishlistId")
-    const target =
-      list.find((wl) => wl.id === lastActiveWishlistId)?.id ||
-      list[0]?.id
+    const target = list.find((wl) => wl.id === lastActiveWishlistId)?.id || list[0]?.id
 
     if (target) {
       navigate(`/wishlists/${target}`, { replace: true })

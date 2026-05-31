@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common"
-import { Privacy, SubscriptionStatus } from "@prisma/client"
+import { NotificationType, Privacy, SubscriptionStatus } from "@prisma/client"
 // biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"
 // biome-ignore lint/style/useImportType: validation requirement
@@ -126,10 +126,25 @@ export class SubscriptionsService {
     }
 
     if (status === SubscriptionStatus.APPROVED) {
-      return this.prisma.subscription.update({
+      const updated = await this.prisma.subscription.update({
         where: { id: subscriptionId },
         data: { status },
+        include: {
+          wishlist: { select: { title: true } },
+          user: { select: { id: true } },
+        },
       })
+
+      await this.prisma.notification.create({
+        data: {
+          userId: updated.userId,
+          type: NotificationType.NEW_ITEM,
+          title: "Follow request approved",
+          message: `You can now follow "${updated.wishlist.title}"`,
+        },
+      })
+
+      return updated
     }
 
     // Rejecting means deleting the request

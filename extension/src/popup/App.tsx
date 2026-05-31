@@ -1,13 +1,5 @@
+import type { Wishlist } from "@wishtracker/shared"
 import { useEffect, useState } from "react"
-
-// Types duplicated from web/src/types/index.ts
-// In a monorepo we'd share this, but for this structure we duplicate.
-interface Wishlist {
-  id: string
-  title: string
-  emoji: string
-  _count?: { items: number }
-}
 
 interface ScrapedData {
   title: string
@@ -18,7 +10,7 @@ interface ScrapedData {
   currency?: string
 }
 
-const API_Base = "http://localhost:3010/api"
+const API_Base = `${import.meta.env.VITE_API_URL || "http://localhost:3010"}/api`
 
 export default function App() {
   const [token, setToken] = useState<string | null>(null)
@@ -228,10 +220,8 @@ export default function App() {
           <button
             type="button"
             onClick={() => {
-              // Clear tokens
-              chrome.storage.local.remove(["auth_token"], () => {
+              chrome.storage.local.remove(["token"], () => {
                 setToken(null)
-                // setUser(null) // Assuming setUser is defined elsewhere or will be added
               })
             }}
             className="text-[10px] uppercase tracking-widest font-black text-zinc-600 hover:text-white transition-colors"

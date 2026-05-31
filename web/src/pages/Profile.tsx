@@ -1,5 +1,6 @@
 import { Input } from "@/components/Input"
 import { Modal } from "@/components/Modal"
+import { PendingSubscriptions } from "@/components/PendingSubscriptions"
 import { UserAvatar } from "@/components/UserAvatar"
 import { useAuth } from "@/context/AuthContext"
 import {
@@ -391,7 +392,7 @@ export default function ProfilePage() {
             ) : (
               <div className="space-y-3">
                 {pendingFriends.data
-                  ?.filter((req: any) => req.friendId === req.user.id)
+                  ?.filter((req: any) => req.friendId === user?.id)
                   .map((req: any) => (
                     <div
                       key={req.id}
@@ -439,6 +440,15 @@ export default function ProfilePage() {
           </div>
         </section>
       </div>
+
+      <section>
+        <h2 className="text-xl font-bold mb-4 text-zinc-100 uppercase tracking-tight">
+          {t("subscriptions.pending_title")}
+        </h2>
+        <div className="p-6 bg-zinc-900/50 backdrop-blur-3xl border border-zinc-800/50 rounded-3xl shadow-xl">
+          <PendingSubscriptions />
+        </div>
+      </section>
 
       {/* ─── Change Password ───────────────────────── */}
       <section>

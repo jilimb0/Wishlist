@@ -4,3 +4,18 @@ packages:
   - "mobile"
   - "extension"
   - "packages/*"
+allowBuilds:
+  '@biomejs/biome': true
+  '@nestjs/core': true
+  '@prisma/engines': true
+  '@scarf/scarf': true
+  bcrypt: true
+  esbuild: true
+  prisma: true
+onlyBuiltDependencies:
+  - "@biomejs/biome"
+  - "@nestjs/core"
+  - "@prisma/engines"
+  - "bcrypt"
+  - "esbuild"
+  - "prisma"

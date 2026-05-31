@@ -1,10 +1,14 @@
 import { Input } from "@/components/Input"
 import { useAuth } from "@/context/AuthContext"
-import { useRegister } from "@/hooks/api"
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useInvitationPreview, useRegister } from "@/hooks/api"
+import { useEffect, useState } from "react"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
 
 export default function RegisterPage() {
+  const [searchParams] = useSearchParams()
+  const inviteToken = searchParams.get("token") || ""
+  const invitation = useInvitationPreview(inviteToken)
+
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [displayName, setDisplayName] = useState("")
@@ -13,11 +17,15 @@ export default function RegisterPage() {
   const navigate = useNavigate()
   const registerMutation = useRegister()
 
+  useEffect(() => {
+    if (invitation.data?.email) setEmail(invitation.data.email)
+  }, [invitation.data?.email])
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     registerMutation.mutate(
-      { email, password, displayName },
+      { email, password, displayName, inviteToken: inviteToken || undefined },
       {
         onSuccess: (data: any) => {
           login(data.token, data.user)
@@ -41,6 +49,11 @@ export default function RegisterPage() {
             </h1>
           </div>
           <p className="text-zinc-500 text-sm">Create your account</p>
+          {invitation.data?.inviter && (
+            <p className="text-brand-400 text-xs mt-2">
+              Invited by {invitation.data.inviter.displayName}
+            </p>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

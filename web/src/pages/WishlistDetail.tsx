@@ -506,7 +506,9 @@ function ItemsView({
                     }`}
                     title={item.status === "COMPLETED" ? "Completed" : "Active"}
                   />
-                  <p className={`text-sm truncate ${item.status === "COMPLETED" ? "text-zinc-500 line-through" : "text-zinc-100"}`}>
+                  <p
+                    className={`text-sm truncate ${item.status === "COMPLETED" ? "text-zinc-500 line-through" : "text-zinc-100"}`}
+                  >
                     {item.title}
                   </p>
                 </div>

@@ -19,7 +19,22 @@ export function useRegister() {
       email: string
       password: string
       displayName: string
+      inviteToken?: string
     }) => api.post<AuthResponse>("/auth/register", data),
+  })
+}
+
+export function useInvitationPreview(token: string) {
+  return useQuery({
+    queryKey: ["invitation", token],
+    queryFn: () =>
+      api.get<{
+        email: string
+        expiresAt: string
+        inviter: { id: string; displayName: string; avatarUrl: string | null }
+      }>(`/friends/invitations/${token}`),
+    enabled: !!token,
+    retry: false,
   })
 }
 

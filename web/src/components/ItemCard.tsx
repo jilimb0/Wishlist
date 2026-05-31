@@ -1,3 +1,4 @@
+import { ItemPriceHistory } from "@/components/ItemPriceHistory"
 import { useI18n } from "@/i18n/context"
 import type { Item, User } from "@/types"
 import { useState } from "react"
@@ -86,6 +87,9 @@ export function ItemCard({
                   <p className="text-[10px] font-black text-brand-400 mt-0.5">
                     {formatPrice(item.currentPrice, item.currency)}
                   </p>
+                )}
+                {isOwner && (
+                  <ItemPriceHistory itemId={item.id} enabled={item.trackPrice} />
                 )}
               </div>
 
