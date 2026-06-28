@@ -1,5 +1,8 @@
 # WishTracker Monorepo
 
+[![CI](https://github.com/jilimb0/Wishlist/actions/workflows/ci.yml/badge.svg)](https://github.com/jilimb0/Wishlist/actions/workflows/ci.yml)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue?style=flat-square)](https://www.typescriptlang.org/)
+
 WishTracker is a cross-platform wishlist ecosystem: create wishlists, reserve items, track prices, share with friends, and add items from the browser.
 
 **Stack**

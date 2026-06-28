@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto"
 import {
   BadRequestException,
   ConflictException,
@@ -223,8 +224,7 @@ export class FriendsService {
 
   async createInvitation(inviterId: string, email: string) {
     const normalizedEmail = email.toLowerCase()
-    const token =
-      Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    const token = randomBytes(32).toString("hex")
     const expiresAt = new Date()
     expiresAt.setDate(expiresAt.getDate() + 7)
 

@@ -7,6 +7,16 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     include: ["src/**/*.spec.ts", "src/**/*.spec.tsx"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov"],
+      thresholds: {
+        lines: 40,
+        functions: 30,
+        branches: 30,
+        statements: 40,
+      },
+    },
   },
   resolve: {
     alias: {
