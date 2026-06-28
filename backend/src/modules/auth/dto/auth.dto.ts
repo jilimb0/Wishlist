@@ -2,15 +2,15 @@ import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from "class-vali
 
 export class RegisterDto {
   @IsEmail()
-  email: string
+  email!: string
 
   @IsString()
   @MinLength(6)
-  password: string
+  password!: string
 
   @IsString()
   @IsNotEmpty()
-  displayName: string
+  displayName!: string
 
   @IsOptional()
   @IsString()
@@ -19,24 +19,24 @@ export class RegisterDto {
 
 export class LoginDto {
   @IsEmail()
-  email: string
+  email!: string
 
   @IsString()
   @IsNotEmpty()
-  password: string
+  password!: string
 }
 
 export class ForgotPasswordDto {
   @IsEmail()
-  email: string
+  email!: string
 }
 
 export class ResetPasswordDto {
   @IsString()
   @IsNotEmpty()
-  token: string
+  token!: string
 
   @IsString()
   @MinLength(6)
-  password: string
+  password!: string
 }

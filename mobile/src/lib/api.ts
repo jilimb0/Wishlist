@@ -56,8 +56,6 @@ class ApiClient {
     const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
 
     try {
-      console.log(`[API] ${options.method || "GET"} ${API_BASE}${endpoint}`)
-
       const response = await fetch(`${API_BASE}${endpoint}`, {
         ...options,
         headers,
@@ -65,8 +63,6 @@ class ApiClient {
       })
 
       clearTimeout(timeoutId)
-
-      console.log(`[API] Response status: ${response.status}`)
 
       if (response.status === 401) {
         await this.setToken(null)

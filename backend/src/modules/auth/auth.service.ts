@@ -10,6 +10,7 @@ import { ConfigService } from "@nestjs/config"
 // biome-ignore lint/style/useImportType: DI requirement
 import { JwtService } from "@nestjs/jwt"
 import * as bcrypt from "bcrypt"
+import { randomBytes } from "node:crypto"
 // biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"
 // biome-ignore lint/style/useImportType: DI requirement
@@ -120,9 +121,8 @@ export class AuthService {
       return { message: "If email exists, reset instructions sent." }
     }
 
-    // Generate simple token (random string)
-    const resetToken =
-      Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    // Generate cryptographically secure reset token
+    const resetToken = randomBytes(32).toString("hex")
     // Expires in 1 hour
     const resetTokenExpires = new Date(Date.now() + 3600000)
 

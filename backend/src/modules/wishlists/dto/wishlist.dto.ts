@@ -4,7 +4,7 @@ import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator"
 export class CreateWishlistDto {
   @IsString()
   @IsNotEmpty()
-  title: string
+  title!: string
 
   @IsOptional()
   @IsString()
@@ -19,7 +19,7 @@ export class CreateWishlistDto {
   emoji?: string
 
   @IsEnum(Privacy)
-  privacy: Privacy
+  privacy!: Privacy
 }
 
 export class UpdateWishlistDto {

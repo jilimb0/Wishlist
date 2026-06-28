@@ -7,23 +7,23 @@ export class UserResponseDto {
   }
 
   @Expose()
-  id: string
+  id!: string
 
   @Expose()
-  email: string
+  email!: string
 
   @Expose()
-  displayName: string
+  displayName!: string
 
   @Expose()
-  avatarUrl: string | null
+  avatarUrl!: string | null
 
   @Expose()
-  createdAt: Date
+  createdAt!: Date
 
   @Exclude()
-  passwordHash: string
+  passwordHash!: string
 
   @Exclude()
-  updatedAt: Date
+  updatedAt!: Date
 }

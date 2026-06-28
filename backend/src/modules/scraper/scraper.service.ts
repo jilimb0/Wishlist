@@ -79,7 +79,9 @@ export class ScraperService {
         description: description?.trim() || null,
       }
     } catch (error) {
-      throw new BadRequestException(`Failed to scrape URL: ${error.message}`)
+      throw new BadRequestException(
+        `Failed to scrape URL: ${error instanceof Error ? error.message : "Unknown error"}`,
+      )
     }
   }
 
