@@ -54,7 +54,9 @@ describe("WishlistsService", () => {
 
   describe("getMyWishlists", () => {
     it("returns user wishlists with item count", async () => {
-      prisma.wishlist.findMany.mockResolvedValue([{ id: wishlistId, items: [], _count: { items: 0 } }])
+      prisma.wishlist.findMany.mockResolvedValue([
+        { id: wishlistId, items: [], _count: { items: 0 } },
+      ])
       const result = await service.getMyWishlists(userId)
       expect(result).toHaveLength(1)
     })
@@ -187,9 +189,7 @@ describe("WishlistsService", () => {
       prisma.wishlist.findMany.mockResolvedValue([])
       prisma.wishlist.count.mockResolvedValue(0)
       await service.discover(undefined, 999)
-      expect(prisma.wishlist.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ take: 100 }),
-      )
+      expect(prisma.wishlist.findMany).toHaveBeenCalledWith(expect.objectContaining({ take: 100 }))
     })
   })
 })

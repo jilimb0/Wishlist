@@ -1,6 +1,6 @@
-// @vitest-environment jsdom
-import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen } from "@testing-library/react"
+// @vitest-environment jsdom
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import { api } from "../lib/api"
 import { AuthProvider, useAuth } from "./AuthContext"
 

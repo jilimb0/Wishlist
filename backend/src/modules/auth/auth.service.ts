@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto"
 import {
   BadRequestException,
   ConflictException,
@@ -10,7 +11,6 @@ import { ConfigService } from "@nestjs/config"
 // biome-ignore lint/style/useImportType: DI requirement
 import { JwtService } from "@nestjs/jwt"
 import * as bcrypt from "bcrypt"
-import { randomBytes } from "node:crypto"
 // biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"
 // biome-ignore lint/style/useImportType: DI requirement

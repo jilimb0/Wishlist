@@ -21,10 +21,7 @@ describe("NotificationsService", () => {
   beforeEach(async () => {
     jest.clearAllMocks()
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        NotificationsService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [NotificationsService, { provide: PrismaService, useValue: prisma }],
     }).compile()
     service = module.get(NotificationsService)
   })
@@ -49,12 +46,16 @@ describe("NotificationsService", () => {
 
     it("throws when not found", async () => {
       prisma.notification.findUnique.mockResolvedValue(null)
-      await expect(service.markAsRead(notificationId, userId)).rejects.toBeInstanceOf(NotFoundException)
+      await expect(service.markAsRead(notificationId, userId)).rejects.toBeInstanceOf(
+        NotFoundException,
+      )
     })
 
     it("throws when not owned by user", async () => {
       prisma.notification.findUnique.mockResolvedValue({ id: notificationId, userId: "other" })
-      await expect(service.markAsRead(notificationId, userId)).rejects.toBeInstanceOf(NotFoundException)
+      await expect(service.markAsRead(notificationId, userId)).rejects.toBeInstanceOf(
+        NotFoundException,
+      )
     })
   })
 

@@ -2,8 +2,8 @@ import { BadRequestException, ConflictException, NotFoundException } from "@nest
 import { ConfigService } from "@nestjs/config"
 import { Test, type TestingModule } from "@nestjs/testing"
 import { PrismaService } from "../../prisma/prisma.service"
-import { FriendsService } from "./friends.service"
 import { MailService } from "../mail/mail.service"
+import { FriendsService } from "./friends.service"
 
 const userId = "user-1"
 const friendId = "user-2"
@@ -60,21 +60,33 @@ describe("FriendsService", () => {
 
   describe("respondToRequest", () => {
     it("accepts request", async () => {
-      prisma.friendship.findUnique.mockResolvedValue({ id: requestId, friendId: userId, status: "PENDING" })
+      prisma.friendship.findUnique.mockResolvedValue({
+        id: requestId,
+        friendId: userId,
+        status: "PENDING",
+      })
       prisma.friendship.update.mockResolvedValue({ id: requestId, status: "ACCEPTED" })
       const result = await service.respondToRequest(userId, requestId, true)
       expect(result.status).toBe("ACCEPTED")
     })
 
     it("declines by deleting", async () => {
-      prisma.friendship.findUnique.mockResolvedValue({ id: requestId, friendId: userId, status: "PENDING" })
+      prisma.friendship.findUnique.mockResolvedValue({
+        id: requestId,
+        friendId: userId,
+        status: "PENDING",
+      })
       prisma.friendship.delete.mockResolvedValue({ id: requestId })
       const result = await service.respondToRequest(userId, requestId, false)
       expect(result.id).toBe(requestId)
     })
 
     it("throws on already processed request", async () => {
-      prisma.friendship.findUnique.mockResolvedValue({ id: requestId, friendId: userId, status: "ACCEPTED" })
+      prisma.friendship.findUnique.mockResolvedValue({
+        id: requestId,
+        friendId: userId,
+        status: "ACCEPTED",
+      })
       await expect(service.respondToRequest(userId, requestId, true)).rejects.toBeInstanceOf(
         BadRequestException,
       )
@@ -102,7 +114,11 @@ describe("FriendsService", () => {
     })
 
     it("throws when not involved", async () => {
-      prisma.friendship.findUnique.mockResolvedValue({ id: "f1", userId: "other", friendId: "other2" })
+      prisma.friendship.findUnique.mockResolvedValue({
+        id: "f1",
+        userId: "other",
+        friendId: "other2",
+      })
       await expect(service.removeFriendship(userId, "f1")).rejects.toBeInstanceOf(NotFoundException)
     })
   })

@@ -25,10 +25,7 @@ describe("SubscriptionsService", () => {
   beforeEach(async () => {
     jest.clearAllMocks()
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        SubscriptionsService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [SubscriptionsService, { provide: PrismaService, useValue: prisma }],
     }).compile()
     service = module.get(SubscriptionsService)
   })
@@ -36,27 +33,47 @@ describe("SubscriptionsService", () => {
   describe("subscribe", () => {
     it("throws when wishlist not found", async () => {
       prisma.wishlist.findUnique.mockResolvedValue(null)
-      await expect(service.subscribe(wishlistId, userId, {})).rejects.toBeInstanceOf(NotFoundException)
+      await expect(service.subscribe(wishlistId, userId, {})).rejects.toBeInstanceOf(
+        NotFoundException,
+      )
     })
 
     it("throws when subscribing to own wishlist", async () => {
       prisma.wishlist.findUnique.mockResolvedValue({ id: wishlistId, userId, privacy: "PUBLIC" })
-      await expect(service.subscribe(wishlistId, userId, {})).rejects.toBeInstanceOf(ForbiddenException)
+      await expect(service.subscribe(wishlistId, userId, {})).rejects.toBeInstanceOf(
+        ForbiddenException,
+      )
     })
 
     it("throws when wishlist is private", async () => {
-      prisma.wishlist.findUnique.mockResolvedValue({ id: wishlistId, userId: ownerId, privacy: "PRIVATE" })
-      await expect(service.subscribe(wishlistId, userId, {})).rejects.toBeInstanceOf(ForbiddenException)
+      prisma.wishlist.findUnique.mockResolvedValue({
+        id: wishlistId,
+        userId: ownerId,
+        privacy: "PRIVATE",
+      })
+      await expect(service.subscribe(wishlistId, userId, {})).rejects.toBeInstanceOf(
+        ForbiddenException,
+      )
     })
 
     it("throws when already subscribed", async () => {
-      prisma.wishlist.findUnique.mockResolvedValue({ id: wishlistId, userId: ownerId, privacy: "PUBLIC" })
+      prisma.wishlist.findUnique.mockResolvedValue({
+        id: wishlistId,
+        userId: ownerId,
+        privacy: "PUBLIC",
+      })
       prisma.subscription.findUnique.mockResolvedValue({ id: subscriptionId })
-      await expect(service.subscribe(wishlistId, userId, {})).rejects.toBeInstanceOf(ConflictException)
+      await expect(service.subscribe(wishlistId, userId, {})).rejects.toBeInstanceOf(
+        ConflictException,
+      )
     })
 
     it("creates APPROVED subscription for public wishlist", async () => {
-      prisma.wishlist.findUnique.mockResolvedValue({ id: wishlistId, userId: ownerId, privacy: "PUBLIC" })
+      prisma.wishlist.findUnique.mockResolvedValue({
+        id: wishlistId,
+        userId: ownerId,
+        privacy: "PUBLIC",
+      })
       prisma.subscription.findUnique.mockResolvedValue(null)
       prisma.subscription.create.mockResolvedValue({ id: subscriptionId, status: "APPROVED" })
       const result = await service.subscribe(wishlistId, userId, {})
@@ -64,7 +81,11 @@ describe("SubscriptionsService", () => {
     })
 
     it("creates PENDING subscription for friends-only wishlist", async () => {
-      prisma.wishlist.findUnique.mockResolvedValue({ id: wishlistId, userId: ownerId, privacy: "FRIENDS" })
+      prisma.wishlist.findUnique.mockResolvedValue({
+        id: wishlistId,
+        userId: ownerId,
+        privacy: "FRIENDS",
+      })
       prisma.subscription.findUnique.mockResolvedValue(null)
       prisma.subscription.create.mockResolvedValue({ id: subscriptionId, status: "PENDING" })
       const result = await service.subscribe(wishlistId, userId, {})
@@ -82,7 +103,9 @@ describe("SubscriptionsService", () => {
 
     it("throws when not subscription owner", async () => {
       prisma.subscription.findUnique.mockResolvedValue({ id: subscriptionId, userId: "other" })
-      await expect(service.unsubscribe(subscriptionId, userId)).rejects.toBeInstanceOf(ForbiddenException)
+      await expect(service.unsubscribe(subscriptionId, userId)).rejects.toBeInstanceOf(
+        ForbiddenException,
+      )
     })
   })
 
@@ -100,7 +123,7 @@ describe("SubscriptionsService", () => {
         user: { id: userId },
       })
       prisma.notification.create.mockResolvedValue({})
-      const result = await service.updateStatus(subscriptionId, ownerId, "APPROVED" as any)
+      const _result = await service.updateStatus(subscriptionId, ownerId, "APPROVED" as any)
       expect(prisma.notification.create).toHaveBeenCalled()
     })
 
@@ -111,7 +134,7 @@ describe("SubscriptionsService", () => {
         userId,
       })
       prisma.subscription.delete.mockResolvedValue({ id: subscriptionId })
-      const result = await service.updateStatus(subscriptionId, ownerId, "REJECTED" as any) as any
+      const result = (await service.updateStatus(subscriptionId, ownerId, "REJECTED" as any)) as any
       expect(result.success).toBe(true)
     })
   })

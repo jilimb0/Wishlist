@@ -26,10 +26,7 @@ describe("ItemsService", () => {
   beforeEach(async () => {
     jest.clearAllMocks()
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ItemsService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [ItemsService, { provide: PrismaService, useValue: prisma }],
     }).compile()
     service = module.get(ItemsService)
   })
@@ -45,7 +42,11 @@ describe("ItemsService", () => {
     })
 
     it("throws ForbiddenException when not wishlist owner", async () => {
-      prisma.wishlist.findUnique.mockResolvedValue({ id: wishlistId, userId: otherUserId, subscriptions: [] })
+      prisma.wishlist.findUnique.mockResolvedValue({
+        id: wishlistId,
+        userId: otherUserId,
+        subscriptions: [],
+      })
       await expect(service.addToWishlist(wishlistId, userId, validDto)).rejects.toBeInstanceOf(
         ForbiddenException,
       )
