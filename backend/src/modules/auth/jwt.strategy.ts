@@ -1,9 +1,7 @@
 import { Injectable, Logger, UnauthorizedException } from "@nestjs/common"
-// biome-ignore lint/style/useImportType: DI requirement
 import { ConfigService } from "@nestjs/config"
 import { PassportStrategy } from "@nestjs/passport"
 import { ExtractJwt, Strategy } from "passport-jwt"
-// biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"
 
 export interface JwtPayload {

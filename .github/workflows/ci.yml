@@ -36,7 +36,7 @@ jobs:
         run: pnpm type-check
 
       - name: Lint & format check
-        run: pnpm exec biome check backend web mobile extension packages/shared
+        run: pnpm exec biome check --diagnostic-level=error backend web mobile extension packages/shared
 
       - name: Test
         run: pnpm test

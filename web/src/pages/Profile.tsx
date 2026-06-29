@@ -1,3 +1,6 @@
+import { useRef, useState } from "react"
+import { toast } from "react-hot-toast"
+import { Link, useNavigate } from "react-router-dom"
 import { Input } from "@/components/Input"
 import { Modal } from "@/components/Modal"
 import { PendingSubscriptions } from "@/components/PendingSubscriptions"
@@ -17,10 +20,6 @@ import {
   useUploadAvatar,
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
-import { useRef, useState } from "react"
-import { toast } from "react-hot-toast"
-import { Link } from "react-router-dom"
-import { useNavigate } from "react-router-dom"
 
 function InviteForm() {
   const [email, setEmail] = useState("")

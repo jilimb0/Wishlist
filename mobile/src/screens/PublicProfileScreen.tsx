@@ -22,7 +22,7 @@ import { useI18n } from "../i18n/context"
 
 export default function PublicProfileScreen() {
   const { params } = useRoute<any>()
-  // @ts-ignore
+  // @ts-expect-error
   const { userId } = params
   const navigation = useNavigation<any>()
   const { user: currentUser } = useAuth()

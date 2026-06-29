@@ -1,3 +1,6 @@
+import { useState } from "react"
+import { toast } from "react-hot-toast"
+import { Link, useParams } from "react-router-dom"
 import { Modal } from "@/components/Modal"
 import { UserAvatar } from "@/components/UserAvatar"
 import { WishlistCard } from "@/components/WishlistCard"
@@ -14,10 +17,6 @@ import {
   useUnsubscribe,
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
-import { useState } from "react"
-import { toast } from "react-hot-toast"
-import { useParams } from "react-router-dom"
-import { Link } from "react-router-dom"
 
 export default function PublicProfilePage() {
   const { id } = useParams<{ id: string }>()

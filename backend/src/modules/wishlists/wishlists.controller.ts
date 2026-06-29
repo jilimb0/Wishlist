@@ -1,9 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
 import { Public } from "../auth/public.decorator"
-// biome-ignore lint/style/useImportType: validation requirement
 import { CreateWishlistDto, UpdateWishlistDto } from "./dto/wishlist.dto"
-// biome-ignore lint/style/useImportType: DI requirement
 import { WishlistsService } from "./wishlists.service"
 
 @Controller("api")

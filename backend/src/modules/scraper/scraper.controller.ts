@@ -1,8 +1,6 @@
 import { Body, Controller, Post } from "@nestjs/common"
 import { Throttle } from "@nestjs/throttler"
-// biome-ignore lint/style/useImportType: validation requirement
 import { ScrapeDto } from "./dto/scrape.dto"
-// biome-ignore lint/style/useImportType: DI requirement
 import { ScraperService } from "./scraper.service"
 
 @Controller("api/scrape")

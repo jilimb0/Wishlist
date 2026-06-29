@@ -83,7 +83,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({
       const asset = result.assets[0]
       // Upload immediately
       uploadImageMutation.mutate(
-        // @ts-ignore
+        // @ts-expect-error
         {
           uri: asset.uri,
           name: asset.fileName || "image.jpg",

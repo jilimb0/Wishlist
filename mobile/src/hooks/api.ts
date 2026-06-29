@@ -15,11 +15,8 @@ import type {
 
 export function useRegister() {
   return useMutation({
-    mutationFn: (data: {
-      email: string
-      password: string
-      displayName: string
-    }) => api.post<AuthResponse>("/auth/register", data),
+    mutationFn: (data: { email: string; password: string; displayName: string }) =>
+      api.post<AuthResponse>("/auth/register", data),
   })
 }
 
@@ -171,7 +168,7 @@ export function useUploadItemImage() {
   return useMutation({
     mutationFn: async (file: RNFile) => {
       const formData = new FormData()
-      // @ts-ignore - React Native FormData expects an object with uri, name, type
+      // @ts-expect-error - React Native FormData expects an object with uri, name, type
       formData.append("file", {
         uri: file.uri,
         name: file.name,
@@ -219,13 +216,8 @@ export function useScrape() {
 export function useReserveItem() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({
-      itemId,
-      isAnonymous,
-    }: {
-      itemId: string
-      isAnonymous?: boolean
-    }) => api.post(`/items/${itemId}/reserve`, { isAnonymous }),
+    mutationFn: ({ itemId, isAnonymous }: { itemId: string; isAnonymous?: boolean }) =>
+      api.post(`/items/${itemId}/reserve`, { isAnonymous }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["wishlist"] }),
   })
 }
@@ -381,7 +373,7 @@ export function useUploadAvatar() {
   return useMutation({
     mutationFn: async (file: RNFile) => {
       const formData = new FormData()
-      // @ts-ignore
+      // @ts-expect-error
       formData.append("file", {
         uri: file.uri,
         name: file.name,

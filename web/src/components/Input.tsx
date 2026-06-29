@@ -1,4 +1,4 @@
-import { type InputHTMLAttributes, type ReactNode, forwardRef, useMemo, useState } from "react"
+import { forwardRef, type InputHTMLAttributes, type ReactNode, useMemo, useState } from "react"
 
 interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "ref"> {
   error?: boolean | string

@@ -5,9 +5,7 @@ import {
   NotFoundException,
 } from "@nestjs/common"
 import { NotificationType, Privacy, SubscriptionStatus } from "@prisma/client"
-// biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"
-// biome-ignore lint/style/useImportType: validation requirement
 import { CreateSubscriptionDto } from "./dto/subscription.dto"
 
 @Injectable()

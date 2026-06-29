@@ -1,0 +1,27 @@
+name: Lighthouse CI
+
+on:
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "26"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @wishtracker/shared build
+      - run: pnpm --filter wishtracker-web run build
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            http://localhost:4173
+          configPath: ./web/lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true

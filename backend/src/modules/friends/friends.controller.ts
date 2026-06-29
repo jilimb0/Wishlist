@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Query } from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
 import { Public } from "../auth/public.decorator"
-// biome-ignore lint/style/useImportType: DI requirement
 import { FriendsService } from "./friends.service"
 
 @Controller("api/friends")

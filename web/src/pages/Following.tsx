@@ -1,7 +1,7 @@
+import { Link } from "react-router-dom"
 import { WishlistCard } from "@/components/WishlistCard"
 import { useMySubscriptions, useUnsubscribe } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
-import { Link } from "react-router-dom"
 
 export default function FollowingPage() {
   const { data, isLoading } = useMySubscriptions()

@@ -15,9 +15,7 @@ import { diskStorage } from "multer"
 import { v4 as uuidv4 } from "uuid"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
 import { Public } from "../auth/public.decorator"
-// biome-ignore lint/style/useImportType: validation requirement
 import { UpdateUserDto } from "./dto/update-user.dto"
-// biome-ignore lint/style/useImportType: DI requirement
 import { UsersService } from "./users.service"
 
 @Controller("api/users")

@@ -1,11 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common"
-// biome-ignore lint/style/useImportType: DI requirement
 import { ConfigService } from "@nestjs/config"
 import { Cron } from "@nestjs/schedule"
 import { NotificationType } from "@prisma/client"
-// biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"
-// biome-ignore lint/style/useImportType: DI requirement
 import { ScraperService } from "../scraper/scraper.service"
 
 @Injectable()

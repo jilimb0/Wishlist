@@ -5,9 +5,7 @@ import {
   NotFoundException,
 } from "@nestjs/common"
 import { ReservationStatus } from "@prisma/client"
-// biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"
-// biome-ignore lint/style/useImportType: validation requirement
 import { CreateReservationDto } from "./dto/reservation.dto"
 
 @Injectable()

@@ -74,7 +74,7 @@ class ApiClient {
 
     // If FormData, let the browser set the Content-Type
     if (isFormData) {
-      // @ts-ignore
+      // @ts-expect-error
       headers["Content-Type"] = undefined
     }
 

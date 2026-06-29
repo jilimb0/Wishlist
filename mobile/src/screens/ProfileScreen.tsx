@@ -63,7 +63,7 @@ export default function ProfileScreen() {
 
     if (!result.canceled) {
       const asset = result.assets[0]
-      // @ts-ignore
+      // @ts-expect-error
       uploadAvatarMutation.mutate(
         {
           uri: asset.uri,

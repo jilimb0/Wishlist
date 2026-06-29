@@ -1,8 +1,8 @@
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { Input } from "@/components/Input"
 import { useAuth } from "@/context/AuthContext"
 import { useLogin } from "@/hooks/api"
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")

@@ -8,6 +8,14 @@ module.exports = {
   },
   collectCoverageFrom: ["**/*.(t|j)s"],
   coverageDirectory: "../coverage",
+  coverageThresholds: {
+    global: {
+      lines: 60,
+      functions: 50,
+      branches: 40,
+      statements: 60,
+    },
+  },
   testEnvironment: "node",
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",

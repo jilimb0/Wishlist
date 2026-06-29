@@ -1,8 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
-// biome-ignore lint/style/useImportType: validation requirement
 import { CreateSubscriptionDto } from "./dto/subscription.dto"
-// biome-ignore lint/style/useImportType: DI requirement
 import { SubscriptionsService } from "./subscriptions.service"
 
 @Controller("api")

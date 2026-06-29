@@ -58,7 +58,7 @@ export const WishlistForm: React.FC<WishlistFormProps> = ({
   const [title, setTitle] = useState(initialData?.title || "")
   const [description, setDescription] = useState(initialData?.description || "")
   const [emoji, setEmoji] = useState(initialData?.emoji || "🎁")
-  // @ts-ignore
+  // @ts-expect-error
   const [privacy, setPrivacy] = useState<Privacy>(initialData?.privacy || Privacy.PUBLIC)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 

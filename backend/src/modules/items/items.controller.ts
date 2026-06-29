@@ -14,9 +14,7 @@ import { FileInterceptor } from "@nestjs/platform-express"
 import { diskStorage } from "multer"
 import { v4 as uuidv4 } from "uuid"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
-// biome-ignore lint/style/useImportType: validation requirement
 import { CreateItemDto, UpdateItemDto } from "./dto/item.dto"
-// biome-ignore lint/style/useImportType: DI requirement
 import { ItemsService } from "./items.service"
 
 @Controller("api")

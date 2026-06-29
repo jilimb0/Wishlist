@@ -19,8 +19,8 @@
     "db:studio": "pnpm --filter wishtracker-backend run prisma:studio",
     "format": "biome format --write .",
     "lint": "biome lint --write .",
-    "check": "biome check --write backend web mobile extension packages/shared .plans",
-    "check:ci": "biome check backend web mobile extension packages/shared .plans",
+    "check": "biome check --write backend web mobile extension packages/shared",
+    "check:ci": "biome check --diagnostic-level=error backend web mobile extension packages/shared",
     "type-check": "pnpm --filter @wishtracker/shared run build && pnpm --filter @wishtracker/shared run type-check && pnpm --filter wishtracker-backend run type-check && pnpm --filter wishtracker-web run type-check && pnpm --filter wishtracker-extension run type-check",
     "type-check:mobile": "pnpm --filter wishtracker-mobile run type-check",
     "postinstall": "pnpm db:generate",
@@ -28,8 +28,8 @@
     "validate": "pnpm run check:ci && pnpm run type-check && pnpm run test"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "typescript": "^5.7.3",
-    "lefthook": "^1.11.0"
+    "@biomejs/biome": "^2.5.1",
+    "lefthook": "^1.11.0",
+    "typescript": "^5.7.3"
   }
 }

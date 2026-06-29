@@ -1,8 +1,8 @@
+import EmojiPicker, { Theme } from "emoji-picker-react"
+import { useEffect, useRef, useState } from "react"
 import { Input } from "@/components/Input"
 import { useAuth } from "@/context/AuthContext"
 import { useI18n } from "@/i18n/context"
-import EmojiPicker, { Theme } from "emoji-picker-react"
-import { useEffect, useRef, useState } from "react"
 import { useScrape, useUploadItemImage } from "../hooks/api"
 
 interface WishlistFormProps {

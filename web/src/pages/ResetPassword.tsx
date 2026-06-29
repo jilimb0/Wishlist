@@ -1,7 +1,7 @@
-import { Input } from "@/components/Input"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { Input } from "@/components/Input"
 import { useResetPassword } from "../hooks/api"
 
 export default function ResetPassword() {

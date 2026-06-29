@@ -235,13 +235,8 @@ export function useScrape() {
 export function useReserveItem() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({
-      itemId,
-      isAnonymous,
-    }: {
-      itemId: string
-      isAnonymous?: boolean
-    }) => api.post(`/items/${itemId}/reserve`, { isAnonymous }),
+    mutationFn: ({ itemId, isAnonymous }: { itemId: string; isAnonymous?: boolean }) =>
+      api.post(`/items/${itemId}/reserve`, { isAnonymous }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["wishlist"] }),
   })
 }

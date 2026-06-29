@@ -1,6 +1,6 @@
-import { useMyWishlists } from "@/hooks/api"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { useMyWishlists } from "@/hooks/api"
 
 export default function HomePage() {
   const navigate = useNavigate()

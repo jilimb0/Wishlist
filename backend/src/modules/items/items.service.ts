@@ -4,9 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common"
-// biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"
-// biome-ignore lint/style/useImportType: validation requirement
 import { CreateItemDto, UpdateItemDto } from "./dto/item.dto"
 
 @Injectable()

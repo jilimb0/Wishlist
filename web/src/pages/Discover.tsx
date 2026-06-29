@@ -1,3 +1,7 @@
+import { useQueryClient } from "@tanstack/react-query"
+import { useState } from "react"
+import { toast } from "react-hot-toast"
+import { Link } from "react-router-dom"
 import { Input } from "@/components/Input"
 import { Modal } from "@/components/Modal"
 import { UserAvatar } from "@/components/UserAvatar"
@@ -13,10 +17,6 @@ import {
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
 import type { User, Wishlist } from "@/types"
-import { useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import { toast } from "react-hot-toast"
-import { Link } from "react-router-dom"
 
 export default function DiscoverPage() {
   const [search, setSearch] = useState("")

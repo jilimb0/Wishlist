@@ -24,6 +24,7 @@ export default function App() {
   // 1. Check for token in storage (or sync from web app logic if we had cookie auth,
   // but we use localStorage token, so user needs to login in extension separately
   // OR we can try to message the web app if open. For MVP: separate login/token input)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: fetchWishlists is stable (defined once via useCallback)
   useEffect(() => {
     chrome.storage.local.get(["token"], (result: { token?: string }) => {
       if (result.token) {

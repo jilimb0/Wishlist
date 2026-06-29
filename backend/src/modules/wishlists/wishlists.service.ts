@@ -1,10 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common"
 import { Privacy, type SubscriptionStatus } from "@prisma/client"
-// biome-ignore lint/style/useImportType: DI requirement
 import { PrismaService } from "../../prisma/prisma.service"
-// biome-ignore lint/style/useImportType: DI requirement
 import { FriendsService } from "../friends/friends.service"
-// biome-ignore lint/style/useImportType: validation requirement
 import { CreateWishlistDto, UpdateWishlistDto } from "./dto/wishlist.dto"
 
 @Injectable()

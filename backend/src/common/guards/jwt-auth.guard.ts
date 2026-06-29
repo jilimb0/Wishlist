@@ -1,5 +1,4 @@
 import { type ExecutionContext, Injectable } from "@nestjs/common"
-// biome-ignore lint/style/useImportType: DI requirement
 import { Reflector } from "@nestjs/core"
 import { AuthGuard } from "@nestjs/passport"
 import { IS_PUBLIC_KEY } from "../../modules/auth/public.decorator"

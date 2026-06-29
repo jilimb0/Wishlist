@@ -24,8 +24,10 @@ export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetPro
 
   return (
     // biome-ignore lint/a11y/useKeyWithClickEvents: Overlay handles click to close, but is not focusable to prevent trapping focus outside content
+    // biome-ignore lint/a11y/noStaticElementInteractions: Overlay click to close
     <div className="bottom-sheet-overlay" onClick={onClose}>
       {/* biome-ignore lint/a11y/useKeyWithClickEvents: Stop propagation wrapper */}
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: Stop propagation wrapper */}
       <div className="bottom-sheet-content" onClick={(e) => e.stopPropagation()}>
         {/* Drag handle */}
         <div className="bottom-sheet-handle-area">
