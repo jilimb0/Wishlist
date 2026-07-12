@@ -2,9 +2,9 @@ import { usePendingSubscriptions, useApproveSubscription, useRejectSubscription 
 import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { UserAvatar } from "./UserAvatar"
 import { colors, fontSize, fontWeight, radius } from "../theme"
+import type { Subscription } from "@wishtracker/shared"
 
 export function PendingSubscriptions() {
-  const { t } = useI18n()
   const { data: pending, isLoading } = usePendingSubscriptions()
   const approve = useApproveSubscription()
   const reject = useRejectSubscription()
@@ -29,7 +29,7 @@ export function PendingSubscriptions() {
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Pending requests</Text>
-      {pending.map((sub: any) => (
+      {pending.map((sub: Subscription) => (
         <View key={sub.id} style={styles.card}>
           <View style={styles.row}>
             <UserAvatar user={sub.user} size="sm" />

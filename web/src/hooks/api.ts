@@ -299,7 +299,7 @@ export function useMySubscriptions() {
 export function usePendingSubscriptions() {
   return useQuery({
     queryKey: ["subscriptions", "pending"],
-    queryFn: () => api.get<Array<Record<string, unknown>>>("/subscriptions/pending"),
+    queryFn: () => api.get<Subscription[]>("/subscriptions/pending"),
   })
 }
 
