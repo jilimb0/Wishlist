@@ -1,9 +1,7 @@
 import { Injectable, Logger, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common"
 // ConfigService MUST be a value import (not type) for NestJS Dependency Injection to work
 import { ConfigService } from "@nestjs/config"
-import { PrismaPg } from "@prisma/adapter-pg"
 import { PrismaClient } from "@prisma/client"
-import { Pool } from "pg"
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
@@ -11,14 +9,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
   constructor(private configService: ConfigService) {
     const databaseUrl = configService.get<string>("database.url")
-    const pool = new Pool({ connectionString: databaseUrl })
-    const adapter = new PrismaPg(pool)
-    super({ adapter })
+    super({ datasources: { db: { url: databaseUrl } } })
   }
 
   async onModuleInit() {
     await this.$connect()
-    this.logger.log("Connected to database via Driver Adapter")
+    this.logger.log("Connected to database")
   }
 
   async onModuleDestroy() {
