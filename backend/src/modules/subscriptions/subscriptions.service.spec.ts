@@ -1,6 +1,6 @@
 import { ConflictException, ForbiddenException, NotFoundException } from "@nestjs/common"
-import { SubscriptionStatus } from "@prisma/client"
 import { Test, type TestingModule } from "@nestjs/testing"
+import { SubscriptionStatus } from "@prisma/client"
 import { PrismaService } from "../../prisma/prisma.service"
 import { SubscriptionsService } from "./subscriptions.service"
 
@@ -124,7 +124,11 @@ describe("SubscriptionsService", () => {
         user: { id: userId },
       })
       prisma.notification.create.mockResolvedValue({})
-      const _result = await service.updateStatus(subscriptionId, ownerId, SubscriptionStatus.APPROVED)
+      const _result = await service.updateStatus(
+        subscriptionId,
+        ownerId,
+        SubscriptionStatus.APPROVED,
+      )
       expect(prisma.notification.create).toHaveBeenCalled()
     })
 

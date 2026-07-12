@@ -1,8 +1,12 @@
-import { usePendingSubscriptions, useApproveSubscription, useRejectSubscription } from "../hooks/api"
-import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import { UserAvatar } from "./UserAvatar"
-import { colors, fontSize, fontWeight, radius } from "../theme"
 import type { Subscription } from "@wishtracker/shared"
+import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import {
+  useApproveSubscription,
+  usePendingSubscriptions,
+  useRejectSubscription,
+} from "../hooks/api"
+import { colors, fontSize, fontWeight, radius } from "../theme"
+import { UserAvatar } from "./UserAvatar"
 
 export function PendingSubscriptions() {
   const { data: pending, isLoading } = usePendingSubscriptions()

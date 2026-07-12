@@ -80,7 +80,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, forwardedR
         <input
           ref={(node) => {
             if (typeof forwardedRef === "function") forwardedRef(node)
-            else if (forwardedRef) (forwardedRef as React.MutableRefObject<HTMLInputElement | null>).current = node
+            else if (forwardedRef)
+              (forwardedRef as React.MutableRefObject<HTMLInputElement | null>).current = node
           }}
           className={`w-full bg-zinc-900/50 border ${
             hasError

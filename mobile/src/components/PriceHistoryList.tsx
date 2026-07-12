@@ -1,5 +1,5 @@
-import { usePriceHistory } from "../hooks/api"
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native"
+import { usePriceHistory } from "../hooks/api"
 
 type PriceRow = {
   id: string
@@ -8,13 +8,7 @@ type PriceRow = {
   checkedAt: string
 }
 
-export function PriceHistoryList({
-  itemId,
-  enabled,
-}: {
-  itemId: string
-  enabled?: boolean
-}) {
+export function PriceHistoryList({ itemId, enabled }: { itemId: string; enabled?: boolean }) {
   const { data: history, isLoading } = usePriceHistory(itemId)
 
   if (!enabled) return null
@@ -28,12 +22,8 @@ export function PriceHistoryList({
       <Text style={styles.title}>Price history</Text>
       {recent.map((row: PriceRow) => (
         <View key={row.id} style={styles.row}>
-          <Text style={styles.date}>
-            {new Date(row.checkedAt).toLocaleDateString()}
-          </Text>
-          <Text style={styles.price}>
-            {formatPrice(row.price, row.currency)}
-          </Text>
+          <Text style={styles.date}>{new Date(row.checkedAt).toLocaleDateString()}</Text>
+          <Text style={styles.price}>{formatPrice(row.price, row.currency)}</Text>
         </View>
       ))}
     </View>

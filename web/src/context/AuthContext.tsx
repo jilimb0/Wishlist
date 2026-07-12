@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { api } from "../lib/api"
 import type { User } from "../types"
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null
   token: string | null
   isLoading: boolean

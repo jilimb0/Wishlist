@@ -19,9 +19,9 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import Toast from "react-native-toast-message"
 import { GlassBottomSheet } from "../components/GlassBottomSheet"
 import { GlassCard } from "../components/GlassCard"
-import { PriceHistoryList } from "../components/PriceHistoryList"
 import { GlassModal } from "../components/GlassModal"
 import { ItemForm } from "../components/ItemForm"
+import { PriceHistoryList } from "../components/PriceHistoryList"
 import { UserAvatar } from "../components/UserAvatar"
 import { WishlistForm } from "../components/WishlistForm"
 import { useAuth } from "../context/AuthContext"
@@ -63,7 +63,9 @@ export default function WishlistDetailScreen() {
   const unsubscribeMutation = useUnsubscribeFromWishlist()
 
   const isOwner = user?.id === wishlist?.userId
-  const userSubscription = wishlist?.subscriptions?.find((sub: Record<string, unknown>) => sub.userId === user?.id)
+  const userSubscription = wishlist?.subscriptions?.find(
+    (sub: Record<string, unknown>) => sub.userId === user?.id,
+  )
   const isSubscribed = !!userSubscription
 
   const getPrivacyIcon = React.useCallback((privacy: string) => {

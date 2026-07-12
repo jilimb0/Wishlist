@@ -24,9 +24,11 @@ export function PendingSubscriptions() {
           className="flex items-center justify-between gap-3 p-3 rounded-xl bg-zinc-900/50 border border-zinc-800"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <UserAvatar user={sub.user} size="sm" />
+            <UserAvatar user={sub.wishlist.user} size="sm" />
             <div className="min-w-0">
-              <p className="font-semibold text-zinc-100 truncate">{sub.user.displayName}</p>
+              <p className="font-semibold text-zinc-100 truncate">
+                {sub.wishlist.user.displayName}
+              </p>
               <p className="text-xs text-zinc-500 truncate">
                 {sub.wishlist.emoji} {sub.wishlist.title}
               </p>

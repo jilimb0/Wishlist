@@ -75,7 +75,12 @@ export class ReservationsService {
       })
     } catch (e: unknown) {
       // Catch unique constraint violation as a safety net for race conditions
-      if (e && typeof e === "object" && "code" in e && (e as Record<string, unknown>).code === "P2002") {
+      if (
+        e &&
+        typeof e === "object" &&
+        "code" in e &&
+        (e as Record<string, unknown>).code === "P2002"
+      ) {
         throw new ConflictException("Item is already reserved")
       }
       throw e

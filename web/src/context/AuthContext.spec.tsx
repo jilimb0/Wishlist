@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react"
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { api } from "../lib/api"
-import { AuthProvider, useAuth, type AuthContextType } from "./AuthContext"
+import { type AuthContextType, AuthProvider, useAuth } from "./AuthContext"
 
 function TestConsumer() {
   const auth = useAuth()
@@ -48,9 +48,9 @@ describe("AuthProvider", () => {
     )
 
     expect(capturedAuth).not.toBeNull()
-    expect(typeof capturedAuth.login).toBe("function")
-    expect(typeof capturedAuth.logout).toBe("function")
-    expect(typeof capturedAuth.updateUser).toBe("function")
+    expect(typeof capturedAuth!.login).toBe("function")
+    expect(typeof capturedAuth!.logout).toBe("function")
+    expect(typeof capturedAuth!.updateUser).toBe("function")
   })
 
   it("throws useAuth outside provider", () => {

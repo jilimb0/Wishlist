@@ -20,7 +20,7 @@ import {
   useUploadAvatar,
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
-import type { User, Friendship, Reservation } from "@/types"
+import type { Friendship, Reservation, User } from "@/types"
 
 function InviteForm() {
   const [email, setEmail] = useState("")
@@ -190,7 +190,9 @@ export default function ProfilePage() {
           setPasswordState("idle")
           const message =
             (err as unknown as { response?: { data?: { message?: string } } }).response?.data
-              ?.message || (err as Error).message || "Failed to change password"
+              ?.message ||
+            (err as Error).message ||
+            "Failed to change password"
           setPasswordError(message)
         },
       },
@@ -549,27 +551,26 @@ export default function ProfilePage() {
         ) : (
           <div className="grid gap-4">
             {reservations.data.map((res: Reservation) => (
-                <div
-                  key={res.id}
-                  className="flex items-center justify-between p-5 bg-zinc-900/50 backdrop-blur-3xl border border-zinc-800/50 rounded-2xl hover:border-zinc-700 transition-all shadow-sm"
-                >
-                  <div>
-                    <h3 className="font-bold text-zinc-100">{res.item.title}</h3>
-                    <p className="text-[10px] uppercase tracking-wider font-black text-zinc-500 mt-1">
-                      from <span className="text-zinc-300">{res.item.title}</span> by{" "}
-                      <span className="text-brand-400">{res.item.user?.displayName}</span>
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => cancelReservation.mutate(res.id)}
-                    className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300 hover:bg-red-400/5 border border-transparent hover:border-red-400/20 rounded-xl transition-all active:scale-95"
-                  >
-                    {t("common.cancel")}
-                  </button>
+              <div
+                key={res.id}
+                className="flex items-center justify-between p-5 bg-zinc-900/50 backdrop-blur-3xl border border-zinc-800/50 rounded-2xl hover:border-zinc-700 transition-all shadow-sm"
+              >
+                <div>
+                  <h3 className="font-bold text-zinc-100">{res.item.title}</h3>
+                  <p className="text-[10px] uppercase tracking-wider font-black text-zinc-500 mt-1">
+                    from <span className="text-zinc-300">{res.item.title}</span> by{" "}
+                    <span className="text-brand-400">{res.item.wishlist.user?.displayName}</span>
+                  </p>
                 </div>
-              )
-            )}
+                <button
+                  type="button"
+                  onClick={() => cancelReservation.mutate(res.id)}
+                  className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300 hover:bg-red-400/5 border border-transparent hover:border-red-400/20 rounded-xl transition-all active:scale-95"
+                >
+                  {t("common.cancel")}
+                </button>
+              </div>
+            ))}
           </div>
         )}
       </section>

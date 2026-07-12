@@ -1,6 +1,6 @@
 import { ForbiddenException, NotFoundException } from "@nestjs/common"
-import { Privacy } from "@prisma/client"
 import { Test, type TestingModule } from "@nestjs/testing"
+import { Privacy } from "@prisma/client"
 import { PrismaService } from "../../prisma/prisma.service"
 import { FriendsService } from "../friends/friends.service"
 import { WishlistsService } from "./wishlists.service"

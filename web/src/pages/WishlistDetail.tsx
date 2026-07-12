@@ -343,10 +343,19 @@ export default function WishlistDetailPage() {
         {editingItem && (
           <ItemForm
             wishlistId={wishlist.id}
-            initial={editingItem}
+            initial={{
+              id: editingItem.id,
+              url: editingItem.url,
+              title: editingItem.title,
+              imageUrl: editingItem.imageUrl ?? undefined,
+              currentPrice: editingItem.currentPrice ?? undefined,
+              currency: editingItem.currency,
+              status: editingItem.status,
+              trackPrice: editingItem.trackPrice,
+            }}
             onSubmit={(data) =>
               updateItem.mutate(
-                { id: editingItem.id, wishlistId: wishlist.id, ...data },
+                { id: editingItem.id, ...data },
                 { onSuccess: () => setEditingItem(null) },
               )
             }

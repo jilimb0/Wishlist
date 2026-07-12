@@ -21,8 +21,12 @@ export default function FriendsScreen() {
   const cancelRequestMutation = useCancelFriendRequest()
   const { t } = useI18n()
 
-  const incomingRequests = allPendingRequests?.filter((req: Record<string, unknown>) => req.friendId === user?.id)
-  const outgoingRequests = allPendingRequests?.filter((req: Record<string, unknown>) => req.userId === user?.id)
+  const incomingRequests = allPendingRequests?.filter(
+    (req: Record<string, unknown>) => req.friendId === user?.id,
+  )
+  const outgoingRequests = allPendingRequests?.filter(
+    (req: Record<string, unknown>) => req.userId === user?.id,
+  )
 
   const renderFriend = ({ item }: { item: Record<string, unknown> }) => (
     <GlassCard style={styles.friendCard}>
@@ -136,7 +140,9 @@ export default function FriendsScreen() {
               incomingRequests &&
               incomingRequests.length > 0
             ) {
-              const currentIndex = incomingRequests.findIndex((r: Record<string, unknown>) => r.id === leadingItem.id)
+              const currentIndex = incomingRequests.findIndex(
+                (r: Record<string, unknown>) => r.id === leadingItem.id,
+              )
               if (currentIndex === incomingRequests.length - 1) {
                 if (outgoingRequests && outgoingRequests.length > 0) {
                   return <Text style={styles.sectionTitle}>{t("friends.outgoing")}</Text>
@@ -151,7 +157,9 @@ export default function FriendsScreen() {
               outgoingRequests &&
               outgoingRequests.length > 0
             ) {
-              const currentIndex = outgoingRequests.findIndex((r: Record<string, unknown>) => r.id === leadingItem.id)
+              const currentIndex = outgoingRequests.findIndex(
+                (r: Record<string, unknown>) => r.id === leadingItem.id,
+              )
               if (currentIndex === outgoingRequests.length - 1 && friends && friends.length > 0) {
                 return <Text style={styles.friendsTitle}>{t("friends.title")}</Text>
               }
