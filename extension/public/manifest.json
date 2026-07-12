@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "Quickly add items to your Wishlist from any site",
   "permissions": ["activeTab", "storage", "scripting", "contextMenus"],
-  "host_permissions": ["http://localhost:3010/*"],
+  "host_permissions": ["https://*/*"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
@@ -15,15 +15,18 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["https://*/*", "http://*/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
   ],
+  "externally_connectable": {
+    "matches": ["https://*.wishtracker.app/*"]
+  },
   "web_accessible_resources": [
     {
       "resources": ["assets/*"],
-      "matches": ["<all_urls>"]
+      "matches": ["https://*/*"]
     }
   ]
 }

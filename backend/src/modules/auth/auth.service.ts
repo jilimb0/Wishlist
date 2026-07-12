@@ -62,6 +62,15 @@ export class AuthService {
 
     const token = this.generateToken(user.id, user.email)
     this.logger.log(`Registered user: ${user.email} (ID: ${user.id})`)
+
+    // Send welcome email (non-blocking)
+    this.mail.send({
+      to: user.email,
+      subject: "Welcome to WishTracker!",
+      html: `<p>Welcome to WishTracker, ${user.displayName || user.email}!</p><p>Start creating wishlists and tracking items you love.</p><p><a href="${this.config.get<string>("appUrl") || "http://localhost:3011"}">Go to WishTracker</a></p>`,
+      text: `Welcome to WishTracker! Start creating wishlists and tracking items you love.`,
+    }).catch((err: Error) => this.logger.error("Failed to send welcome email", err.message))
+
     return { user, token }
   }
 
