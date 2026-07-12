@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react"
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { api } from "../lib/api"
-import { AuthProvider, useAuth } from "./AuthContext"
+import { AuthProvider, useAuth, type AuthContextType } from "./AuthContext"
 
 function TestConsumer() {
   const auth = useAuth()
@@ -34,7 +34,7 @@ describe("AuthProvider", () => {
   })
 
   it("provides working login and logout via context", () => {
-    let capturedAuth: Record<string, unknown> | null = null
+    let capturedAuth: AuthContextType | null = null
     function CaptureConsumer() {
       const auth = useAuth()
       capturedAuth = auth

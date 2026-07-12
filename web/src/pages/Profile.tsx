@@ -20,6 +20,7 @@ import {
   useUploadAvatar,
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
+import type { User, Friendship, Reservation } from "@/types"
 
 function InviteForm() {
   const [email, setEmail] = useState("")
@@ -357,7 +358,7 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {friends.data.map((friend: Record<string, unknown>) => (
+                {friends.data.map((friend: User) => (
                   <Link
                     key={friend.id}
                     to={`/users/${friend.id}`}
@@ -393,19 +394,19 @@ export default function ProfilePage() {
             ) : (
               <div className="space-y-3">
                 {pendingFriends.data
-                  ?.filter((req: Record<string, unknown>) => req.friendId === user?.id)
-                  .map((req: Record<string, unknown>) => (
+                  ?.filter((req: Friendship) => req.friendId === user?.id)
+                  .map((req: Friendship) => (
                     <div
-                      key={req.id as string}
+                      key={req.id}
                       className="p-3 bg-brand-500/5 border border-brand-500/10 rounded-xl space-y-3"
                     >
                       <Link
-                        to={`/users/${(req.user as Record<string, unknown>).id as string}`}
+                        to={`/users/${req.user?.id}`}
                         className="flex items-center gap-3 active:scale-95 transition-transform"
                       >
-                        <UserAvatar user={req.user as Record<string, unknown>} size="sm" />
+                        <UserAvatar user={req.user} size="sm" />
                         <span className="text-sm font-bold text-zinc-200">
-                          {(req.user as Record<string, unknown>).displayName as string}
+                          {req.user?.displayName}
                         </span>
                       </Link>
                       <div className="flex gap-2">
@@ -547,32 +548,28 @@ export default function ProfilePage() {
           </div>
         ) : (
           <div className="grid gap-4">
-            {reservations.data.map((res: Record<string, unknown>) => {
-              const item = res.item as Record<string, unknown>
-              const wishlist = item.wishlist as Record<string, unknown>
-              const wishlistUser = wishlist.user as Record<string, unknown>
-              return (
+            {reservations.data.map((res: Reservation) => (
                 <div
-                  key={res.id as string}
+                  key={res.id}
                   className="flex items-center justify-between p-5 bg-zinc-900/50 backdrop-blur-3xl border border-zinc-800/50 rounded-2xl hover:border-zinc-700 transition-all shadow-sm"
                 >
                   <div>
-                    <h3 className="font-bold text-zinc-100">{item.title as string}</h3>
+                    <h3 className="font-bold text-zinc-100">{res.item.title}</h3>
                     <p className="text-[10px] uppercase tracking-wider font-black text-zinc-500 mt-1">
-                      from <span className="text-zinc-300">{wishlist.title as string}</span> by{" "}
-                      <span className="text-brand-400">{wishlistUser.displayName as string}</span>
+                      from <span className="text-zinc-300">{res.item.title}</span> by{" "}
+                      <span className="text-brand-400">{res.item.user?.displayName}</span>
                     </p>
                   </div>
                   <button
                     type="button"
-                    onClick={() => cancelReservation.mutate(res.id as string)}
+                    onClick={() => cancelReservation.mutate(res.id)}
                     className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300 hover:bg-red-400/5 border border-transparent hover:border-red-400/20 rounded-xl transition-all active:scale-95"
                   >
                     {t("common.cancel")}
                   </button>
                 </div>
               )
-            })}
+            )}
           </div>
         )}
       </section>

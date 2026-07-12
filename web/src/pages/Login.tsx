@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { Input } from "@/components/Input"
 import { useAuth } from "@/context/AuthContext"
 import { useLogin } from "@/hooks/api"
+import type { AuthResponse } from "@/types"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -18,7 +19,7 @@ export default function LoginPage() {
     loginMutation.mutate(
       { email, password },
       {
-        onSuccess: (data: Record<string, unknown>) => {
+        onSuccess: (data: AuthResponse) => {
           login(data.token, data.user)
           navigate("/")
         },

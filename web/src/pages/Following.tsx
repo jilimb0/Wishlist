@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { WishlistCard } from "@/components/WishlistCard"
 import { useMySubscriptions, useUnsubscribe } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
+import type { Subscription } from "@/types"
 
 export default function FollowingPage() {
   const { data, isLoading } = useMySubscriptions()
@@ -46,7 +47,7 @@ export default function FollowingPage() {
         </div>
       ) : (
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-{data.map((sub: Record<string, unknown>) => (
+{data.map((sub: Subscription) => (
               <WishlistCard
               key={sub.id}
               wishlist={sub.wishlist}

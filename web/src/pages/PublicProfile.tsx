@@ -17,6 +17,7 @@ import {
   useUnsubscribe,
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
+import type { Wishlist } from "@/types"
 
 export default function PublicProfilePage() {
   const { id } = useParams<{ id: string }>()
@@ -185,7 +186,7 @@ export default function PublicProfilePage() {
           </div>
         ) : (
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {wishlists.map((wl: Record<string, unknown>) => {
+            {wishlists.map((wl: Wishlist) => {
               const subscription = subscriptions.data?.find((s) => s.wishlistId === wl.id)
               const isSubscribed = !!subscription
 

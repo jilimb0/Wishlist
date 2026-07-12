@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { Input } from "@/components/Input"
 import { useAuth } from "@/context/AuthContext"
 import { useInvitationPreview, useRegister } from "@/hooks/api"
+import type { AuthResponse } from "@/types"
 
 export default function RegisterPage() {
   const [searchParams] = useSearchParams()
@@ -27,7 +28,7 @@ export default function RegisterPage() {
     registerMutation.mutate(
       { email, password, displayName, inviteToken: inviteToken || undefined },
       {
-        onSuccess: (data: Record<string, unknown>) => {
+        onSuccess: (data: AuthResponse) => {
           login(data.token, data.user)
           navigate("/")
         },

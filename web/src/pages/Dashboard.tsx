@@ -145,7 +145,7 @@ export default function DashboardPage() {
           centered
         >
           <WishlistForm
-            onSubmit={(data: Record<string, unknown>) => {
+            onSubmit={(data) => {
               const { firstWishTitle, ...wishlistData } = data
               return createWishlist.mutate(wishlistData, {
                 onSuccess: (createdWishlist) => {
@@ -213,7 +213,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredWishlists.map((wl: Record<string, unknown>) => (
+            {filteredWishlists.map((wl) => (
               <WishlistCard
                 key={wl.id}
                 wishlist={wl}

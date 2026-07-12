@@ -18,6 +18,7 @@ import {
   useWishlist,
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
+import type { Item, User } from "@/types"
 
 export default function WishlistDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -36,7 +37,7 @@ export default function WishlistDetailPage() {
 
   const [showAddItem, setShowAddItem] = useState(false)
   const [showEditList, setShowEditList] = useState(false)
-  const [editingItem, setEditingItem] = useState<Record<string, unknown> | null>(null)
+  const [editingItem, setEditingItem] = useState<Item | null>(null)
   const [deleteWishlistId, setDeleteWishlistId] = useState<string | null>(null)
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<"GRID" | "LIST">("GRID")
@@ -174,7 +175,7 @@ export default function WishlistDetailPage() {
       >
         <ItemForm
           wishlistId={wishlist.id}
-          onSubmit={(data: Record<string, unknown>) =>
+          onSubmit={(data) =>
             addItem.mutate(data, {
               onSuccess: () => setShowAddItem(false),
             })
@@ -321,7 +322,7 @@ export default function WishlistDetailPage() {
             emoji: wishlist.emoji || "🎁",
             privacy: wishlist.privacy,
           }}
-          onSubmit={(data: Record<string, unknown>) =>
+          onSubmit={(data) =>
             updateWishlist.mutate(
               { id: wishlist.id, ...data },
               { onSuccess: () => setShowEditList(false) },
@@ -343,7 +344,7 @@ export default function WishlistDetailPage() {
           <ItemForm
             wishlistId={wishlist.id}
             initial={editingItem}
-            onSubmit={(data: Record<string, unknown>) =>
+            onSubmit={(data) =>
               updateItem.mutate(
                 { id: editingItem.id, wishlistId: wishlist.id, ...data },
                 { onSuccess: () => setEditingItem(null) },
@@ -382,7 +383,7 @@ export default function WishlistDetailPage() {
           sortMode={sortMode}
           onChangeViewMode={setViewMode}
           onChangeSortMode={setSortMode}
-          onToggleStatus={(item: Record<string, unknown>) =>
+          onToggleStatus={(item: Item) =>
             updateItem.mutate({
               id: item.id,
               wishlistId: wishlist.id,
@@ -400,15 +401,15 @@ export default function WishlistDetailPage() {
 }
 
 interface ItemsViewProps {
-  items: Array<Record<string, unknown>>
+  items: Item[]
   isOwner: boolean
-  user: Record<string, unknown> | null
+  user: User | null
   viewMode: "GRID" | "LIST"
-  sortMode: string
+  sortMode: "NEWEST" | "OLDEST" | "TITLE" | "PRICE"
   onChangeViewMode: (mode: "GRID" | "LIST") => void
-  onChangeSortMode: (mode: string) => void
-  onToggleStatus: (item: Record<string, unknown>) => void
-  onEdit: (item: Record<string, unknown>) => void
+  onChangeSortMode: (mode: "NEWEST" | "OLDEST" | "TITLE" | "PRICE") => void
+  onToggleStatus: (item: Item) => void
+  onEdit: (item: Item) => void
   onRemove: (id: string) => void
   onReserve: (id: string) => void
   onCancelReserve: (id: string) => void
@@ -489,9 +490,9 @@ function ItemsView({
       <div className="flex-1 overflow-y-auto min-h-0 scrollbar-hide pb-4">
         {viewMode === "GRID" ? (
           <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
-            {currentItems.map((item: Record<string, unknown>) => (
+            {currentItems.map((item: Item) => (
               <ItemCard
-                key={item.id as string}
+                key={item.id}
                 item={item}
                 isOwner={isOwner}
                 user={user}
@@ -505,7 +506,7 @@ function ItemsView({
           </div>
         ) : (
           <div className="space-y-2">
-            {currentItems.map((item: Record<string, unknown>) => (
+            {currentItems.map((item: Item) => (
               <div
                 key={item.id}
                 className="flex items-center justify-between gap-3 p-3 rounded-xl border border-zinc-800 bg-zinc-900/50"

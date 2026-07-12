@@ -178,11 +178,21 @@ export function useAddItem() {
 export function useUpdateItem() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: Record<string, unknown>) => {
+    mutationFn: (data: {
+      id: string
+      wishlistId: string
+      url?: string
+      title?: string
+      imageUrl?: string
+      price?: number
+      currency?: string
+      status?: "ACTIVE" | "COMPLETED"
+      trackPrice?: boolean
+    }) => {
       const { id, wishlistId, ...rest } = data
       return api.patch(`/items/${id}`, rest)
     },
-    onSuccess: (_, _variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist"] })
     },
   })
@@ -418,7 +428,7 @@ export function useFriends() {
 export function usePendingFriends() {
   return useQuery({
     queryKey: ["friends", "pending"],
-    queryFn: () => api.get<Array<Record<string, unknown>>>("/friends/pending"),
+    queryFn: () => api.get<Friendship[]>("/friends/pending"),
   })
 }
 
