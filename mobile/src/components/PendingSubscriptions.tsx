@@ -32,10 +32,10 @@ export function PendingSubscriptions() {
       {pending.map((sub: Subscription) => (
         <View key={sub.id} style={styles.card}>
           <View style={styles.row}>
-            <UserAvatar user={sub.user} size="sm" />
+            <UserAvatar user={sub.wishlist.user} size="sm" />
             <View style={styles.info}>
               <Text style={styles.name} numberOfLines={1}>
-                {sub.user?.displayName || "Someone"}
+                {sub.wishlist.user?.displayName || "Someone"}
               </Text>
               <Text style={styles.wishlist} numberOfLines={1}>
                 {sub.wishlist?.emoji || "📋"} {sub.wishlist?.title || "wishlist"}
