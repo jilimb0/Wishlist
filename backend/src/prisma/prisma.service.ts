@@ -7,9 +7,8 @@ import { PrismaClient } from "@prisma/client"
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name)
 
-  constructor(private configService: ConfigService) {
-    const databaseUrl = configService.get<string>("database.url")
-    super({ datasources: { db: { url: databaseUrl } } })
+  constructor() {
+    super()
   }
 
   async onModuleInit() {
