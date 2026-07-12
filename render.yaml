@@ -5,6 +5,7 @@ services:
     dockerfilePath: backend/Dockerfile
     dockerContext: .
     healthCheckPath: /api/health
+    buildCommand: npm install -g pnpm@11 && pnpm install --frozen-lockfile && pnpm --filter @wishtracker/shared build && pnpm --filter wishtracker-backend build
     envVars:
       - key: DATABASE_URL
         fromDatabase:
