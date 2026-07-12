@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import Toast from "react-native-toast-message"
 import { GlassCard } from "../components/GlassCard"
 import { GlassModal } from "../components/GlassModal"
+import { PendingSubscriptions } from "../components/PendingSubscriptions"
 import { UserAvatar } from "../components/UserAvatar"
 import { useAuth } from "../context/AuthContext"
 import { useLogout, useUpdateProfile, useUploadAvatar } from "../hooks/api"
@@ -185,6 +186,8 @@ export default function ProfileScreen() {
             </GlassCard>
           </TouchableOpacity>
         </View>
+
+        <PendingSubscriptions />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{t("profile.account_section")}</Text>

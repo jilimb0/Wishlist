@@ -19,6 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import Toast from "react-native-toast-message"
 import { GlassBottomSheet } from "../components/GlassBottomSheet"
 import { GlassCard } from "../components/GlassCard"
+import { PriceHistoryList } from "../components/PriceHistoryList"
 import { GlassModal } from "../components/GlassModal"
 import { ItemForm } from "../components/ItemForm"
 import { UserAvatar } from "../components/UserAvatar"
@@ -244,6 +245,8 @@ export default function WishlistDetailScreen() {
             {item.price && (
               <Text style={styles.itemPrice}>{formatPrice(item.price, item.currency)}</Text>
             )}
+
+            <PriceHistoryList itemId={item.id} enabled={!!item.price} />
 
             <View style={styles.actions}>
               {isOwner ? (
