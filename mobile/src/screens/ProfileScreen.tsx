@@ -25,7 +25,7 @@ import { colors, fontSize, fontWeight, radius, spacing } from "../theme"
 
 export default function ProfileScreen() {
   const { user, updateUser } = useAuth()
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const logoutMutation = useLogout()
   const updateProfileMutation = useUpdateProfile()
   const uploadAvatarMutation = useUploadAvatar()

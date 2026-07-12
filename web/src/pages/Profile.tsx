@@ -185,9 +185,11 @@ export default function ProfilePage() {
           setConfirmPassword("")
           setTimeout(() => setPasswordState("idle"), 2000)
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
           setPasswordState("idle")
-          const message = err.response?.data?.message || err.message || "Failed to change password"
+          const message =
+            (err as unknown as { response?: { data?: { message?: string } } }).response?.data
+              ?.message || (err as Error).message || "Failed to change password"
           setPasswordError(message)
         },
       },
@@ -214,8 +216,8 @@ export default function ProfilePage() {
         toast.success("Profile deleted successfully")
         navigate("/")
       },
-      onError: (err: any) => {
-        toast.error(err.message || "Failed to delete profile")
+      onError: (err: Error) => {
+        toast.error((err as Error).message || "Failed to delete profile")
       },
     })
   }
@@ -355,7 +357,7 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {friends.data.map((friend: any) => (
+                {friends.data.map((friend: Record<string, unknown>) => (
                   <Link
                     key={friend.id}
                     to={`/users/${friend.id}`}
@@ -391,19 +393,19 @@ export default function ProfilePage() {
             ) : (
               <div className="space-y-3">
                 {pendingFriends.data
-                  ?.filter((req: any) => req.friendId === user?.id)
-                  .map((req: any) => (
+                  ?.filter((req: Record<string, unknown>) => req.friendId === user?.id)
+                  .map((req: Record<string, unknown>) => (
                     <div
-                      key={req.id}
+                      key={req.id as string}
                       className="p-3 bg-brand-500/5 border border-brand-500/10 rounded-xl space-y-3"
                     >
                       <Link
-                        to={`/users/${req.user.id}`}
+                        to={`/users/${(req.user as Record<string, unknown>).id as string}`}
                         className="flex items-center gap-3 active:scale-95 transition-transform"
                       >
-                        <UserAvatar user={req.user} size="sm" />
+                        <UserAvatar user={req.user as Record<string, unknown>} size="sm" />
                         <span className="text-sm font-bold text-zinc-200">
-                          {req.user.displayName}
+                          {(req.user as Record<string, unknown>).displayName as string}
                         </span>
                       </Link>
                       <div className="flex gap-2">
@@ -545,27 +547,32 @@ export default function ProfilePage() {
           </div>
         ) : (
           <div className="grid gap-4">
-            {reservations.data.map((res: any) => (
-              <div
-                key={res.id}
-                className="flex items-center justify-between p-5 bg-zinc-900/50 backdrop-blur-3xl border border-zinc-800/50 rounded-2xl hover:border-zinc-700 transition-all shadow-sm"
-              >
-                <div>
-                  <h3 className="font-bold text-zinc-100">{res.item.title}</h3>
-                  <p className="text-[10px] uppercase tracking-wider font-black text-zinc-500 mt-1">
-                    from <span className="text-zinc-300">{res.item.wishlist.title}</span> by{" "}
-                    <span className="text-brand-400">{res.item.wishlist.user.displayName}</span>
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => cancelReservation.mutate(res.id)}
-                  className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300 hover:bg-red-400/5 border border-transparent hover:border-red-400/20 rounded-xl transition-all active:scale-95"
+            {reservations.data.map((res: Record<string, unknown>) => {
+              const item = res.item as Record<string, unknown>
+              const wishlist = item.wishlist as Record<string, unknown>
+              const wishlistUser = wishlist.user as Record<string, unknown>
+              return (
+                <div
+                  key={res.id as string}
+                  className="flex items-center justify-between p-5 bg-zinc-900/50 backdrop-blur-3xl border border-zinc-800/50 rounded-2xl hover:border-zinc-700 transition-all shadow-sm"
                 >
-                  {t("common.cancel")}
-                </button>
-              </div>
-            ))}
+                  <div>
+                    <h3 className="font-bold text-zinc-100">{item.title as string}</h3>
+                    <p className="text-[10px] uppercase tracking-wider font-black text-zinc-500 mt-1">
+                      from <span className="text-zinc-300">{wishlist.title as string}</span> by{" "}
+                      <span className="text-brand-400">{wishlistUser.displayName as string}</span>
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => cancelReservation.mutate(res.id as string)}
+                    className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-red-400 hover:text-red-300 hover:bg-red-400/5 border border-transparent hover:border-red-400/20 rounded-xl transition-all active:scale-95"
+                  >
+                    {t("common.cancel")}
+                  </button>
+                </div>
+              )
+            })}
           </div>
         )}
       </section>

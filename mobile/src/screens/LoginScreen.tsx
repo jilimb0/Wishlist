@@ -22,7 +22,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const { login } = useAuth()
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const loginMutation = useLogin()
 
   const handleSubmit = () => {
@@ -35,10 +35,10 @@ export default function LoginScreen() {
     loginMutation.mutate(
       { email, password },
       {
-        onSuccess: (data: any) => {
-          login(data.token, data.user)
+        onSuccess: (data: Record<string, unknown>) => {
+          login(data.token as string, data.user)
         },
-        onError: (err: any) => setError(err.message),
+        onError: (err: Error) => setError(err.message),
       },
     )
   }

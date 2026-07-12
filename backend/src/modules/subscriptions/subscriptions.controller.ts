@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common"
+import { SubscriptionStatus } from "@prisma/client"
 import { CurrentUser } from "../../common/decorators/current-user.decorator"
 import { CreateSubscriptionDto } from "./dto/subscription.dto"
 import { SubscriptionsService } from "./subscriptions.service"
@@ -33,11 +34,12 @@ export class SubscriptionsController {
 
   @Post("subscriptions/:id/approve")
   async approve(@Param("id") id: string, @CurrentUser("id") userId: string) {
-    return this.subscriptionsService.updateStatus(id, userId, "APPROVED" as any)
+    return this.subscriptionsService.updateStatus(id, userId, SubscriptionStatus.APPROVED)
   }
 
   @Post("subscriptions/:id/reject")
   async reject(@Param("id") id: string, @CurrentUser("id") userId: string) {
-    return this.subscriptionsService.updateStatus(id, userId, "PENDING" as any) // PENDING will cause deletion as per logic
+    // Passing PENDING to trigger deletion (only APPROVED updates, anything else deletes)
+    return this.subscriptionsService.updateStatus(id, userId, SubscriptionStatus.PENDING)
   }
 }

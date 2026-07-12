@@ -15,8 +15,14 @@ const queryClient = new QueryClient({
   },
 })
 
+interface ToastProps {
+  text1?: string
+  text2?: string
+  props?: Record<string, unknown>
+}
+
 const toastConfig = {
-  success: (props: any) => (
+  success: (props: ToastProps) => (
     <BaseToast
       {...props}
       style={{
@@ -36,7 +42,7 @@ const toastConfig = {
       }}
     />
   ),
-  error: (props: any) => (
+  error: (props: ToastProps) => (
     <ErrorToast
       {...props}
       style={{
@@ -56,7 +62,7 @@ const toastConfig = {
       }}
     />
   ),
-  info: (props: any) => (
+  info: (props: ToastProps) => (
     <BaseToast
       {...props}
       style={{

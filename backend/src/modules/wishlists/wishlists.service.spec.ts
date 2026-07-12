@@ -1,4 +1,5 @@
 import { ForbiddenException, NotFoundException } from "@nestjs/common"
+import { Privacy } from "@prisma/client"
 import { Test, type TestingModule } from "@nestjs/testing"
 import { PrismaService } from "../../prisma/prisma.service"
 import { FriendsService } from "../friends/friends.service"
@@ -42,7 +43,7 @@ describe("WishlistsService", () => {
 
   describe("create", () => {
     it("creates a wishlist for the user", async () => {
-      const dto = { title: "My Wishlist", privacy: "PUBLIC" as any }
+      const dto = { title: "My Wishlist", privacy: Privacy.PUBLIC }
       prisma.wishlist.create.mockResolvedValue({ id: wishlistId, ...dto, userId })
       const result = await service.create(userId, dto)
       expect(result.id).toBe(wishlistId)
@@ -152,7 +153,7 @@ describe("WishlistsService", () => {
         privacy: "PUBLIC",
       })
       prisma.wishlist.update.mockResolvedValue({ id: wishlistId, privacy: "PRIVATE" })
-      await service.update(wishlistId, userId, { privacy: "PRIVATE" as any })
+      await service.update(wishlistId, userId, { privacy: Privacy.PRIVATE })
       expect(prisma.subscription.deleteMany).toHaveBeenCalledWith({ where: { wishlistId } })
     })
   })

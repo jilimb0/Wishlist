@@ -18,11 +18,11 @@ export default function LoginPage() {
     loginMutation.mutate(
       { email, password },
       {
-        onSuccess: (data: any) => {
+        onSuccess: (data: Record<string, unknown>) => {
           login(data.token, data.user)
           navigate("/")
         },
-        onError: (err: any) => setError(err.message),
+        onError: (err: Error) => setError(err.message),
       },
     )
   }

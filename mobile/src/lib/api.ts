@@ -75,15 +75,15 @@ class ApiClient {
       }
 
       return response.json()
-    } catch (error: any) {
+    } catch (error: unknown) {
       clearTimeout(timeoutId)
 
-      if (error.name === "AbortError") {
+      if ((error as Error).name === "AbortError") {
         console.error("[API] Request timeout")
         throw new Error("Request timeout - please check your connection")
       }
 
-      console.error("[API] Request failed:", error.message)
+      console.error("[API] Request failed:", (error as Error).message)
       throw error
     }
   }

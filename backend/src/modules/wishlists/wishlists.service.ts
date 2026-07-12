@@ -170,7 +170,7 @@ export class WishlistsService {
   async discover(search?: string, limit = 20, offset = 0) {
     // Cap limit to prevent abuse
     const takenLimit = Math.min(Math.max(1, limit), 100)
-    const where: any = { privacy: Privacy.PUBLIC }
+    const where: Record<string, unknown> = { privacy: Privacy.PUBLIC }
 
     if (search) {
       where.OR = [

@@ -14,7 +14,7 @@ export default function NotificationsScreen() {
 
   const notifications = data?.notifications || []
 
-  const renderItem = ({ item: n }: { item: any }) => {
+  const renderItem = ({ item: n }: { item: Record<string, unknown> }) => {
     return (
       <TouchableOpacity activeOpacity={0.7} onPress={() => !n.isRead && markAsRead.mutate(n.id)}>
         <GlassCard>

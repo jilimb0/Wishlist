@@ -21,10 +21,10 @@ export default function FriendsScreen() {
   const cancelRequestMutation = useCancelFriendRequest()
   const { t } = useI18n()
 
-  const incomingRequests = allPendingRequests?.filter((req: any) => req.friendId === user?.id)
-  const outgoingRequests = allPendingRequests?.filter((req: any) => req.userId === user?.id)
+  const incomingRequests = allPendingRequests?.filter((req: Record<string, unknown>) => req.friendId === user?.id)
+  const outgoingRequests = allPendingRequests?.filter((req: Record<string, unknown>) => req.userId === user?.id)
 
-  const renderFriend = ({ item }: { item: any }) => (
+  const renderFriend = ({ item }: { item: Record<string, unknown> }) => (
     <GlassCard style={styles.friendCard}>
       <View style={styles.friendItem}>
         <UserAvatar user={item} size="md" />
@@ -35,7 +35,7 @@ export default function FriendsScreen() {
     </GlassCard>
   )
 
-  const renderIncomingRequest = ({ item }: { item: any }) => (
+  const renderIncomingRequest = ({ item }: { item: Record<string, unknown> }) => (
     <GlassCard style={styles.requestCard}>
       <View style={styles.requestItem}>
         <UserAvatar user={item.user} size="md" />
@@ -61,7 +61,7 @@ export default function FriendsScreen() {
     </GlassCard>
   )
 
-  const renderOutgoingRequest = ({ item }: { item: any }) => (
+  const renderOutgoingRequest = ({ item }: { item: Record<string, unknown> }) => (
     <GlassCard style={styles.requestCard}>
       <View style={styles.requestItem}>
         <UserAvatar user={item.friend} size="md" />
@@ -99,20 +99,20 @@ export default function FriendsScreen() {
       ) : (
         <FlatList
           data={[
-            ...(incomingRequests || []).map((req: any) => ({
+            ...(incomingRequests || []).map((req: Record<string, unknown>) => ({
               ...req,
               _type: "incoming",
             })),
-            ...(outgoingRequests || []).map((req: any) => ({
+            ...(outgoingRequests || []).map((req: Record<string, unknown>) => ({
               ...req,
               _type: "outgoing",
             })),
-            ...(friends || []).map((friend: any) => ({
+            ...(friends || []).map((friend: Record<string, unknown>) => ({
               ...friend,
               _type: "friend",
             })),
           ]}
-          renderItem={({ item }: { item: any }) => {
+          renderItem={({ item }: { item: Record<string, unknown> }) => {
             if (item._type === "incoming") {
               return renderIncomingRequest({ item })
             }
@@ -130,13 +130,13 @@ export default function FriendsScreen() {
               <Text style={styles.sectionTitle}>{t("friends.incoming")}</Text>
             ) : null
           }
-          ItemSeparatorComponent={({ leadingItem }: any) => {
+          ItemSeparatorComponent={({ leadingItem }: { leadingItem: Record<string, unknown> }) => {
             if (
               leadingItem._type === "incoming" &&
               incomingRequests &&
               incomingRequests.length > 0
             ) {
-              const currentIndex = incomingRequests.findIndex((r: any) => r.id === leadingItem.id)
+              const currentIndex = incomingRequests.findIndex((r: Record<string, unknown>) => r.id === leadingItem.id)
               if (currentIndex === incomingRequests.length - 1) {
                 if (outgoingRequests && outgoingRequests.length > 0) {
                   return <Text style={styles.sectionTitle}>{t("friends.outgoing")}</Text>
@@ -151,7 +151,7 @@ export default function FriendsScreen() {
               outgoingRequests &&
               outgoingRequests.length > 0
             ) {
-              const currentIndex = outgoingRequests.findIndex((r: any) => r.id === leadingItem.id)
+              const currentIndex = outgoingRequests.findIndex((r: Record<string, unknown>) => r.id === leadingItem.id)
               if (currentIndex === outgoingRequests.length - 1 && friends && friends.length > 0) {
                 return <Text style={styles.friendsTitle}>{t("friends.title")}</Text>
               }

@@ -23,7 +23,7 @@ export default function DiscoverScreen() {
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState<"wishlists" | "users">("wishlists")
   const [search, setSearch] = useState("")
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const { t } = useI18n()
 
   const { data: discoverData } = useDiscover(search)
@@ -34,9 +34,9 @@ export default function DiscoverScreen() {
   const subscribeMutation = useSubscribeToWishlist()
   const unsubscribeMutation = useUnsubscribeFromWishlist()
 
-  const filteredWishlists = (discoverData?.wishlists || []).filter((wishlist: any) => {
+  const filteredWishlists = (discoverData?.wishlists || []).filter((wishlist: Record<string, unknown>) => {
     if (wishlist.userId === user?.id) return false
-    if (wishlist.subscriptions?.some((sub: any) => sub.userId === user?.id)) return false
+    if ((wishlist.subscriptions as Array<Record<string, unknown>> | undefined)?.some((sub: Record<string, unknown>) => sub.userId === user?.id)) return false
     return true
   })
 
@@ -51,8 +51,8 @@ export default function DiscoverScreen() {
     })
   }
 
-  const renderWishlist = ({ item }: { item: any }) => {
-    const userSubscription = item.subscriptions?.find((sub: any) => sub.userId === user?.id)
+  const renderWishlist = ({ item }: { item: Record<string, unknown> }) => {
+    const userSubscription = (item.subscriptions as Array<Record<string, unknown>> | undefined)?.find((sub: Record<string, unknown>) => sub.userId === user?.id)
     const isSubscribed = !!userSubscription
     const isOwner = item.userId === user?.id
 
@@ -75,7 +75,7 @@ export default function DiscoverScreen() {
                 onPress={(e) => {
                   e.stopPropagation()
                   if (isSubscribed && userSubscription) {
-                    unsubscribeMutation.mutate(userSubscription.id)
+                    unsubscribeMutation.mutate((userSubscription as Record<string, unknown>).id as string)
                   } else {
                     subscribeMutation.mutate(item.id)
                   }
@@ -98,10 +98,10 @@ export default function DiscoverScreen() {
     )
   }
 
-  const renderUser = ({ item }: { item: any }) => {
-    const isFriend = friends?.some((f: any) => f.id === item.id)
+  const renderUser = ({ item }: { item: Record<string, unknown> }) => {
+    const isFriend = friends?.some((f: Record<string, unknown>) => f.id === item.id)
     const hasPendingRequest = pendingRequests?.some(
-      (req: any) => req.user?.id === item.id || req.friendId === item.id,
+      (req: Record<string, unknown>) => (req.user as Record<string, unknown> | undefined)?.id === item.id || req.friendId === item.id,
     )
 
     return (

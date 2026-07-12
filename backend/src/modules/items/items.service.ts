@@ -57,10 +57,10 @@ export class ItemsService {
     }
 
     // Notify subscribers about new item
-    const subscribersToNotify = wishlist.subscriptions.filter((s: any) => s.notifyNewItems)
+    const subscribersToNotify = wishlist.subscriptions.filter((s) => s.notifyNewItems)
     if (subscribersToNotify.length > 0) {
       await this.prisma.notification.createMany({
-        data: subscribersToNotify.map((sub: any) => ({
+        data: subscribersToNotify.map((sub) => ({
           userId: sub.userId,
           type: "NEW_ITEM" as const,
           title: "New Item Added",
@@ -132,7 +132,7 @@ export class ItemsService {
     })
 
     // Serialize Decimal → number
-    return history.map((h: any) => ({
+    return history.map((h) => ({
       ...h,
       price: Number(h.price),
     }))

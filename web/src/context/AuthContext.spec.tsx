@@ -34,7 +34,7 @@ describe("AuthProvider", () => {
   })
 
   it("provides working login and logout via context", () => {
-    let capturedAuth: any = null
+    let capturedAuth: Record<string, unknown> | null = null
     function CaptureConsumer() {
       const auth = useAuth()
       capturedAuth = auth

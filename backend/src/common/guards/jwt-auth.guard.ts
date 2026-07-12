@@ -26,7 +26,7 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
     }
   }
 
-  handleRequest<TUser = any>(err: any, user: any, info: any, context: ExecutionContext): TUser {
+  handleRequest<TUser = unknown>(err: Error | unknown, user: TUser | null, info: unknown, context: ExecutionContext): TUser {
     // If we have a user, return it (whether public or private)
     if (user) return user
 

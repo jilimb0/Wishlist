@@ -14,12 +14,12 @@ import { useI18n } from "../i18n/context"
 
 export default function FollowingScreen() {
   const { data: subscriptions, isLoading, refetch } = useMySubscriptions()
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const subscribeMutation = useSubscribeToWishlist()
   const unsubscribeMutation = useUnsubscribeFromWishlist()
   const { t } = useI18n()
 
-  const renderItem = ({ item }: { item: any }) => {
+  const renderItem = ({ item }: { item: Record<string, unknown> }) => {
     const { wishlist } = item
     const isSubscribed = !!item.id
 

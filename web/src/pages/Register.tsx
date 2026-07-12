@@ -27,11 +27,11 @@ export default function RegisterPage() {
     registerMutation.mutate(
       { email, password, displayName, inviteToken: inviteToken || undefined },
       {
-        onSuccess: (data: any) => {
+        onSuccess: (data: Record<string, unknown>) => {
           login(data.token, data.user)
           navigate("/")
         },
-        onError: (err: any) => setError(err.message),
+        onError: (err: Error) => setError(err.message),
       },
     )
   }

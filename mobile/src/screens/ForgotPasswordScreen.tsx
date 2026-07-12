@@ -21,7 +21,7 @@ export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("")
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState("")
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const forgotPasswordMutation = useForgotPassword()
 
   const handleSubmit = () => {
@@ -37,7 +37,7 @@ export default function ForgotPasswordScreen() {
         onSuccess: () => {
           setSuccess(true)
         },
-        onError: (err: any) => setError(err.message),
+        onError: (err: Error) => setError(err.message),
       },
     )
   }

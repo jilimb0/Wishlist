@@ -40,10 +40,10 @@ import { colors, fontSize, fontWeight, radius, spacing } from "../theme"
 import type { Item } from "../types"
 
 export default function WishlistDetailScreen() {
-  const { params } = useRoute<any>()
+  const { params } = useRoute()
   const { wishlistId } = params
   const { user } = useAuth()
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const { formatPrice, t } = useI18n()
 
   const { data: wishlist, isLoading, refetch } = useWishlist(wishlistId)
@@ -62,7 +62,7 @@ export default function WishlistDetailScreen() {
   const unsubscribeMutation = useUnsubscribeFromWishlist()
 
   const isOwner = user?.id === wishlist?.userId
-  const userSubscription = wishlist?.subscriptions?.find((sub: any) => sub.userId === user?.id)
+  const userSubscription = wishlist?.subscriptions?.find((sub: Record<string, unknown>) => sub.userId === user?.id)
   const isSubscribed = !!userSubscription
 
   const getPrivacyIcon = React.useCallback((privacy: string) => {
@@ -151,7 +151,7 @@ export default function WishlistDetailScreen() {
     t,
   ])
 
-  const handleAddItem = (data: any) => {
+  const handleAddItem = (data: Record<string, unknown>) => {
     addItemMutation.mutate(
       { wishlistId, ...data },
       {
@@ -159,12 +159,12 @@ export default function WishlistDetailScreen() {
           setIsAddItemOpen(false)
           Toast.show({ type: "success", text1: t("wishlist.item_added") })
         },
-        onError: (err: any) => Toast.show({ type: "error", text1: err.message }),
+        onError: (err: Error) => Toast.show({ type: "error", text1: err.message }),
       },
     )
   }
 
-  const handleUpdateWishlist = (data: any) => {
+  const handleUpdateWishlist = (data: Record<string, unknown>) => {
     updateWishlistMutation.mutate(
       { wishlistId, ...data },
       {
@@ -172,7 +172,7 @@ export default function WishlistDetailScreen() {
           setIsEditWishlistOpen(false)
           Toast.show({ type: "success", text1: t("wishlist.updated") })
         },
-        onError: (err: any) => Toast.show({ type: "error", text1: err.message }),
+        onError: (err: Error) => Toast.show({ type: "error", text1: err.message }),
       },
     )
   }

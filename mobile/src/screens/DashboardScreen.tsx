@@ -24,7 +24,7 @@ import type { Wishlist } from "../types"
 
 export default function DashboardScreen() {
   const { user } = useAuth()
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const { data: wishlists, isLoading, refetch } = useMyWishlists()
   const { data: notificationsData } = useNotifications(10)
   const { t } = useI18n()
@@ -37,7 +37,7 @@ export default function DashboardScreen() {
   const createMutation = useCreateWishlist()
   const deleteMutation = useDeleteWishlist()
 
-  const handleCreate = (data: any) => {
+  const handleCreate = (data: Record<string, unknown>) => {
     createMutation.mutate(data, {
       onSuccess: (createdWishlist) => {
         setIsCreateOpen(false)
@@ -51,7 +51,7 @@ export default function DashboardScreen() {
           title: createdWishlist.title,
         })
       },
-      onError: (err: any) => {
+      onError: (err: Error) => {
         Toast.show({
           type: "error",
           text1: t("common.error"),

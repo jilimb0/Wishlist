@@ -185,7 +185,7 @@ export default function PublicProfilePage() {
           </div>
         ) : (
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {wishlists.map((wl: any) => {
+            {wishlists.map((wl: Record<string, unknown>) => {
               const subscription = subscriptions.data?.find((s) => s.wishlistId === wl.id)
               const isSubscribed = !!subscription
 

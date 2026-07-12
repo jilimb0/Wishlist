@@ -8,7 +8,7 @@ module.exports = {
   },
   collectCoverageFrom: ["**/*.(t|j)s"],
   coverageDirectory: "../coverage",
-  coverageThresholds: {
+  coverageThreshold: {
     global: {
       lines: 60,
       functions: 50,

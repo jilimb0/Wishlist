@@ -36,7 +36,7 @@ export default function WishlistDetailPage() {
 
   const [showAddItem, setShowAddItem] = useState(false)
   const [showEditList, setShowEditList] = useState(false)
-  const [editingItem, setEditingItem] = useState<any | null>(null)
+  const [editingItem, setEditingItem] = useState<Record<string, unknown> | null>(null)
   const [deleteWishlistId, setDeleteWishlistId] = useState<string | null>(null)
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<"GRID" | "LIST">("GRID")
@@ -174,7 +174,7 @@ export default function WishlistDetailPage() {
       >
         <ItemForm
           wishlistId={wishlist.id}
-          onSubmit={(data: any) =>
+          onSubmit={(data: Record<string, unknown>) =>
             addItem.mutate(data, {
               onSuccess: () => setShowAddItem(false),
             })
@@ -321,7 +321,7 @@ export default function WishlistDetailPage() {
             emoji: wishlist.emoji || "🎁",
             privacy: wishlist.privacy,
           }}
-          onSubmit={(data: any) =>
+          onSubmit={(data: Record<string, unknown>) =>
             updateWishlist.mutate(
               { id: wishlist.id, ...data },
               { onSuccess: () => setShowEditList(false) },
@@ -343,7 +343,7 @@ export default function WishlistDetailPage() {
           <ItemForm
             wishlistId={wishlist.id}
             initial={editingItem}
-            onSubmit={(data: any) =>
+            onSubmit={(data: Record<string, unknown>) =>
               updateItem.mutate(
                 { id: editingItem.id, wishlistId: wishlist.id, ...data },
                 { onSuccess: () => setEditingItem(null) },
@@ -382,7 +382,7 @@ export default function WishlistDetailPage() {
           sortMode={sortMode}
           onChangeViewMode={setViewMode}
           onChangeSortMode={setSortMode}
-          onToggleStatus={(item: any) =>
+          onToggleStatus={(item: Record<string, unknown>) =>
             updateItem.mutate({
               id: item.id,
               wishlistId: wishlist.id,
@@ -399,6 +399,21 @@ export default function WishlistDetailPage() {
   )
 }
 
+interface ItemsViewProps {
+  items: Array<Record<string, unknown>>
+  isOwner: boolean
+  user: Record<string, unknown> | null
+  viewMode: "GRID" | "LIST"
+  sortMode: string
+  onChangeViewMode: (mode: "GRID" | "LIST") => void
+  onChangeSortMode: (mode: string) => void
+  onToggleStatus: (item: Record<string, unknown>) => void
+  onEdit: (item: Record<string, unknown>) => void
+  onRemove: (id: string) => void
+  onReserve: (id: string) => void
+  onCancelReserve: (id: string) => void
+}
+
 function ItemsView({
   items,
   isOwner,
@@ -412,7 +427,7 @@ function ItemsView({
   onRemove,
   onReserve,
   onCancelReserve,
-}: any) {
+}: ItemsViewProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
   const sortedItems = [...items].sort((a, b) => {
@@ -474,9 +489,9 @@ function ItemsView({
       <div className="flex-1 overflow-y-auto min-h-0 scrollbar-hide pb-4">
         {viewMode === "GRID" ? (
           <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5">
-            {currentItems.map((item: any) => (
+            {currentItems.map((item: Record<string, unknown>) => (
               <ItemCard
-                key={item.id}
+                key={item.id as string}
                 item={item}
                 isOwner={isOwner}
                 user={user}
@@ -490,7 +505,7 @@ function ItemsView({
           </div>
         ) : (
           <div className="space-y-2">
-            {currentItems.map((item: any) => (
+            {currentItems.map((item: Record<string, unknown>) => (
               <div
                 key={item.id}
                 className="flex items-center justify-between gap-3 p-3 rounded-xl border border-zinc-800 bg-zinc-900/50"

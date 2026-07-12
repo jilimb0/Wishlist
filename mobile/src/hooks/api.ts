@@ -148,7 +148,7 @@ export function useAddItem() {
 export function useUpdateItem() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: any) => {
+    mutationFn: (data: Record<string, unknown>) => {
       const { id, wishlistId, ...rest } = data
       return api.patch(`/items/${id}`, rest)
     },
@@ -280,7 +280,7 @@ export function useMySubscriptions() {
 export function usePendingSubscriptions() {
   return useQuery({
     queryKey: ["subscriptions", "pending"],
-    queryFn: () => api.get<any[]>("/subscriptions/pending"),
+    queryFn: () => api.get<Array<Record<string, unknown>>>("/subscriptions/pending"),
   })
 }
 
@@ -404,7 +404,7 @@ export function useFriends() {
 export function usePendingFriends() {
   return useQuery({
     queryKey: ["friends", "pending"],
-    queryFn: () => api.get<any[]>("/friends/pending"),
+    queryFn: () => api.get<Array<Record<string, unknown>>>("/friends/pending"),
   })
 }
 

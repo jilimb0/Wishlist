@@ -13,6 +13,13 @@ import {
 import { colors, fontSize, fontWeight, radius, spacing } from "../theme"
 import { Privacy } from "../types"
 
+interface WishlistFormData {
+  title?: string
+  description?: string
+  emoji?: string
+  privacy?: Privacy | string
+}
+
 interface WishlistFormProps {
   initialData?: {
     id?: string
@@ -21,7 +28,7 @@ interface WishlistFormProps {
     emoji: string
     privacy: Privacy | string
   }
-  onSubmit: (data: any) => void
+  onSubmit: (data: WishlistFormData) => void
   isLoading: boolean
   submitLabel: string
 }
@@ -165,7 +172,7 @@ export const WishlistForm: React.FC<WishlistFormProps> = ({
                 style={[styles.privacyIcon, privacy === option.id && styles.privacyIconSelected]}
               >
                 <Ionicons
-                  name={option.icon as any}
+                  name={option.icon as keyof typeof Ionicons.glyphMap}
                   size={20}
                   color={privacy === option.id ? "#fbbf24" : "#71717a"}
                 />

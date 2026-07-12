@@ -43,7 +43,7 @@ export default function DiscoverPage() {
         toast.success(t("discover.request_sent_success"))
         qc.invalidateQueries({ queryKey: ["users", "search"] })
       },
-      onError: (err: any) => {
+      onError: (err: Error & { response?: { data?: { message?: string } } }) => {
         const msg = err.response?.data?.message || t("discover.request_error")
         toast.error(msg)
       },

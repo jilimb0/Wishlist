@@ -46,8 +46,8 @@ export default function FollowingPage() {
         </div>
       ) : (
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {data.map((sub: any) => (
-            <WishlistCard
+{data.map((sub: Record<string, unknown>) => (
+              <WishlistCard
               key={sub.id}
               wishlist={sub.wishlist}
               showUser={true}

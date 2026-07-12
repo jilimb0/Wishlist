@@ -21,10 +21,10 @@ import {
 import { useI18n } from "../i18n/context"
 
 export default function PublicProfileScreen() {
-  const { params } = useRoute<any>()
+  const { params } = useRoute<Record<string, unknown>>()
   // @ts-expect-error
   const { userId } = params
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const { user: currentUser } = useAuth()
   const { t } = useI18n()
 
@@ -38,13 +38,13 @@ export default function PublicProfileScreen() {
   const respondMutation = useRespondFriendRequest()
   const removeFriendshipMutation = useRemoveFriendship()
 
-  const isFriend = friends?.some((f: any) => f.id === userId)
-  const friend = friends?.find((f: any) => f.id === userId)
+  const isFriend = friends?.some((f: Record<string, unknown>) => f.id === userId)
+  const friend = friends?.find((f: Record<string, unknown>) => f.id === userId)
   const myOutgoingRequest = allPendingRequests?.find(
-    (req: any) => req.userId === currentUser?.id && req.friendId === userId,
+    (req: Record<string, unknown>) => req.userId === currentUser?.id && req.friendId === userId,
   )
   const incomingRequest = allPendingRequests?.find(
-    (req: any) => req.userId === userId && req.friendId === currentUser?.id,
+    (req: Record<string, unknown>) => req.userId === userId && req.friendId === currentUser?.id,
   )
   // Note: friendshipId might be available as a separate field on friend object
   // const friendshipId = friend?.friendshipId
@@ -112,7 +112,7 @@ export default function PublicProfileScreen() {
     )
   }
 
-  const renderWishlist = ({ item }: { item: any }) => (
+  const renderWishlist = ({ item }: { item: Record<string, unknown> }) => (
     <TouchableOpacity
       activeOpacity={0.7}
       style={{ flex: 1, maxWidth: "48%" }}

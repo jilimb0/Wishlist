@@ -9,9 +9,16 @@ const userId = "user-1"
 const friendId = "user-2"
 const requestId = "req-1"
 
+interface MockPrisma {
+  friendship: Record<string, jest.Mock>
+  invitation: Record<string, jest.Mock>
+  user: Record<string, jest.Mock>
+  $transaction: jest.Mock
+}
+
 describe("FriendsService", () => {
   let service: FriendsService
-  const prisma: any = {
+  const prisma: MockPrisma = {
     friendship: {
       findFirst: jest.fn(),
       findUnique: jest.fn(),
@@ -22,7 +29,7 @@ describe("FriendsService", () => {
     },
     invitation: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
     user: { findUnique: jest.fn(), findMany: jest.fn() },
-    $transaction: jest.fn((fn: any) => fn(prisma)),
+    $transaction: jest.fn((fn: (tx: MockPrisma) => unknown) => fn(prisma)),
   }
   const mail = { send: jest.fn() }
   const config = { get: jest.fn(() => "http://localhost:3011") }

@@ -79,9 +79,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, forwardedR
       <div className="relative w-full">
         <input
           ref={(node) => {
-            ;(rest as any).ref?.(node)
             if (typeof forwardedRef === "function") forwardedRef(node)
-            else if (forwardedRef) (forwardedRef as any).current = node
+            else if (forwardedRef) (forwardedRef as React.MutableRefObject<HTMLInputElement | null>).current = node
           }}
           className={`w-full bg-zinc-900/50 border ${
             hasError

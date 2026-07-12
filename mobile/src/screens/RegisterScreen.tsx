@@ -23,7 +23,7 @@ export default function RegisterScreen() {
   const [displayName, setDisplayName] = useState("")
   const [error, setError] = useState("")
   const { login } = useAuth()
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const registerMutation = useRegister()
 
   const handleSubmit = () => {
@@ -41,10 +41,10 @@ export default function RegisterScreen() {
     registerMutation.mutate(
       { email, password, displayName },
       {
-        onSuccess: (data: any) => {
+        onSuccess: (data: Record<string, unknown>) => {
           login(data.token, data.user)
         },
-        onError: (err: any) => setError(err.message),
+        onError: (err: Error) => setError(err.message),
       },
     )
   }

@@ -22,7 +22,7 @@ export default function ResetPasswordScreen() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState("")
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation()
   const resetPasswordMutation = useResetPassword()
 
   // Handle deep linking for token
@@ -75,7 +75,7 @@ export default function ResetPasswordScreen() {
         onSuccess: () => {
           setSuccess(true)
         },
-        onError: (err: any) => setError(err.message),
+        onError: (err: Error) => setError(err.message),
       },
     )
   }

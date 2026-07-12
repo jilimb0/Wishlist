@@ -18,9 +18,18 @@ import Toast from "react-native-toast-message"
 import { useScrape, useUploadItemImage } from "../hooks/api"
 import { colors, fontSize, fontWeight, radius, spacing } from "../theme"
 
+interface ItemFormData {
+  url?: string
+  title?: string
+  description?: string
+  imageUrl?: string
+  price?: number
+  currency?: string
+}
+
 interface ItemFormProps {
-  initialData?: any
-  onSubmit: (data: any) => void
+  initialData?: Partial<ItemFormData>
+  onSubmit: (data: ItemFormData) => void
   isLoading: boolean
   submitLabel: string
 }
