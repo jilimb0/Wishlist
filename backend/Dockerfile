@@ -25,6 +25,7 @@ COPY --from=builder /app/backend/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/backend/package.json ./
 COPY --from=builder /app/backend/prisma ./prisma
+COPY --from=builder /app/backend/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/package.json /app/pnpm-workspace.yaml ./
 
 EXPOSE 3010
