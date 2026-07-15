@@ -13,16 +13,16 @@
     "check": "biome check --write ."
   },
   "dependencies": {
-    "@wishtracker/shared": "workspace:*",
-    "@babel/runtime": "^7.28.6",
-    "@expo/vector-icons": "^14.0.0",
+    "@babel/runtime": "^7.29.7",
+    "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "1.21.0",
-    "@react-navigation/bottom-tabs": "^6.5.11",
-    "@react-navigation/native": "^6.1.9",
-    "@react-navigation/native-stack": "^6.9.17",
-    "@tanstack/react-query": "^5.17.19",
-    "axios": "^1.6.7",
-    "clsx": "^2.1.0",
+    "@react-navigation/bottom-tabs": "^6.6.1",
+    "@react-navigation/native": "^6.1.18",
+    "@react-navigation/native-stack": "^6.11.0",
+    "@tanstack/react-query": "^5.101.2",
+    "@wishtracker/shared": "workspace:*",
+    "axios": "^1.18.1",
+    "clsx": "^2.1.1",
     "expo": "~50.0.21",
     "expo-blur": "~12.9.2",
     "expo-clipboard": "~5.0.1",
@@ -31,20 +31,20 @@
     "expo-linking": "~6.2.2",
     "expo-status-bar": "~1.11.1",
     "invariant": "^2.2.4",
-    "luxon": "^3.4.4",
+    "luxon": "^3.7.2",
     "react": "18.2.0",
     "react-native": "0.73.6",
     "react-native-safe-area-context": "4.8.2",
     "react-native-screens": "~3.29.0",
-    "react-native-toast-message": "^2.2.0",
-    "tailwind-merge": "^2.2.1"
+    "react-native-toast-message": "^2.4.0",
+    "tailwind-merge": "^2.6.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
+    "@babel/core": "^7.29.7",
     "@biomejs/biome": "^1.9.4",
-    "@types/luxon": "^3.4.2",
+    "@types/luxon": "^3.7.2",
     "@types/react": "18.2.79",
-    "typescript": "^5.3.3"
+    "typescript": "^5.9.3"
   },
   "private": true,
   "engines": {

@@ -28,8 +28,8 @@
     "validate": "pnpm run check:ci && pnpm run type-check && pnpm run test"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.1",
-    "lefthook": "^1.11.0",
-    "typescript": "^5.7.3"
+    "@biomejs/biome": "^2.5.3",
+    "lefthook": "^1.13.6",
+    "typescript": "^5.9.3"
   }
 }
