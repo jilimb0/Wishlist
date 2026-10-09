@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common"
+import { SubscriptionTier } from "@prisma/client"
 import { PrismaService } from "../../prisma/prisma.service"
 import { UpdateUserDto } from "./dto/update-user.dto"
 
@@ -17,12 +18,28 @@ export class UsersService {
         language: true,
         currency: true,
         createdAt: true,
+        telegramChatId: true,
+        telegramUsername: true,
+        subscriptionTier: true,
+        trialEndsAt: true,
+        proExpiresAt: true,
         _count: { select: { wishlists: true } },
       },
     })
 
     if (!user) throw new NotFoundException("User not found")
-    return user
+
+    const now = new Date()
+    const isTrialActive = user.trialEndsAt ? user.trialEndsAt > now : true
+    const isPro =
+      user.subscriptionTier === SubscriptionTier.PRO ||
+      isTrialActive ||
+      (user.proExpiresAt ? user.proExpiresAt > now : false)
+
+    return {
+      ...user,
+      isPro,
+    }
   }
 
   async updateMe(userId: string, dto: UpdateUserDto) {
@@ -37,10 +54,42 @@ export class UsersService {
         language: true,
         currency: true,
         createdAt: true,
+        telegramChatId: true,
+        telegramUsername: true,
+        subscriptionTier: true,
+        trialEndsAt: true,
+        proExpiresAt: true,
       },
     })
 
-    return user
+    const now = new Date()
+    const isTrialActive = user.trialEndsAt ? user.trialEndsAt > now : true
+    const isPro =
+      user.subscriptionTier === SubscriptionTier.PRO ||
+      isTrialActive ||
+      (user.proExpiresAt ? user.proExpiresAt > now : false)
+
+    return {
+      ...user,
+      isPro,
+    }
+  }
+
+  async deleteAccount(userId: string) {
+    await this.prisma.user.delete({ where: { id: userId } })
+    return { success: true }
+  }
+
+  async updateAvatar(userId: string, avatarUrl: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl },
+      select: {
+        id: true,
+        displayName: true,
+        avatarUrl: true,
+      },
+    })
   }
 
   async getPublicProfile(userId: string) {
@@ -58,33 +107,18 @@ export class UsersService {
   }
 
   // Alias for controller compat
-  async findById(userId: string) {
-    return this.getMe(userId)
+  async findById(id: string) {
+    return this.getMe(id)
   }
 
-  async update(userId: string, dto: UpdateUserDto) {
-    return this.updateMe(userId, dto)
+  async update(id: string, dto: UpdateUserDto) {
+    return this.updateMe(id, dto)
   }
 
-  async updateAvatar(userId: string, avatarUrl: string) {
-    const user = await this.prisma.user.update({
-      where: { id: userId },
-      data: { avatarUrl },
-      select: {
-        id: true,
-        email: true,
-        displayName: true,
-        avatarUrl: true,
-        language: true,
-        currency: true,
-        createdAt: true,
-      },
-    })
-    return user
-  }
-  async deleteAccount(userId: string) {
-    return this.prisma.user.delete({
-      where: { id: userId },
+  async getUserWishlists(userId: string) {
+    return this.prisma.wishlist.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
     })
   }
 }

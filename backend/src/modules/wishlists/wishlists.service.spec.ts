@@ -2,6 +2,7 @@ import { ForbiddenException, NotFoundException } from "@nestjs/common"
 import { Test, type TestingModule } from "@nestjs/testing"
 import { Privacy } from "@prisma/client"
 import { PrismaService } from "../../prisma/prisma.service"
+import { AffiliateService } from "../affiliate/affiliate.service"
 import { FriendsService } from "../friends/friends.service"
 import { WishlistsService } from "./wishlists.service"
 
@@ -28,6 +29,9 @@ describe("WishlistsService", () => {
   const friendsService = {
     isFriend: jest.fn(),
   }
+  const affiliateService = {
+    getAffiliateUrl: jest.fn((url: string) => `${url}?tag=test`),
+  }
 
   beforeEach(async () => {
     jest.clearAllMocks()
@@ -36,6 +40,7 @@ describe("WishlistsService", () => {
         WishlistsService,
         { provide: PrismaService, useValue: prisma },
         { provide: FriendsService, useValue: friendsService },
+        { provide: AffiliateService, useValue: affiliateService },
       ],
     }).compile()
     service = module.get(WishlistsService)

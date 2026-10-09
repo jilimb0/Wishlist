@@ -3,13 +3,16 @@ import { toast } from "react-hot-toast"
 import { Link, useNavigate } from "react-router-dom"
 import { Input } from "@/components/Input"
 import { Modal } from "@/components/Modal"
+import { PaywallModal } from "@/components/PaywallModal"
 import { PendingSubscriptions } from "@/components/PendingSubscriptions"
 import { UserAvatar } from "@/components/UserAvatar"
 import { useAuth } from "@/context/AuthContext"
 import {
+  useBillingStatus,
   useCancelReservation,
   useChangePassword,
   useDeleteProfile,
+  useDisconnectTelegram,
   useFriends,
   useInviteFriend,
   useMyReservations,
@@ -20,6 +23,7 @@ import {
   useUploadAvatar,
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
+import { api } from "@/lib/api"
 import type { Friendship, Reservation, User } from "@/types"
 
 function InviteForm() {
@@ -133,6 +137,25 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState(user?.displayName || "")
   const [saved, setSaved] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showPaywallModal, setShowPaywallModal] = useState(false)
+  const [isConnectingTg, setIsConnectingTg] = useState(false)
+
+  const { data: billing } = useBillingStatus()
+  const disconnectTelegram = useDisconnectTelegram()
+
+  const handleConnectTelegram = async () => {
+    try {
+      setIsConnectingTg(true)
+      const res = await api.get<{ token: string; linkUrl: string }>("/telegram/link-url")
+      if (res?.linkUrl) {
+        window.open(res.linkUrl, "_blank")
+      }
+    } catch {
+      toast.error("Не удалось получить ссылку для Telegram")
+    } finally {
+      setIsConnectingTg(false)
+    }
+  }
 
   // Password change state
   const [oldPassword, setOldPassword] = useState("")
@@ -335,6 +358,111 @@ export default function ProfilePage() {
           <p>{t("profile.delete_confirm")}</p>
         </Modal>
       </section>
+
+      {/* ─── Telegram & Pro Monetization ──────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+        {/* Telegram Card */}
+        <section className="space-y-4 flex flex-col">
+          <h2 className="text-xl font-bold text-zinc-100 uppercase tracking-tight h-8">
+            Telegram Уведомления
+          </h2>
+          <div className="flex-1 p-6 bg-zinc-900/50 backdrop-blur-3xl border border-zinc-800/50 rounded-3xl shadow-lg flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">✈️</span>
+                <div>
+                  <h3 className="font-bold text-white text-sm">Бот WishTracker</h3>
+                  <p className="text-xs text-zinc-400">
+                    Мгновенные оповещения о бронировании подарков и скидках
+                  </p>
+                </div>
+              </div>
+
+              {user?.telegramChatId ? (
+                <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-400 font-bold flex items-center justify-between">
+                  <span>
+                    ✅ Подключен {user.telegramUsername ? `@${user.telegramUsername}` : ""}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => disconnectTelegram.mutate()}
+                    className="text-red-400 hover:text-red-300 font-bold underline text-[11px]"
+                  >
+                    Отключить
+                  </button>
+                </div>
+              ) : (
+                <p className="text-xs text-zinc-400">
+                  Подключите Telegram, чтобы не пропустить, когда друзья бронируют подарки из вашего
+                  списка!
+                </p>
+              )}
+            </div>
+
+            {!user?.telegramChatId && (
+              <button
+                type="button"
+                onClick={handleConnectTelegram}
+                disabled={isConnectingTg}
+                className="mt-4 w-full py-3 bg-sky-500 hover:bg-sky-400 text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-98 flex items-center justify-center gap-2"
+              >
+                <span>✈️</span> Подключить Telegram
+              </button>
+            )}
+          </div>
+        </section>
+
+        {/* Pro Subscription Card */}
+        <section className="space-y-4 flex flex-col">
+          <h2 className="text-xl font-bold text-zinc-100 uppercase tracking-tight h-8">
+            Подписка & Pro
+          </h2>
+          <div className="flex-1 p-6 bg-zinc-900/50 backdrop-blur-3xl border border-zinc-800/50 rounded-3xl shadow-lg flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl">⭐</span>
+                  <div>
+                    <h3 className="font-bold text-white text-sm">Тарифный план</h3>
+                    <p className="text-xs text-zinc-400">
+                      {billing?.isPro ? "PRO возможности активны" : "Базовый бесплатный тариф"}
+                    </p>
+                  </div>
+                </div>
+                <span
+                  className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${
+                    billing?.isPro
+                      ? "bg-brand-500/20 text-brand-400 border border-brand-500/30"
+                      : "bg-zinc-800 text-zinc-400"
+                  }`}
+                >
+                  {billing?.isPro ? "PRO" : "FREE"}
+                </span>
+              </div>
+
+              {billing?.trialDaysRemaining ? (
+                <p className="text-xs text-brand-400/90 font-medium">
+                  ⏳ Пробный PRO период: осталось {billing.trialDaysRemaining} дн.
+                </p>
+              ) : null}
+
+              <p className="text-xs text-zinc-400">
+                Автотрекинг цен на маркетплейсах, групповые сборы и эксклюзивные темы оформления.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowPaywallModal(true)}
+              className="mt-4 w-full py-3 bg-brand-500 hover:bg-brand-400 text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-98"
+            >
+              ⭐ {billing?.isPro ? "Управление PRO подпиской" : "Перейти на PRO"}
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <PaywallModal isOpen={showPaywallModal} onClose={() => setShowPaywallModal(false)} />
 
       {/* ─── Friends & Invites ────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">

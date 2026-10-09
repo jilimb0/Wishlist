@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.1.0 (2026-10-10)
+
+Monetization, Viral Sharing & Social Gifting release.
+
+### Monetization & Affiliate Links
+- Automated marketplace scrapers for Wildberries, Amazon, and Ozon (accurate prices, high-res images).
+- Dynamic affiliate link generator (`@wishtracker/shared/affiliate`) injecting partner tags for Amazon, Ozon, and Wildberries.
+- Backend affiliate redirect router (`/api/affiliate/redirect` and `/api/items/:id/out`) for tracking outbound clicks and commission earning (3–8%).
+- Billing & Pro subscription module (`/api/billing`): 14-day free trial auto-grant, promo code redemption (`WISHTRACKERPRO`, `GIFT2026`), mock checkout and subscription lifecycle.
+- Web Paywall modal (`PaywallModal.tsx`) with monthly/yearly plans, feature comparison, and promo code support.
+
+### Social & Group Gifting
+- Group gifting / crowdfunding widget (`GroupGiftModal.tsx`): progress bar, percentage calculation, quick contribution chips, organizer payout link.
+- New database schema models: `GroupGiftContribution`, `SubscriptionTier`, and crowdfunding attributes on `Item`.
+- Viral sharing modal (`ShareWishlistModal.tsx`): occasion-based presets (Birthday, New Year, General) with direct 1-click sharing to Telegram, WhatsApp, and VK.
+
+### Notifications & Automation
+- Telegram bot integration: deep-link account linking (`/start <token>`), webhook controller, and instant alerts for gift reservations, price drops, and group gift contributions.
+- Automatic scheduled price tracking cron (`PriceTrackingService.checkPrices`) with Telegram price-drop notifications.
+
+---
+
 ## 1.0.0 (2026-06-30)
 
 Production-ready release. Transformed from 1/10 to 10/10 — full CI/CD, structured logging, Sentry monitoring, comprehensive testing, and deployment pipeline.

@@ -4,6 +4,7 @@ import { Cron } from "@nestjs/schedule"
 import { NotificationType } from "@prisma/client"
 import { PrismaService } from "../../prisma/prisma.service"
 import { ScraperService } from "../scraper/scraper.service"
+import { TelegramService } from "../telegram/telegram.service"
 
 @Injectable()
 export class PriceTrackingService {
@@ -13,6 +14,7 @@ export class PriceTrackingService {
     private prisma: PrismaService,
     private scraper: ScraperService,
     private config: ConfigService,
+    private telegramService: TelegramService,
   ) {}
 
   @Cron("0 */6 * * *")
@@ -74,6 +76,18 @@ export class PriceTrackingService {
               relatedItemId: item.id,
             })),
           })
+
+          // Telegram notifications for price drops
+          for (const userId of notifyUserIds) {
+            await this.telegramService.notifyPriceDrop(
+              userId,
+              item.title,
+              previous,
+              scraped.price,
+              currency,
+              item.url,
+            )
+          }
         }
       } catch (error) {
         this.logger.warn(`Price track failed for item ${item.id}: ${(error as Error).message}`)

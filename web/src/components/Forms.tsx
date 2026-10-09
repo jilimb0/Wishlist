@@ -343,6 +343,10 @@ interface ItemFormProps {
     price?: number
     status?: "ACTIVE" | "COMPLETED"
     trackPrice?: boolean
+    isGroupGift?: boolean
+    targetAmount?: number
+    fundraiserNote?: string
+    fundraiserPaymentLink?: string
   }) => void
   initial?: {
     id: string
@@ -353,6 +357,10 @@ interface ItemFormProps {
     currency?: string
     status?: "ACTIVE" | "COMPLETED"
     trackPrice?: boolean
+    isGroupGift?: boolean
+    targetAmount?: number
+    fundraiserNote?: string
+    fundraiserPaymentLink?: string
   }
   isLoading?: boolean
 }
@@ -365,6 +373,14 @@ export function ItemForm({ wishlistId, onSubmit, initial, isLoading }: ItemFormP
   const [price, setPrice] = useState(initial?.currentPrice ? String(initial.currentPrice) : "")
   const [status, setStatus] = useState<"ACTIVE" | "COMPLETED">(initial?.status || "ACTIVE")
   const [trackPrice, setTrackPrice] = useState(initial?.trackPrice ?? false)
+  const [isGroupGift, setIsGroupGift] = useState(initial?.isGroupGift ?? false)
+  const [targetAmount, setTargetAmount] = useState(
+    initial?.targetAmount ? String(initial.targetAmount) : "",
+  )
+  const [fundraiserNote, setFundraiserNote] = useState(initial?.fundraiserNote || "")
+  const [fundraiserPaymentLink, setFundraiserPaymentLink] = useState(
+    initial?.fundraiserPaymentLink || "",
+  )
   const [isUrl, setIsUrl] = useState(initial?.url?.startsWith("http") || !!initial?.url || false)
   const { user } = useAuth()
   const [currency, _setCurrency] = useState(initial?.currency || user?.currency || "USD")
@@ -430,6 +446,10 @@ export function ItemForm({ wishlistId, onSubmit, initial, isLoading }: ItemFormP
       price: price ? Number.parseFloat(price) : undefined,
       status,
       trackPrice,
+      isGroupGift,
+      targetAmount: targetAmount ? Number.parseFloat(targetAmount) : undefined,
+      fundraiserNote: fundraiserNote.trim() || undefined,
+      fundraiserPaymentLink: fundraiserPaymentLink.trim() || undefined,
     })
 
     if (!initial) {
@@ -588,6 +608,70 @@ export function ItemForm({ wishlistId, onSubmit, initial, isLoading }: ItemFormP
             />
             Track price changes
           </label>
+
+          <div className="pt-2 border-t border-zinc-800/80 space-y-3">
+            <label className="flex items-center gap-2 text-sm text-brand-400 font-bold cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isGroupGift}
+                onChange={(e) => setIsGroupGift(e.target.checked)}
+                className="rounded border-zinc-600 accent-brand-500"
+              />
+              🤝 Совместный подарок (сброситься с друзьями)
+            </label>
+
+            {isGroupGift && (
+              <div className="space-y-3 pl-6 border-l-2 border-brand-500/30">
+                <div>
+                  <label
+                    htmlFor="target-amount"
+                    className="block text-xs font-bold text-zinc-300 mb-1"
+                  >
+                    Целевая сумма сбора ({currency})
+                  </label>
+                  <Input
+                    id="target-amount"
+                    type="number"
+                    min="1"
+                    step="any"
+                    value={targetAmount}
+                    onChange={(e) => setTargetAmount(e.target.value)}
+                    placeholder="25000"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="fundraiser-note"
+                    className="block text-xs font-bold text-zinc-300 mb-1"
+                  >
+                    Заметка для друзей
+                  </label>
+                  <Input
+                    id="fundraiser-note"
+                    value={fundraiserNote}
+                    onChange={(e) => setFundraiserNote(e.target.value)}
+                    placeholder="Скидываемся на PS5 к дню рождения! 🎉"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="fundraiser-payment"
+                    className="block text-xs font-bold text-zinc-300 mb-1"
+                  >
+                    Ссылка на перевод / сбор (СБП, Тинькофф, PayPal)
+                  </label>
+                  <Input
+                    id="fundraiser-payment"
+                    value={fundraiserPaymentLink}
+                    onChange={(e) => setFundraiserPaymentLink(e.target.value)}
+                    placeholder="https://tinkoff.ru/cf/..."
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

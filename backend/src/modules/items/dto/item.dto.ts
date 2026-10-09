@@ -42,6 +42,22 @@ export class CreateItemDto {
   @IsOptional()
   @IsBoolean()
   trackPrice?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  isGroupGift?: boolean
+
+  @IsOptional()
+  @IsNumber()
+  targetAmount?: number
+
+  @IsOptional()
+  @IsString()
+  fundraiserNote?: string
+
+  @IsOptional()
+  @IsString()
+  fundraiserPaymentLink?: string
 }
 
 export class UpdateItemDto {
@@ -82,4 +98,20 @@ export class UpdateItemDto {
   @IsOptional()
   @IsString()
   currency?: string
+
+  @IsOptional()
+  @IsBoolean()
+  isGroupGift?: boolean
+
+  @IsOptional()
+  @IsNumber()
+  targetAmount?: number
+
+  @IsOptional()
+  @IsString()
+  fundraiserNote?: string
+
+  @IsOptional()
+  @IsString()
+  fundraiserPaymentLink?: string
 }

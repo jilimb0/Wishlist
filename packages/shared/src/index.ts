@@ -1,3 +1,5 @@
+export * from "./affiliate"
+
 // Enums (matching Prisma)
 export enum Privacy {
   PRIVATE = "PRIVATE",
@@ -15,6 +17,7 @@ export enum NotificationType {
   PRICE_DROP = "PRICE_DROP",
   NEW_ITEM = "NEW_ITEM",
   RESERVATION = "RESERVATION",
+  GROUP_GIFT_CONTRIBUTION = "GROUP_GIFT_CONTRIBUTION",
 }
 
 export enum ItemStatus {
@@ -27,6 +30,11 @@ export enum FriendshipStatus {
   ACCEPTED = "ACCEPTED",
 }
 
+export enum SubscriptionTier {
+  FREE = "FREE",
+  PRO = "PRO",
+}
+
 // Entities
 export interface User {
   id: string
@@ -36,6 +44,12 @@ export interface User {
   language: string
   currency: string
   createdAt: string
+  telegramChatId?: string | null
+  telegramUsername?: string | null
+  subscriptionTier?: SubscriptionTier | "FREE" | "PRO"
+  trialEndsAt?: string | null
+  proExpiresAt?: string | null
+  isPro?: boolean
   friendshipId?: string
   friendship?: {
     id: string
@@ -81,6 +95,17 @@ export interface Wishlist {
   subscriptionStatus?: string
 }
 
+export interface GroupGiftContribution {
+  id: string
+  itemId: string
+  userId: string | null
+  contributorName: string
+  amount: number
+  currency: string
+  message: string | null
+  createdAt: string
+}
+
 export interface Item {
   id: string
   wishlistId: string
@@ -88,12 +113,20 @@ export interface Item {
   description: string | null
   status: ItemStatus | "ACTIVE" | "COMPLETED"
   url: string
+  affiliateUrl?: string | null
   imageUrl: string | null
   currentPrice: number | null
   currency: string
   trackPrice: boolean
   priority: number
   createdAt: string
+  isGroupGift?: boolean
+  targetAmount?: number | null
+  fundraiserNote?: string | null
+  fundraiserPaymentLink?: string | null
+  contributions?: GroupGiftContribution[]
+  totalContributed?: number
+  contributionCount?: number
   reservation?: {
     id: string
     status: string
@@ -133,7 +166,7 @@ export interface Subscription {
 
 export interface Notification {
   id: string
-  type: NotificationType | "PRICE_DROP" | "NEW_ITEM" | "RESERVATION"
+  type: NotificationType | "PRICE_DROP" | "NEW_ITEM" | "RESERVATION" | "GROUP_GIFT_CONTRIBUTION"
   title: string
   message: string
   relatedItemId: string | null
@@ -147,6 +180,19 @@ export interface PriceHistory {
   price: number
   currency: string
   checkedAt: string
+}
+
+export interface BillingStatus {
+  tier: SubscriptionTier | "FREE" | "PRO"
+  isPro: boolean
+  trialDaysRemaining: number
+  proExpiresAt: string | null
+  features: {
+    unlimitedPriceTracking: boolean
+    groupGifting: boolean
+    customThemes: boolean
+    prioritySupport: boolean
+  }
 }
 
 // API Responses

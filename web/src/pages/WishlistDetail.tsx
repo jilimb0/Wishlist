@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import { toast } from "react-hot-toast"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { ItemForm, WishlistForm } from "@/components/Forms"
 import { ItemCard } from "@/components/ItemCard"
 import { Modal } from "@/components/Modal"
+import { ShareWishlistModal } from "@/components/ShareWishlistModal"
 import { useAuth } from "@/context/AuthContext"
 import {
   useAddItem,
@@ -37,6 +37,7 @@ export default function WishlistDetailPage() {
 
   const [showAddItem, setShowAddItem] = useState(false)
   const [showEditList, setShowEditList] = useState(false)
+  const [showShareModal, setShowShareModal] = useState(false)
   const [editingItem, setEditingItem] = useState<Item | null>(null)
   const [deleteWishlistId, setDeleteWishlistId] = useState<string | null>(null)
   const [deleteItemId, setDeleteItemId] = useState<string | null>(null)
@@ -47,25 +48,8 @@ export default function WishlistDetailPage() {
 
   const isOwner = wishlist?.userId === user?.id
 
-  const handleShare = async () => {
-    if (!wishlist) return
-    const shareUrl = `${window.location.origin}/wishlists/${wishlist.id}`
-
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: wishlist.title,
-          text: `Check out this wishlist: ${wishlist.title}`,
-          url: shareUrl,
-        })
-        return
-      }
-
-      await navigator.clipboard.writeText(shareUrl)
-      toast.success("Wishlist link copied")
-    } catch (_error) {
-      toast.error("Could not share wishlist")
-    }
+  const handleShare = () => {
+    setShowShareModal(true)
   }
 
   useEffect(() => {
@@ -183,6 +167,12 @@ export default function WishlistDetailPage() {
           isLoading={addItem.isPending}
         />
       </Modal>
+
+      <ShareWishlistModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        wishlist={wishlist}
+      />
 
       {/* ─── Header ────────────────────────────────── */}
       <div className="flex flex-row items-center justify-between gap-4">

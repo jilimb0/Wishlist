@@ -1,8 +1,10 @@
 import { Module } from "@nestjs/common"
+import { AffiliateModule } from "../affiliate/affiliate.module"
 import { ItemsController } from "./items.controller"
 import { ItemsService } from "./items.service"
 
 @Module({
+  imports: [AffiliateModule],
   controllers: [ItemsController],
   providers: [ItemsService],
   exports: [ItemsService],

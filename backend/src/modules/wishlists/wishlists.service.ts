@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common"
 import { Privacy, type SubscriptionStatus } from "@prisma/client"
 import { PrismaService } from "../../prisma/prisma.service"
+import { AffiliateService } from "../affiliate/affiliate.service"
 import { FriendsService } from "../friends/friends.service"
 import { CreateWishlistDto, UpdateWishlistDto } from "./dto/wishlist.dto"
 
@@ -9,6 +10,7 @@ export class WishlistsService {
   constructor(
     private prisma: PrismaService,
     private friendsService: FriendsService,
+    private affiliateService: AffiliateService,
   ) {}
 
   async getMyWishlists(userId: string) {
@@ -52,6 +54,19 @@ export class WishlistsService {
                 userId: true,
               },
             },
+            contributions: {
+              orderBy: { createdAt: "desc" },
+              select: {
+                id: true,
+                itemId: true,
+                userId: true,
+                contributorName: true,
+                amount: true,
+                currency: true,
+                message: true,
+                createdAt: true,
+              },
+            },
           },
           orderBy: { createdAt: "desc" },
         },
@@ -83,12 +98,23 @@ export class WishlistsService {
     }
 
     // Hide reservation details from wishlist owner (surprise mode)
-    // Also serialize Decimal → number for currentPrice
+    // Also serialize Decimal → number for currentPrice & targetAmount
     const isOwner = wishlist.userId === currentUserId
-    const items = wishlist.items.map((item) => {
+    const items = (wishlist.items || []).map((item) => {
+      const contributions = item.contributions || []
+      const totalContributed = contributions.reduce((sum, c) => sum + Number(c.amount), 0)
       const serialized = {
         ...item,
         currentPrice: item.currentPrice ? Number(item.currentPrice) : null,
+        targetAmount: item.targetAmount ? Number(item.targetAmount) : null,
+        affiliateUrl: item.url ? this.affiliateService.getAffiliateUrl(item.url) : null,
+        totalContributed,
+        contributionCount: contributions.length,
+        contributions: contributions.map((c) => ({
+          ...c,
+          amount: Number(c.amount),
+          createdAt: c.createdAt instanceof Date ? c.createdAt.toISOString() : c.createdAt,
+        })),
       }
 
       if (isOwner && item.reservation) {
@@ -168,7 +194,6 @@ export class WishlistsService {
   }
 
   async discover(search?: string, limit = 20, offset = 0) {
-    // Cap limit to prevent abuse
     const takenLimit = Math.min(Math.max(1, limit), 100)
     const where: Record<string, unknown> = { privacy: Privacy.PUBLIC }
 
@@ -192,7 +217,7 @@ export class WishlistsService {
             },
           },
           items: {
-            take: 4, // Preview items
+            take: 4,
             select: { imageUrl: true },
           },
           subscriptions: {

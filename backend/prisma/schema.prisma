@@ -24,6 +24,7 @@ enum NotificationType {
   PRICE_DROP
   NEW_ITEM
   RESERVATION
+  GROUP_GIFT_CONTRIBUTION
 }
 
 enum SubscriptionStatus {
@@ -39,6 +40,11 @@ enum FriendshipStatus {
 enum ItemStatus {
   ACTIVE
   COMPLETED
+}
+
+enum SubscriptionTier {
+  FREE
+  PRO
 }
 
 // ─── Models ─────────────────────────────────────────────────────────
@@ -57,10 +63,21 @@ model User {
   resetToken        String?   @map("reset_token")
   resetTokenExpires DateTime? @map("reset_token_expires")
 
-  wishlists     Wishlist[]
-  subscriptions Subscription[]
-  reservations  Reservation[]
-  notifications Notification[]
+  // Telegram Integration
+  telegramChatId    String?   @map("telegram_chat_id") @db.VarChar(50)
+  telegramUsername  String?   @map("telegram_username") @db.VarChar(100)
+  telegramLinkToken String?   @unique @map("telegram_link_token") @db.VarChar(100)
+
+  // Monetization & Subscription
+  subscriptionTier  SubscriptionTier @default(FREE) @map("subscription_tier")
+  trialEndsAt       DateTime?        @map("trial_ends_at")
+  proExpiresAt      DateTime?        @map("pro_expires_at")
+
+  wishlists              Wishlist[]
+  subscriptions          Subscription[]
+  reservations           Reservation[]
+  notifications          Notification[]
+  groupGiftContributions GroupGiftContribution[]
   
   // Relationships for friendships
   sentFriendRequests     Friendship[] @relation("SentFriendRequests")
@@ -137,12 +154,37 @@ model Item {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
 
-  wishlist     Wishlist       @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
-  reservation  Reservation?
-  priceHistory PriceHistory[]
+  // Group gifting (crowdfunding among friends)
+  isGroupGift           Boolean  @default(false) @map("is_group_gift")
+  targetAmount          Decimal? @map("target_amount") @db.Decimal(10, 2)
+  fundraiserNote        String?  @map("fundraiser_note")
+  fundraiserPaymentLink String?  @map("fundraiser_payment_link")
+
+  wishlist      Wishlist                @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  reservation   Reservation?
+  priceHistory  PriceHistory[]
+  contributions GroupGiftContribution[]
 
   @@index([wishlistId])
   @@map("items")
+}
+
+model GroupGiftContribution {
+  id              String   @id @default(uuid()) @db.Uuid
+  itemId          String   @map("item_id") @db.Uuid
+  userId          String?  @map("user_id") @db.Uuid
+  contributorName String   @map("contributor_name") @db.VarChar(100)
+  amount          Decimal  @db.Decimal(10, 2)
+  currency        String   @default("USD") @db.VarChar(3)
+  message         String?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  item Item  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([itemId])
+  @@index([userId])
+  @@map("group_gift_contributions")
 }
 
 model Reservation {

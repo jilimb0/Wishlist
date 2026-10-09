@@ -92,7 +92,8 @@ export default function WishlistDetailScreen() {
     const url = `https://wishtracker.app/wishlists/${wishlistId}`
     try {
       await Share.share({
-        message: `Check out my wishlist: ${wishlist.title}\n${url}`,
+        title: wishlist.title,
+        message: `🎁 Мой список желаний: «${wishlist.title}»! Посмотрите, что можно подарить:\n${url}`,
         url,
       })
     } catch (error) {
@@ -222,7 +223,10 @@ export default function WishlistDetailScreen() {
         <GlassCard style={styles.card} noPadding>
           <TouchableOpacity
             style={styles.imageContainer}
-            onPress={() => item.url && Linking.openURL(item.url)}
+            onPress={() => {
+              const targetUrl = item.affiliateUrl || item.url
+              if (targetUrl) Linking.openURL(targetUrl)
+            }}
             activeOpacity={0.8}
           >
             {item.imageUrl ? (
@@ -244,11 +248,11 @@ export default function WishlistDetailScreen() {
               {item.title || "Untitled Item"}
             </Text>
 
-            {item.price && (
-              <Text style={styles.itemPrice}>{formatPrice(item.price, item.currency)}</Text>
+            {item.currentPrice && (
+              <Text style={styles.itemPrice}>{formatPrice(item.currentPrice, item.currency)}</Text>
             )}
 
-            <PriceHistoryList itemId={item.id} enabled={!!item.price} />
+            <PriceHistoryList itemId={item.id} enabled={!!item.currentPrice} />
 
             <View style={styles.actions}>
               {isOwner ? (
@@ -289,10 +293,10 @@ export default function WishlistDetailScreen() {
                 </TouchableOpacity>
               )}
 
-              {item.url && (
+              {(item.affiliateUrl || item.url) && (
                 <TouchableOpacity
                   style={styles.linkButton}
-                  onPress={() => Linking.openURL(item.url)}
+                  onPress={() => Linking.openURL(item.affiliateUrl || item.url)}
                 >
                   <Ionicons name="open-outline" size={20} color="#fbbf24" />
                 </TouchableOpacity>

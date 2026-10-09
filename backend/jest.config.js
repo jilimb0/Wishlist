@@ -19,5 +19,6 @@ module.exports = {
   testEnvironment: "node",
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
+    "^@wishtracker/shared$": "<rootDir>/../../packages/shared/src",
   },
 }

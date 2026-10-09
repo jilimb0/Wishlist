@@ -6,11 +6,15 @@ import {
 } from "@nestjs/common"
 import { ReservationStatus } from "@prisma/client"
 import { PrismaService } from "../../prisma/prisma.service"
+import { TelegramService } from "../telegram/telegram.service"
 import { CreateReservationDto } from "./dto/reservation.dto"
 
 @Injectable()
 export class ReservationsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private telegramService: TelegramService,
+  ) {}
 
   /**
    * Reserve an item.
@@ -19,60 +23,79 @@ export class ReservationsService {
    */
   async reserve(itemId: string, userId: string, dto: CreateReservationDto) {
     try {
-      return await this.prisma.$transaction(async (tx) => {
-        const item = await tx.item.findUnique({
-          where: { id: itemId },
-          include: {
-            wishlist: { select: { userId: true, id: true, title: true } },
-            reservation: true,
-          },
-        })
-
-        if (!item) throw new NotFoundException("Item not found")
-
-        // Cannot reserve own items
-        if (item.wishlist.userId === userId) {
-          throw new ForbiddenException("Cannot reserve your own items")
-        }
-
-        // Check if already actively reserved
-        if (item.reservation && item.reservation.status === ReservationStatus.ACTIVE) {
-          throw new ConflictException("Item is already reserved")
-        }
-
-        // If there is a cancelled/fulfilled reservation, delete it first
-        if (item.reservation) {
-          await tx.reservation.delete({
-            where: { id: item.reservation.id },
-          })
-        }
-
-        const reservation = await tx.reservation.create({
-          data: {
-            itemId,
-            userId,
-            isAnonymous: dto.isAnonymous || false,
-          },
-          include: {
-            item: {
-              select: { id: true, title: true, imageUrl: true },
+      const { reservation, ownerId, itemTitle, reserverName } = await this.prisma.$transaction(
+        async (tx) => {
+          const item = await tx.item.findUnique({
+            where: { id: itemId },
+            include: {
+              wishlist: { select: { userId: true, id: true, title: true } },
+              reservation: true,
             },
-          },
-        })
+          })
 
-        // Create notification for wishlist owner
-        await tx.notification.create({
-          data: {
-            userId: item.wishlist.userId,
-            type: "RESERVATION",
-            title: "Item Reserved",
-            message: `Someone reserved "${item.title}" from your wishlist "${item.wishlist.title}"`,
-            relatedItemId: item.id,
-          },
-        })
+          if (!item) throw new NotFoundException("Item not found")
 
-        return reservation
-      })
+          // Cannot reserve own items
+          if (item.wishlist.userId === userId) {
+            throw new ForbiddenException("Cannot reserve your own items")
+          }
+
+          // Check if already actively reserved
+          if (item.reservation && item.reservation.status === ReservationStatus.ACTIVE) {
+            throw new ConflictException("Item is already reserved")
+          }
+
+          // If there is a cancelled/fulfilled reservation, delete it first
+          if (item.reservation) {
+            await tx.reservation.delete({
+              where: { id: item.reservation.id },
+            })
+          }
+
+          const reserver = await tx.user.findUnique({
+            where: { id: userId },
+            select: { displayName: true },
+          })
+
+          const res = await tx.reservation.create({
+            data: {
+              itemId,
+              userId,
+              isAnonymous: dto.isAnonymous || false,
+            },
+            include: {
+              item: {
+                select: { id: true, title: true, imageUrl: true },
+              },
+            },
+          })
+
+          // Create notification for wishlist owner
+          await tx.notification.create({
+            data: {
+              userId: item.wishlist.userId,
+              type: "RESERVATION",
+              title: "Item Reserved",
+              message: `Someone reserved "${item.title}" from your wishlist "${item.wishlist.title}"`,
+              relatedItemId: item.id,
+            },
+          })
+
+          const name = dto.isAnonymous ? "Тайный друг 🕵️" : reserver?.displayName || "Друг"
+
+          return {
+            reservation: res,
+            ownerId: item.wishlist.userId,
+            itemTitle: item.title,
+            reserverName: name,
+          }
+        },
+      )
+
+      // Send telegram notification outside transaction
+      await this.telegramService.notifyReservation(ownerId, itemTitle, reserverName)
+
+      return reservation
     } catch (e: unknown) {
       // Catch unique constraint violation as a safety net for race conditions
       if (

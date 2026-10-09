@@ -64,6 +64,36 @@ The repo includes a `render.yaml` blueprint.
 
 `GET /api/docs` — Swagger UI when API is running.
 
+## External Integrations & Monetization Setup
+
+### 1. Telegram Bot (Notifications)
+To enable real-time notifications for gift reservations, price drops, and crowdfunding contributions:
+1. Open [@BotFather](https://t.me/botfather) in Telegram and send `/newbot`.
+2. Follow the prompts to create your bot name and username (e.g. `MyWishTrackerBot`).
+3. Copy the HTTP API token into `backend/.env`:
+   ```bash
+   TELEGRAM_BOT_TOKEN="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ"
+   TELEGRAM_BOT_USERNAME="MyWishTrackerBot"
+   ```
+4. Set up the Telegram Webhook pointing to your deployed API:
+   ```bash
+   curl -F "url=https://<your-api-domain>/api/telegram/webhook" https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook
+   ```
+
+### 2. Affiliate Programs (Marketplace Commissions)
+To earn 3–8% commissions on gifts purchased by friends through generated links:
+- **Amazon Associates**: Register at [affiliate-program.amazon.com](https://affiliate-program.amazon.com/) and set `AMAZON_AFFILIATE_TAG="yourtag-20"`.
+- **Ozon Partner / Profit**: Register in Ozon Affiliate Program or CPA networks (Admitad) and set `OZON_PARTNER_CODE="your_code"`.
+- **Wildberries CPA**: Register on affiliate networks (Admitad / Perfluence / WB Affiliate) and set `WB_PARTNER_CODE="your_code"`.
+
+### 3. Payment Gateway & Pro Subscriptions
+- By default, the system provides an automated **14-day free Pro trial** for all new users and supports instant promo code redemption (e.g. `WISHTRACKERPRO`, `GIFT2026`).
+- For production payments (Stripe / CloudPayments / YooKassa):
+  1. Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` in `backend/.env`.
+  2. Point Stripe webhook events (`checkout.session.completed`, `customer.subscription.updated`) to `/api/billing/webhook`.
+
+---
+
 ## Safari extension sync
 
 After building the Chrome extension:

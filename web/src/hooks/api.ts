@@ -478,3 +478,120 @@ export function useRemoveFriendship() {
     },
   })
 }
+
+// ─── Telegram Integration ─────────────────────────────────
+
+export function useTelegramLinkUrl() {
+  return useQuery({
+    queryKey: ["telegram", "link-url"],
+    queryFn: () => api.get<{ token: string; linkUrl: string }>("/telegram/link-url"),
+    enabled: false, // only fetch on user click
+  })
+}
+
+export function useDisconnectTelegram() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: () => api.post<{ success: boolean }>("/telegram/disconnect"),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["me"] })
+    },
+  })
+}
+
+// ─── Group Gifting (Crowdfunding) ──────────────────────────
+
+export function useGroupGiftContributions(itemId: string) {
+  return useQuery({
+    queryKey: ["items", itemId, "contributions"],
+    queryFn: () =>
+      api.get<{
+        itemId: string
+        targetAmount: number | null
+        currency: string
+        totalContributed: number
+        contributionCount: number
+        contributions: Array<{
+          id: string
+          itemId: string
+          userId: string | null
+          contributorName: string
+          amount: number
+          currency: string
+          message: string | null
+          createdAt: string
+        }>
+      }>(`/items/${itemId}/contributions`),
+    enabled: !!itemId,
+  })
+}
+
+export function useAddGroupGiftContribution(itemId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: {
+      contributorName: string
+      amount: number
+      currency?: string
+      message?: string
+    }) => api.post(`/items/${itemId}/contributions`, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["items", itemId, "contributions"] })
+      qc.invalidateQueries({ queryKey: ["wishlist"] })
+    },
+  })
+}
+
+export function useDeleteGroupGiftContribution(itemId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (contributionId: string) =>
+      api.delete(`/items/${itemId}/contributions/${contributionId}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["items", itemId, "contributions"] })
+      qc.invalidateQueries({ queryKey: ["wishlist"] })
+    },
+  })
+}
+
+// ─── Billing & Monetization ───────────────────────────────
+
+export function useBillingStatus() {
+  return useQuery({
+    queryKey: ["billing", "status"],
+    queryFn: () =>
+      api.get<{
+        tier: string
+        isPro: boolean
+        trialDaysRemaining: number
+        proExpiresAt: string | null
+        features: {
+          unlimitedPriceTracking: boolean
+          groupGifting: boolean
+          customThemes: boolean
+          prioritySupport: boolean
+        }
+      }>("/billing/status"),
+  })
+}
+
+export function useActivatePromo() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (code: string) =>
+      api.post<{ success: boolean; message: string }>("/billing/promo", { code }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["billing", "status"] })
+      qc.invalidateQueries({ queryKey: ["me"] })
+    },
+  })
+}
+
+export function useCheckout() {
+  return useMutation({
+    mutationFn: (plan: "MONTHLY" | "YEARLY") =>
+      api.post<{ checkoutUrl: string; amount: number; currency: string }>("/billing/checkout", {
+        plan,
+      }),
+  })
+}

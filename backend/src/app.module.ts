@@ -7,8 +7,11 @@ import { AppController } from "./app.controller"
 import { JwtAuthGuard } from "./common/guards/jwt-auth.guard"
 import { TransformInterceptor } from "./common/interceptors/transform.interceptor"
 import configuration from "./config/configuration"
+import { AffiliateModule } from "./modules/affiliate/affiliate.module"
 import { AuthModule } from "./modules/auth/auth.module"
+import { BillingModule } from "./modules/billing/billing.module"
 import { FriendsModule } from "./modules/friends/friends.module"
+import { GroupGiftsModule } from "./modules/group-gifts/group-gifts.module"
 import { ItemsModule } from "./modules/items/items.module"
 import { MailModule } from "./modules/mail/mail.module"
 import { NotificationsModule } from "./modules/notifications/notifications.module"
@@ -16,6 +19,7 @@ import { PriceTrackingModule } from "./modules/price-tracking/price-tracking.mod
 import { ReservationsModule } from "./modules/reservations/reservations.module"
 import { ScraperModule } from "./modules/scraper/scraper.module"
 import { SubscriptionsModule } from "./modules/subscriptions/subscriptions.module"
+import { TelegramModule } from "./modules/telegram/telegram.module"
 import { UsersModule } from "./modules/users/users.module"
 import { WishlistsModule } from "./modules/wishlists/wishlists.module"
 import { PrismaModule } from "./prisma/prisma.module"
@@ -42,6 +46,10 @@ import { PrismaModule } from "./prisma/prisma.module"
     ScraperModule,
     FriendsModule,
     PriceTrackingModule,
+    AffiliateModule,
+    TelegramModule,
+    GroupGiftsModule,
+    BillingModule,
   ],
   controllers: [AppController],
   providers: [

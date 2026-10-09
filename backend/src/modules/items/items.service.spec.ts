@@ -1,6 +1,7 @@
 import { BadRequestException, ForbiddenException, NotFoundException } from "@nestjs/common"
 import { Test, type TestingModule } from "@nestjs/testing"
 import { PrismaService } from "../../prisma/prisma.service"
+import { AffiliateService } from "../affiliate/affiliate.service"
 import { ItemsService } from "./items.service"
 
 const userId = "user-1"
@@ -22,11 +23,18 @@ describe("ItemsService", () => {
     priceHistory: { create: jest.fn(), findMany: jest.fn() },
     notification: { createMany: jest.fn() },
   }
+  const affiliateService = {
+    getAffiliateUrl: jest.fn((url: string) => `${url}?tag=test`),
+  }
 
   beforeEach(async () => {
     jest.clearAllMocks()
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ItemsService, { provide: PrismaService, useValue: prisma }],
+      providers: [
+        ItemsService,
+        { provide: PrismaService, useValue: prisma },
+        { provide: AffiliateService, useValue: affiliateService },
+      ],
     }).compile()
     service = module.get(ItemsService)
   })
