@@ -51,7 +51,15 @@ The repo includes a workflow that deploys `web/dist` to GitHub Pages on pushes t
 
 The repo includes a `render.yaml` blueprint.
 
-- Create a new Blueprint in Render and point it at this repo.
+- Create a new Blueprint in Render and point it at this repo (or create a Web Service).
+- **Build Command**:
+  ```bash
+  npm install -g pnpm@11 && pnpm install --frozen-lockfile && pnpm --filter @wishtracker/shared build && pnpm --filter wishtracker-backend run prisma:generate && pnpm --filter wishtracker-backend build
+  ```
+- **Start Command**:
+  ```bash
+  pnpm --filter wishtracker-backend run prisma:migrate:prod && pnpm --filter wishtracker-backend start:prod
+  ```
 - Set `APP_URL` to your GitHub Pages URL (including the `/repo` path), e.g. `https://jilimb0.github.io/<repo>`.
 - Set `CORS_ORIGINS` to `https://jilimb0.github.io`.
 - After Render assigns the API URL, set `VITE_API_URL` (repo variable/secret) to `https://<your-service>.onrender.com` and re-run the Pages deploy.

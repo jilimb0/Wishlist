@@ -4,7 +4,8 @@
   "description": "WishTracker Backend API",
   "private": true,
   "scripts": {
-    "build": "nest build",
+    "prebuild": "prisma generate",
+    "build": "prisma generate && nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
