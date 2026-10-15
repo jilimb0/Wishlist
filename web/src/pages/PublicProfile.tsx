@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { toast } from "react-hot-toast"
 import { Link, useParams } from "react-router-dom"
 import { Modal } from "@/components/Modal"
 import { UserAvatar } from "@/components/UserAvatar"
@@ -17,6 +16,7 @@ import {
   useUnsubscribe,
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
+import { toast } from "@/lib/toast"
 import type { Wishlist } from "@/types"
 
 export default function PublicProfilePage() {

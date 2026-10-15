@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { toast } from "react-hot-toast"
 import { Link } from "react-router-dom"
 import { Input } from "@/components/Input"
+import { toast } from "@/lib/toast"
 import { useForgotPassword } from "../hooks/api"
 
 export default function ForgotPassword() {

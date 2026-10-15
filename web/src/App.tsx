@@ -1,7 +1,7 @@
-import { Toaster } from "react-hot-toast"
 import { Route, Routes } from "react-router-dom"
 import { Layout } from "./components/Layout"
 import { ProtectedRoute } from "./components/ProtectedRoute"
+import { Toaster } from "./components/Toaster"
 import DashboardPage from "./pages/Dashboard"
 import DiscoverPage from "./pages/Discover"
 import FollowingPage from "./pages/Following"
@@ -17,33 +17,7 @@ import WishlistDetailPage from "./pages/WishlistDetail"
 export default function App() {
   return (
     <>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: "#18181b",
-            color: "#fff",
-            border: "1px solid rgba(255, 255, 255, 0.08)",
-            fontSize: "14px",
-            fontWeight: "600",
-            borderRadius: "12px",
-            padding: "12px 16px",
-            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.25)",
-          },
-          success: {
-            iconTheme: {
-              primary: "#ffc107",
-              secondary: "#18181b",
-            },
-          },
-          error: {
-            iconTheme: {
-              primary: "#ef4444",
-              secondary: "#fff",
-            },
-          },
-        }}
-      />
+      <Toaster />
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />

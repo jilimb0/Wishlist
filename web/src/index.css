@@ -41,6 +41,7 @@ a {
   input,
   textarea,
   select {
+    /* biome-ignore lint/complexity/noImportantStyles: prevent iOS safari zoom on inputs */
     font-size: 16px !important;
   }
 }
@@ -404,4 +405,25 @@ a {
 
 .rotate-y-180 {
   transform: rotateY(180deg);
+}
+
+/* ─── UCL Dialog / Modal ────────────────────── */
+.ucl-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+}
+
+.ucl-dialog-content {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  outline: none;
+  animation: fadeIn 0.2s ease;
 }

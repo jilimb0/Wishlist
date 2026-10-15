@@ -1,5 +1,4 @@
 import { useRef, useState } from "react"
-import { toast } from "react-hot-toast"
 import { Link, useNavigate } from "react-router-dom"
 import { Input } from "@/components/Input"
 import { Modal } from "@/components/Modal"
@@ -24,6 +23,7 @@ import {
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
 import { api } from "@/lib/api"
+import { toast } from "@/lib/toast"
 import type { Friendship, Reservation, User } from "@/types"
 
 function InviteForm() {

@@ -1,6 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
-import { toast } from "react-hot-toast"
 import { Link } from "react-router-dom"
 import { Input } from "@/components/Input"
 import { Modal } from "@/components/Modal"
@@ -16,6 +15,7 @@ import {
   useSubscribe,
 } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
+import { toast } from "@/lib/toast"
 import type { User, Wishlist } from "@/types"
 
 export default function DiscoverPage() {

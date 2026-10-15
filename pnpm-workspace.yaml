@@ -128,8 +128,6 @@ onlyBuiltDependencies:
   - "lefthook"
   - "prisma"
 
-settings:
-  confirmModulesPurge: false
 
 minimumReleaseAgeExclude:
   - '@tgwrapper/core@0.20.1'
