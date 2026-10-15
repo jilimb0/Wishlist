@@ -1,3 +1,4 @@
+import { FileUpload, Rating } from "@ui-construction-library/core"
 import EmojiPicker, { Theme } from "emoji-picker-react"
 import { useEffect, useRef, useState } from "react"
 import { Input } from "@/components/Input"
@@ -384,6 +385,7 @@ export function ItemForm({ wishlistId, onSubmit, initial, isLoading }: ItemFormP
   const [isUrl, setIsUrl] = useState(initial?.url?.startsWith("http") || !!initial?.url || false)
   const { user } = useAuth()
   const [currency, _setCurrency] = useState(initial?.currency || user?.currency || "USD")
+  const [priorityRating, setPriorityRating] = useState<number>(5)
   const [manualMode, setManualMode] = useState(!!initial)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { t } = useI18n()
@@ -534,35 +536,75 @@ export function ItemForm({ wishlistId, onSubmit, initial, isLoading }: ItemFormP
             </div>
           </div>
           <div>
+            <span className="block text-sm font-medium text-zinc-300 mb-1">Приоритет желания</span>
+            <div className="flex items-center gap-3 bg-zinc-900/40 p-2.5 rounded-xl border border-zinc-800">
+              <Rating
+                value={priorityRating}
+                onChange={(val) => setPriorityRating(val)}
+                max={5}
+                icon="star"
+                className="text-amber-400"
+              />
+              <span className="text-xs text-zinc-400">
+                {priorityRating === 5
+                  ? "🔥 Мечта всей жизни"
+                  : priorityRating === 4
+                    ? "✨ Очень хочу"
+                    : priorityRating === 3
+                      ? "👍 Было бы здорово"
+                      : priorityRating === 2
+                        ? "🙂 Не откажусь"
+                        : "💭 Приятная мелочь"}
+              </span>
+            </div>
+          </div>
+
+          <div>
             <label htmlFor="manual-image" className="block text-sm font-medium text-zinc-300 mb-1">
               {t("form.item_image")}
             </label>
-            <div className="flex gap-2">
-              <Input
-                id="manual-image"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://..."
-                containerClassName="flex-1"
-              />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl transition-all active:scale-95 disabled:opacity-50 border border-zinc-700/50"
-                title="Upload Image"
-              >
-                {uploadImage.isPending ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  "📁"
-                )}
-              </button>
-              <input
-                ref={fileInputRef}
-                type="file"
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <Input
+                  id="manual-image"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://..."
+                  containerClassName="flex-1"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl transition-all active:scale-95 disabled:opacity-50 border border-zinc-700/50 text-xs"
+                  title="Upload Image"
+                >
+                  {uploadImage.isPending ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    "Выбрать"
+                  )}
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </div>
+              <FileUpload
                 accept="image/*"
-                className="hidden"
-                onChange={handleFileChange}
+                maxSizeMb={5}
+                onChange={(files) => {
+                  if (files?.[0]) {
+                    uploadImage.mutate(files[0], {
+                      onSuccess: (data) => {
+                        setImageUrl(data.imageUrl)
+                      },
+                    })
+                  }
+                }}
+                className="w-full text-xs"
               />
             </div>
           </div>

@@ -139,4 +139,56 @@ describe("TelegramService", () => {
       }),
     )
   })
+
+  it("handles pre_checkout_query update", async () => {
+    const handled = await service.handleWebhookUpdate({
+      pre_checkout_query: {
+        id: "pcq_123",
+      },
+    })
+    expect(handled).toBe(true)
+  })
+
+  it("handles inline_query update", async () => {
+    const handled = await service.handleWebhookUpdate({
+      inline_query: {
+        id: "iq_123",
+        query: "wishlist",
+      },
+    })
+    expect(handled).toBe(true)
+  })
+
+  it("handles successful_payment confirmation", async () => {
+    const sendSpy = jest.spyOn(service, "sendMessage").mockResolvedValue(true)
+    const handled = await service.handleWebhookUpdate({
+      message: {
+        chat: { id: "12345678" },
+        successful_payment: {
+          currency: "XTR",
+          total_amount: 50,
+        },
+      },
+    })
+    expect(handled).toBe(true)
+    expect(sendSpy).toHaveBeenCalledWith(
+      "12345678",
+      expect.stringContaining("Спасибо за подарок через Telegram Stars"),
+    )
+  })
+
+  it("handles /stars command", async () => {
+    const sendSpy = jest.spyOn(service, "sendMessage").mockResolvedValue(true)
+    const handled = await service.handleWebhookUpdate({
+      message: {
+        chat: { id: "12345678" },
+        text: "/stars",
+      },
+    })
+    expect(handled).toBe(true)
+    expect(sendSpy).toHaveBeenCalledWith(
+      "12345678",
+      expect.stringContaining("Взнос через Telegram Stars"),
+    )
+  })
 })

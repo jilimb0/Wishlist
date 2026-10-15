@@ -4,12 +4,16 @@ import { ConfigService } from "@nestjs/config"
 import { type BotClient, createBotClient, type InlineKeyboardMarkup } from "@tgwrapper/core"
 import { PrismaService } from "../../prisma/prisma.service"
 
+interface ExtendedBotClient extends BotClient {
+  callApiUnsafe?: (method: string, payload: unknown) => Promise<unknown>
+}
+
 @Injectable()
 export class TelegramService {
   private readonly logger = new Logger(TelegramService.name)
   private readonly botToken: string | undefined
   private readonly botUsername: string
-  private readonly botClient: BotClient | null = null
+  private readonly botClient: ExtendedBotClient | null = null
 
   constructor(
     private readonly configService: ConfigService,
@@ -18,7 +22,7 @@ export class TelegramService {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN")
     this.botUsername = this.configService.get<string>("TELEGRAM_BOT_USERNAME") || "WishTrackerBot"
     if (this.botToken) {
-      this.botClient = createBotClient({ token: this.botToken })
+      this.botClient = createBotClient({ token: this.botToken }) as ExtendedBotClient
     }
   }
 
@@ -71,14 +75,109 @@ export class TelegramService {
   }
 
   async handleWebhookUpdate(update: Record<string, unknown>): Promise<boolean> {
+    // 1. Handle pre_checkout_query for Telegram Stars
+    if (update?.pre_checkout_query) {
+      const pcq = update.pre_checkout_query as { id: string }
+      if (this.botClient?.callApiUnsafe) {
+        try {
+          await this.botClient.callApiUnsafe("answerPreCheckoutQuery", {
+            pre_checkout_query_id: pcq.id,
+            ok: true,
+          })
+        } catch (err) {
+          this.logger.error("Failed to answer pre-checkout query", err)
+        }
+      }
+      return true
+    }
+
+    // 2. Handle inline_query
+    if (update?.inline_query) {
+      const iq = update.inline_query as { id: string; query?: string }
+      if (this.botClient?.callApiUnsafe) {
+        try {
+          const results = [
+            {
+              type: "article",
+              id: "wishlist-share-main",
+              title: "🎁 WishTracker: Поделиться вишлистом",
+              description: "Отправить друзьям список желаний и идей подарков",
+              input_message_content: {
+                message_text: `🎁 <b>Мой список желаний в WishTracker</b>\nВыбирайте и бронируйте подарки без дубликатов:\nhttps://wishtracker.app\nБот: @${this.botUsername}`,
+                parse_mode: "HTML",
+              },
+            },
+            {
+              type: "article",
+              id: "wishlist-group-gift",
+              title: "🤝 Сброситься на совместный подарок (Stars)",
+              description: "Краудфандинг на дорогие подарки через Telegram Stars",
+              input_message_content: {
+                message_text: `🤝 <b>Совместный сбор на подарок</b>\nСкидывайтесь через Telegram Stars или карты в один клик!\nБот: @${this.botUsername}`,
+                parse_mode: "HTML",
+              },
+            },
+          ]
+          await this.botClient.callApiUnsafe("answerInlineQuery", {
+            inline_query_id: iq.id,
+            results,
+            cache_time: 10,
+          })
+        } catch (err) {
+          this.logger.error("Failed to answer inline query", err)
+        }
+      }
+      return true
+    }
+
     const message = update?.message as
-      | { chat?: { id?: number | string }; text?: string; from?: { username?: string } }
+      | {
+          chat?: { id?: number | string }
+          text?: string
+          from?: { username?: string }
+          successful_payment?: unknown
+        }
       | undefined
-    if (!message?.text || !message.chat?.id) return false
+    if (!message?.chat?.id) return false
 
     const chatId = String(message.chat.id)
+
+    // 3. Handle successful_payment
+    if (message.successful_payment) {
+      await this.sendMessage(
+        chatId,
+        "🌟 <b>Спасибо за подарок через Telegram Stars!</b>\nВаш взнос успешно зафиксирован в вишлисте. Организатор сбора получил уведомление! 🎁",
+      )
+      return true
+    }
+
+    if (!message.text) return false
     const text = message.text.trim()
     const username = message.from?.username || null
+
+    // 4. Handle /stars or /gift command
+    if (text.startsWith("/stars") || text.startsWith("/gift")) {
+      if (this.botClient?.callApiUnsafe) {
+        try {
+          await this.botClient.callApiUnsafe("sendInvoice", {
+            chat_id: chatId,
+            title: "⭐ Взнос на подарок через Telegram Stars",
+            description: "Краудфандинговый взнос на совместный подарок для друга в WishTracker",
+            payload: `gift_stars_${chatId}_${Date.now()}`,
+            currency: "XTR",
+            prices: [{ label: "Взнос на подарок", amount: 50 }],
+          })
+          return true
+        } catch (err) {
+          this.logger.error("Failed to send Stars invoice", err)
+        }
+      }
+      await this.sendMessage(
+        chatId,
+        "⭐ <b>Взнос через Telegram Stars: 50 XTR</b>\nПоддержите покупку подарка из вишлиста звёздами Telegram!",
+      )
+      return true
+    }
 
     if (text.startsWith("/start")) {
       const parts = text.split(" ")

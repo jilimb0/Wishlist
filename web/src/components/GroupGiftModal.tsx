@@ -215,6 +215,26 @@ export function GroupGiftModal({ isOpen, onClose, item, currentUser }: GroupGift
             >
               {addContribution.isPending ? "Сохраняем..." : "Зафиксировать взнос ✨"}
             </Button>
+
+            <div className="pt-2 border-t border-zinc-800/80">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={async () => {
+                  const contributor = name.trim() || currentUser?.displayName || "Друг в Telegram"
+                  await addContribution.mutateAsync({
+                    contributorName: contributor,
+                    amount: 50,
+                    currency: "XTR",
+                    message: message.trim() || "Сбросился 50 Stars ⭐",
+                  })
+                }}
+                disabled={addContribution.isPending}
+                className="w-full py-2.5 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-98 flex items-center justify-center gap-1.5"
+              >
+                <span>⭐ Сброситься 50 Telegram Stars (XTR)</span>
+              </Button>
+            </div>
           </form>
 
           {/* List of Contributors */}
