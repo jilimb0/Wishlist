@@ -166,8 +166,8 @@ importers:
         specifier: ^10.65.0
         version: 10.65.0(@opentelemetry/core@2.9.0(@opentelemetry/api@1.9.1))
       '@tgwrapper/core':
-        specifier: ^0.20.1
-        version: 0.20.1
+        specifier: ^0.20.2
+        version: 0.20.2
       '@wishtracker/shared':
         specifier: workspace:*
         version: link:../packages/shared
@@ -2795,7 +2795,7 @@ packages:
   '@tailwindcss/vite@4.3.2':
     resolution: {integrity: sha512-eHpMeX4JXfVNJDEcsouTeCBubJBTcTLigeaw/NTUW6PB5ATKKXdyonnXgTBX2VuRbjz1hjfz6C5XAhr52ImQXA==}
     peerDependencies:
-      vite: ^7.3.5
+      vite: ^7.3.2
 
   '@tanstack/query-core@5.101.2':
     resolution: {integrity: sha512-hH5MLoJhF7KaIGd7q3xTXGXvslI+GYlM1Z/35aSHHWaCJWB7XvTSHYuV3eM7tw+aE0mT/xMro4M4Q9rCGHT0lw==}
@@ -2839,8 +2839,8 @@ packages:
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
 
-  '@tgwrapper/core@0.20.1':
-    resolution: {integrity: sha512-Obti1Jt09WdUmnCSu5FEBrEThRiL0gMeif412a888GrxlQ6E/K0PR9sd7BDVoTcpqkflC+rU64FmRS9ySmA3ew==}
+  '@tgwrapper/core@0.20.2':
+    resolution: {integrity: sha512-BZKon2+kWoo002cqNQlFPeC5Wp4lKnQuoZyt/qS+dEsLku4/+Pz4xW6lKlhmrcpRRAwEWjeo/VQJg/pSZ0wVCg==}
     engines: {node: '>=24.0'}
 
   '@tokenizer/inflate@0.4.1':
@@ -10821,7 +10821,7 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.4.1
 
-  '@tgwrapper/core@0.20.1': {}
+  '@tgwrapper/core@0.20.2': {}
 
   '@tokenizer/inflate@0.4.1':
     dependencies:
