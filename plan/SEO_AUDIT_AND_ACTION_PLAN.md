@@ -25,21 +25,12 @@
 
 ## 2. Пошаговый план внедрения (Action Plan)
 
-- [ ] **Шаг 1 (P0): Внедрение динамических Open Graph тегов в базовый `index.html`**
-  ```html
-  <meta property="og:site_name" content="WishTracker" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="WishTracker — Умные вишлисты и совместные подарки" />
-  <meta property="og:description" content="Создавай списки желаний с Wildberries, Ozon и Amazon. Скидывайся с друзьями на подарки в 1 клик." />
-  <meta property="og:image" content="https://wishtracker.app/og-wishtracker.png" />
-  <meta name="twitter:card" content="summary_large_image" />
-  ```
+- [x] **Шаг 1 (P0): Внедрение динамических Open Graph тегов в базовый `index.html`**
+  - Добавлены `og:title`, `og:description`, `og:image`, `og:site_name`, `twitter:card="summary_large_image"`, `canonical` и Schema.org `WebApplication`.
+  - Создан брендированный растровый баннер `public/og-wishtracker.png` (1200×630).
 
-- [ ] **Шаг 2 (P0): Серверная генерация OG-тегов для ботов соцсетей (Bot-Friendly SSR / Worker)**
-  - Реализовать в NestJS бэкенде (`backend/src`) или через Edge Function (Cloudflare Worker / Vercel Edge) легкий мидлвар для User-Agent ботов (TelegramBot, WhatsApp, TwitterBot, vkShare, Slackbot):
-    - При запросе `/wishlist/:id` отдавать минимальный HTML с заполненными `og:title` («Вишлист [Имя]»), `og:description` («Смотрите, какие подарки выбрал пользователь...») и `og:image` (коллаж фото подарков или аватар).
+- [x] **Шаг 2 (P1): Генерация `robots.txt` и `sitemap.xml`**
+  - Добавлены правила индексации для `/`, `/discover`, закрыты `/dashboard`, `/settings`, `/admin`.
+  - Создан `sitemap.xml`.
 
-- [ ] **Шаг 3 (P1): Генерация `robots.txt` и динамического `sitemap.xml`**
-  - Разрешить индексацию `/`, `/discover`, `/public/*`.
-  - Запретить `/dashboard`, `/settings`, `/admin`.
-  - Бэкенд-эндпоинт `/api/sitemap.xml` отдающий список актуальных публичных вишлистов.
+- [ ] **Шаг 3 (P2): Серверная генерация OG-тегов для ботов соцсетей (Bot-Friendly SSR / Worker)**

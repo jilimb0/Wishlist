@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /discover
+Allow: /public/
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /admin
+
+Sitemap: https://wishtracker.app/sitemap.xml
