@@ -23,14 +23,21 @@ describe("ScraperService", () => {
     )
   })
 
-  it("blocks localhost IP addresses", async () => {
+  it("blocks localhost IP addresses and hostnames", async () => {
     await expect(service.scrape("http://127.0.0.1/admin")).rejects.toBeInstanceOf(
+      BadRequestException,
+    )
+    await expect(service.scrape("http://localhost:3000/")).rejects.toBeInstanceOf(
       BadRequestException,
     )
   })
 
-  it("blocks private network IPs", async () => {
+  it("blocks private network IPs and cloud metadata endpoints", async () => {
     await expect(service.scrape("http://192.168.0.1/")).rejects.toBeInstanceOf(BadRequestException)
+    await expect(service.scrape("http://10.0.0.1/")).rejects.toBeInstanceOf(BadRequestException)
+    await expect(service.scrape("http://169.254.169.254/latest/meta-data")).rejects.toBeInstanceOf(
+      BadRequestException,
+    )
   })
 
   it("parses Amazon product pages with price and image", async () => {

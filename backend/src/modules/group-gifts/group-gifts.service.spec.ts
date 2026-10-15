@@ -7,7 +7,7 @@ import { GroupGiftsService } from "./group-gifts.service"
 describe("GroupGiftsService", () => {
   let service: GroupGiftsService
 
-  const mockPrisma = {
+  const mockPrisma: any = {
     item: {
       findUnique: jest.fn(),
       update: jest.fn(),
@@ -21,6 +21,7 @@ describe("GroupGiftsService", () => {
     notification: {
       create: jest.fn(),
     },
+    $transaction: jest.fn((cb: (tx: any) => Promise<unknown>) => cb(mockPrisma)),
   }
 
   const mockTelegram = {

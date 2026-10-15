@@ -82,66 +82,84 @@ export class GroupGiftsService {
       throw new BadRequestException("Contributor name is required")
     }
 
-    const item = await this.prisma.item.findUnique({
-      where: { id: itemId },
-      include: {
-        wishlist: {
-          select: {
-            userId: true,
+    const { contribution, total, ownerId, itemTitle, effectiveCurrency, shouldNotify } =
+      await this.prisma.$transaction(async (tx) => {
+        const item = await tx.item.findUnique({
+          where: { id: itemId },
+          include: {
+            wishlist: {
+              select: {
+                userId: true,
+              },
+            },
           },
-        },
-      },
-    })
+        })
 
-    if (!item) {
-      throw new NotFoundException("Item not found")
-    }
+        if (!item) {
+          throw new NotFoundException("Item not found")
+        }
 
-    const contribution = await this.prisma.groupGiftContribution.create({
-      data: {
-        itemId,
-        userId: userId || null,
-        contributorName: dto.contributorName.trim(),
-        amount: dto.amount,
-        currency: dto.currency || item.currency,
-        message: dto.message?.trim() || null,
-      },
-    })
+        const curr = dto.currency || item.currency
 
-    // Calculate new total
-    const all = await this.prisma.groupGiftContribution.findMany({
-      where: { itemId },
-    })
-    const total = all.reduce((sum, c) => sum + Number(c.amount), 0)
+        const contrib = await tx.groupGiftContribution.create({
+          data: {
+            itemId,
+            userId: userId || null,
+            contributorName: dto.contributorName.trim(),
+            amount: dto.amount,
+            currency: curr,
+            message: dto.message?.trim() || null,
+          },
+        })
 
-    // If goal reached, optionally mark item completed
-    if (item.targetAmount && total >= Number(item.targetAmount)) {
-      await this.prisma.item.update({
-        where: { id: itemId },
-        data: { status: ItemStatus.COMPLETED },
+        // Calculate new total
+        const all = await tx.groupGiftContribution.findMany({
+          where: { itemId },
+        })
+        const totalContributed = all.reduce((sum, c) => sum + Number(c.amount), 0)
+
+        // If goal reached, mark item completed
+        if (item.targetAmount && totalContributed >= Number(item.targetAmount)) {
+          await tx.item.update({
+            where: { id: itemId },
+            data: { status: ItemStatus.COMPLETED },
+          })
+        }
+
+        // In-app Notification for the wishlist owner
+        const owner = item.wishlist.userId
+        const notify = owner !== userId
+
+        if (notify) {
+          await tx.notification.create({
+            data: {
+              userId: owner,
+              type: NotificationType.GROUP_GIFT_CONTRIBUTION,
+              title: "Взнос на подарок",
+              message: `${dto.contributorName} внес(ла) ${dto.amount} ${curr} на «${item.title}»`,
+              relatedItemId: itemId,
+            },
+          })
+        }
+
+        return {
+          contribution: contrib,
+          total: totalContributed,
+          ownerId: owner,
+          itemTitle: item.title,
+          effectiveCurrency: curr,
+          shouldNotify: notify,
+        }
       })
-    }
 
-    // In-app Notification for the wishlist owner
-    const ownerId = item.wishlist.userId
-    if (ownerId !== userId) {
-      await this.prisma.notification.create({
-        data: {
-          userId: ownerId,
-          type: NotificationType.GROUP_GIFT_CONTRIBUTION,
-          title: "Взнос на подарок",
-          message: `${dto.contributorName} внес(ла) ${dto.amount} ${dto.currency || item.currency} на «${item.title}»`,
-          relatedItemId: itemId,
-        },
-      })
-
-      // Telegram notification
+    // Telegram notification outside transaction
+    if (shouldNotify) {
       await this.telegramService.notifyGroupGiftContribution(
         ownerId,
-        item.title,
+        itemTitle,
         dto.contributorName,
         dto.amount,
-        dto.currency || item.currency,
+        effectiveCurrency,
       )
     }
 

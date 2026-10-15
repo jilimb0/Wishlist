@@ -304,7 +304,23 @@ export class ScraperService {
     }
   }
 
+  private isBlockedHostname(hostname: string): boolean {
+    const lower = hostname.toLowerCase()
+    return (
+      lower === "localhost" ||
+      lower.endsWith(".localhost") ||
+      lower.endsWith(".local") ||
+      lower.endsWith(".internal") ||
+      lower.endsWith(".corp") ||
+      lower === "metadata.google.internal"
+    )
+  }
+
   private async protectAgainstSsrf(hostname: string) {
+    if (this.isBlockedHostname(hostname)) {
+      throw new BadRequestException("Access to internal network is blocked")
+    }
+
     if (isIP(hostname)) {
       if (this.isPrivateIp(hostname)) {
         throw new BadRequestException("Access to internal network is blocked")
@@ -317,18 +333,30 @@ export class ScraperService {
       if (this.isPrivateIp(address)) {
         throw new BadRequestException("Access to internal network is blocked")
       }
-    } catch (_e) {
-      // DNS error handled downstream
+    } catch (e) {
+      if (e instanceof BadRequestException) throw e
+      throw new BadRequestException("Host cannot be resolved or is invalid")
     }
   }
 
   private isPrivateIp(ip: string): boolean {
+    if (ip === "::1" || ip === "::" || ip === "0:0:0:0:0:0:0:1" || ip === "0:0:0:0:0:0:0:0") {
+      return true
+    }
+    if (ip.startsWith("fc00:") || ip.startsWith("fd00:") || ip.startsWith("fe80:")) {
+      return true
+    }
+
     const parts = ip.split(".").map(Number)
-    if (parts[0] === 10) return true
-    if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true
-    if (parts[0] === 192 && parts[1] === 168) return true
-    if (parts[0] === 127) return true
-    if (ip === "::1" || ip === "0:0:0:0:0:0:0:1") return true
+    if (parts.length === 4) {
+      if (parts[0] === 0) return true
+      if (parts[0] === 10) return true
+      if (parts[0] === 127) return true
+      if (parts[0] === 169 && parts[1] === 254) return true // Link-local / Cloud metadata (169.254.x.x)
+      if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true
+      if (parts[0] === 192 && parts[1] === 168) return true
+      if (parts[0] === 100 && parts[1] >= 64 && parts[1] <= 127) return true // Carrier-grade NAT
+    }
     return false
   }
 
