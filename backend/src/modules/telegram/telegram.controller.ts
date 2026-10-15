@@ -49,12 +49,14 @@ export class TelegramController {
   async webhook(
     @Body() update: Record<string, unknown>,
     @Headers("x-telegram-bot-api-secret-token") secretToken?: string,
+    @Headers("x-telegram-bot-secret-token") altSecretToken?: string,
   ) {
+    const receivedToken = secretToken || altSecretToken
     if (this.webhookSecret) {
       if (
-        !secretToken ||
-        secretToken.length !== this.webhookSecret.length ||
-        !timingSafeEqual(Buffer.from(secretToken), Buffer.from(this.webhookSecret))
+        !receivedToken ||
+        receivedToken.length !== this.webhookSecret.length ||
+        !timingSafeEqual(Buffer.from(receivedToken), Buffer.from(this.webhookSecret))
       ) {
         throw new UnauthorizedException("Invalid Telegram webhook secret token")
       }
