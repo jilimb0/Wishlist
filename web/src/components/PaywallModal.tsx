@@ -1,3 +1,4 @@
+import { Badge, Button, Card, Input } from "@ui-construction-library/core"
 import { useState } from "react"
 import { useActivatePromo, useBillingStatus, useCheckout } from "@/hooks/api"
 
@@ -47,9 +48,12 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-black text-white">WishTracker PRO</h2>
-                <span className="px-2 py-0.5 bg-brand-500/20 text-brand-400 font-black text-[10px] rounded-full uppercase">
+                <Badge
+                  variant="warning"
+                  className="px-2 py-0.5 font-black text-[10px] rounded-full uppercase"
+                >
                   Premium
-                </span>
+                </Badge>
               </div>
               <p className="text-xs text-zinc-400">Максимум возможностей для ваших вишлистов</p>
             </div>
@@ -104,10 +108,11 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
 
         {/* Plan Selectors */}
         <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
+          <Card
+            elevation="flat"
+            interactive
             onClick={() => setSelectedPlan("MONTHLY")}
-            className={`p-4 rounded-2xl border text-left transition-all ${
+            className={`p-4 rounded-2xl border text-left transition-all cursor-pointer ${
               selectedPlan === "MONTHLY"
                 ? "bg-brand-500/10 border-brand-500 text-white"
                 : "bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white"
@@ -116,29 +121,33 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
             <div className="text-xs font-bold uppercase tracking-wider text-zinc-400">1 месяц</div>
             <div className="text-xl font-black mt-1">$4.99</div>
             <div className="text-[10px] text-zinc-500 mt-0.5">Оплата каждый месяц</div>
-          </button>
+          </Card>
 
-          <button
-            type="button"
+          <Card
+            elevation="flat"
+            interactive
             onClick={() => setSelectedPlan("YEARLY")}
-            className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden ${
+            className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden cursor-pointer ${
               selectedPlan === "YEARLY"
                 ? "bg-brand-500/10 border-brand-500 text-white"
                 : "bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white"
             }`}
           >
-            <span className="absolute top-2 right-2 text-[9px] bg-brand-500 text-black font-black px-1.5 py-0.5 rounded-full uppercase">
+            <Badge
+              variant="warning"
+              className="absolute top-2 right-2 text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase"
+            >
               Скидка 35%
-            </span>
+            </Badge>
             <div className="text-xs font-bold uppercase tracking-wider text-zinc-400">1 год</div>
             <div className="text-xl font-black mt-1">$39.99</div>
             <div className="text-[10px] text-zinc-500 mt-0.5">~$3.33 в месяц</div>
-          </button>
+          </Card>
         </div>
 
         {/* CTA Button */}
-        <button
-          type="button"
+        <Button
+          variant="default"
           onClick={handleSubscribe}
           disabled={checkout.isPending}
           className="w-full py-3.5 bg-brand-500 hover:bg-brand-400 text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg active:scale-98"
@@ -146,25 +155,26 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
           {checkout.isPending
             ? "Перенаправляем..."
             : `Оформить PRO подписку (${selectedPlan === "YEARLY" ? "$39.99" : "$4.99"}) 🚀`}
-        </button>
+        </Button>
 
         {/* Promo code form */}
         <form onSubmit={handleApplyPromo} className="pt-2 border-t border-zinc-800/80 space-y-2">
           <div className="flex gap-2">
-            <input
+            <Input
               type="text"
               value={promoCode}
               onChange={(e) => setPromoCode(e.target.value)}
               placeholder="Промокод (напр. WISHTRACKERPRO)"
               className="flex-1 px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-brand-500 uppercase"
             />
-            <button
+            <Button
               type="submit"
+              variant="secondary"
               disabled={activatePromo.isPending || !promoCode.trim()}
-              className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold rounded-xl transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-xs font-bold rounded-xl transition-colors"
             >
               Применить
-            </button>
+            </Button>
           </div>
           {promoMessage && <p className="text-xs font-bold text-brand-400">{promoMessage}</p>}
         </form>

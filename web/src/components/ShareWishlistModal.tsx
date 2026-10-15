@@ -1,3 +1,5 @@
+import { Button } from "@ui-construction-library/core"
+import { CopyIcon, ShareIcon } from "@ui-construction-library/icons"
 import { useState } from "react"
 import type { Wishlist } from "@/types"
 
@@ -80,8 +82,9 @@ export function ShareWishlistModal({ isOpen, onClose, wishlist }: ShareWishlistM
             Повод для подарков
           </div>
           <div className="grid grid-cols-3 gap-2">
-            <button
+            <Button
               type="button"
+              variant={preset === "bday" ? "secondary" : "ghost"}
               onClick={() => setPreset("bday")}
               className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border ${
                 preset === "bday"
@@ -90,9 +93,10 @@ export function ShareWishlistModal({ isOpen, onClose, wishlist }: ShareWishlistM
               }`}
             >
               🎂 День рождения
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={preset === "newyear" ? "secondary" : "ghost"}
               onClick={() => setPreset("newyear")}
               className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border ${
                 preset === "newyear"
@@ -101,9 +105,10 @@ export function ShareWishlistModal({ isOpen, onClose, wishlist }: ShareWishlistM
               }`}
             >
               🎄 Новый год
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={preset === "general" ? "secondary" : "ghost"}
               onClick={() => setPreset("general")}
               className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border ${
                 preset === "general"
@@ -112,7 +117,7 @@ export function ShareWishlistModal({ isOpen, onClose, wishlist }: ShareWishlistM
               }`}
             >
               🎁 Просто так
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -158,22 +163,26 @@ export function ShareWishlistModal({ isOpen, onClose, wishlist }: ShareWishlistM
         {/* Action Button: Copy link or Native Share */}
         <div className="flex gap-2">
           {typeof navigator !== "undefined" && "share" in navigator && (
-            <button
+            <Button
               type="button"
+              variant="secondary"
               onClick={handleNativeShare}
-              className="flex-1 py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all"
+              className="flex-1 py-3 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1"
             >
-              Поделиться 📲
-            </button>
+              <ShareIcon className="w-3.5 h-3.5" />
+              <span>Поделиться</span>
+            </Button>
           )}
 
-          <button
+          <Button
             type="button"
+            variant="default"
             onClick={handleCopy}
-            className="flex-1 py-3 bg-brand-500 hover:bg-brand-400 text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-98"
+            className="flex-1 py-3 bg-brand-500 hover:bg-brand-400 text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-98 flex items-center justify-center gap-1"
           >
-            {copied ? "Ссылка скопирована! ✅" : "Скопировать ссылку 📋"}
-          </button>
+            <CopyIcon className="w-3.5 h-3.5" />
+            <span>{copied ? "Скопировано! ✅" : "Скопировать ссылку"}</span>
+          </Button>
         </div>
       </div>
     </div>

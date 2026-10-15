@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto"
 import { Injectable, Logger } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
-import axios from "axios"
+import { type BotClient, createBotClient, type InlineKeyboardMarkup } from "@tgwrapper/core"
 import { PrismaService } from "../../prisma/prisma.service"
 
 @Injectable()
@@ -9,6 +9,7 @@ export class TelegramService {
   private readonly logger = new Logger(TelegramService.name)
   private readonly botToken: string | undefined
   private readonly botUsername: string
+  private readonly botClient: BotClient | null = null
 
   constructor(
     private readonly configService: ConfigService,
@@ -16,6 +17,9 @@ export class TelegramService {
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN")
     this.botUsername = this.configService.get<string>("TELEGRAM_BOT_USERNAME") || "WishTrackerBot"
+    if (this.botToken) {
+      this.botClient = createBotClient({ token: this.botToken })
+    }
   }
 
   getBotUsername(): string {
@@ -44,22 +48,21 @@ export class TelegramService {
     })
   }
 
-  async sendMessage(chatId: string, text: string): Promise<boolean> {
-    if (!this.botToken) {
+  async sendMessage(
+    chatId: string,
+    text: string,
+    options?: { reply_markup?: InlineKeyboardMarkup },
+  ): Promise<boolean> {
+    if (!this.botClient) {
       this.logger.debug(`[DEV/MOCK] Telegram to ${chatId}: ${text}`)
       return true
     }
 
     try {
-      await axios.post(
-        `https://api.telegram.org/bot${this.botToken}/sendMessage`,
-        {
-          chat_id: chatId,
-          text,
-          parse_mode: "HTML",
-        },
-        { timeout: 5000 },
-      )
+      await this.botClient.sendMessage(chatId, text, {
+        parse_mode: "HTML",
+        ...(options?.reply_markup ? { reply_markup: options.reply_markup } : {}),
+      })
       return true
     } catch (error) {
       this.logger.warn(`Failed to send Telegram message to ${chatId}: ${error}`)
@@ -123,7 +126,17 @@ export class TelegramService {
     if (!user?.telegramChatId) return
 
     const message = `🎁 <b>Подарок забронирован!</b>\n\nТовар: <i>«${itemTitle}»</i>\nКто забронировал: <b>${reserverName}</b>\n\nНе забудьте заглянуть в свой вишлист!`
-    await this.sendMessage(user.telegramChatId, message)
+    const replyMarkup: InlineKeyboardMarkup = {
+      inline_keyboard: [
+        [
+          {
+            text: "🎁 Открыть подарок в боте",
+            url: `https://t.me/${this.botUsername}`,
+          },
+        ],
+      ],
+    }
+    await this.sendMessage(user.telegramChatId, message, { reply_markup: replyMarkup })
   }
 
   async notifyPriceDrop(
@@ -142,7 +155,17 @@ export class TelegramService {
     if (!user?.telegramChatId) return
 
     const message = `📉 <b>Цена снизилась!</b>\n\nТовар: <i>«${itemTitle}»</i>\nСтарая цена: <s>${oldPrice} ${currency}</s>\nНовая цена: <b>${newPrice} ${currency}</b>\n\n🔗 <a href="${itemUrl}">Перейти к товару</a>`
-    await this.sendMessage(user.telegramChatId, message)
+    const replyMarkup: InlineKeyboardMarkup = {
+      inline_keyboard: [
+        [
+          {
+            text: "🛒 Перейти к покупке",
+            url: itemUrl,
+          },
+        ],
+      ],
+    }
+    await this.sendMessage(user.telegramChatId, message, { reply_markup: replyMarkup })
   }
 
   async notifyGroupGiftContribution(
@@ -160,6 +183,16 @@ export class TelegramService {
     if (!user?.telegramChatId) return
 
     const message = `🤝 <b>Новый взнос на совместный подарок!</b>\n\nТовар: <i>«${itemTitle}»</i>\nУчастник: <b>${contributorName}</b>\nСумма: <b>+${amount} ${currency}</b>`
-    await this.sendMessage(user.telegramChatId, message)
+    const replyMarkup: InlineKeyboardMarkup = {
+      inline_keyboard: [
+        [
+          {
+            text: "🤝 Сброситься на подарок",
+            url: `https://t.me/${this.botUsername}`,
+          },
+        ],
+      ],
+    }
+    await this.sendMessage(user.telegramChatId, message, { reply_markup: replyMarkup })
   }
 }

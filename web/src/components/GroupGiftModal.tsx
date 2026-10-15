@@ -1,3 +1,4 @@
+import { Button, Progress } from "@ui-construction-library/core"
 import { useState } from "react"
 import { useAddGroupGiftContribution, useGroupGiftContributions } from "@/hooks/api"
 import { useI18n } from "@/i18n/context"
@@ -93,12 +94,11 @@ export function GroupGiftModal({ isOpen, onClose, item, currentUser }: GroupGift
 
             {targetAmount > 0 && (
               <div>
-                <div className="w-full bg-zinc-800 h-2.5 rounded-full overflow-hidden">
-                  <div
-                    className="bg-brand-500 h-full rounded-full transition-all duration-500 shadow-sm"
-                    style={{ width: `${percent}%` }}
-                  />
-                </div>
+                <Progress
+                  value={percent}
+                  label={`${percent}% выполнено`}
+                  className="w-full bg-zinc-800 h-2.5 rounded-full overflow-hidden"
+                />
                 <div className="flex justify-between text-[11px] font-bold text-zinc-400 mt-1">
                   <span>{percent}% выполнено</span>
                   <span>
@@ -176,14 +176,16 @@ export function GroupGiftModal({ isOpen, onClose, item, currentUser }: GroupGift
               {/* Quick Add Chips */}
               <div className="flex gap-2 mt-2">
                 {[500, 1000, 2000, 5000].map((val) => (
-                  <button
+                  <Button
                     key={val}
                     type="button"
+                    variant="secondary"
+                    size="sm"
                     onClick={() => handleQuickAdd(val)}
-                    className="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold rounded-lg transition-colors"
+                    className="px-2.5 py-1 text-xs font-semibold rounded-lg transition-colors"
                   >
                     +{val}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -205,13 +207,14 @@ export function GroupGiftModal({ isOpen, onClose, item, currentUser }: GroupGift
               />
             </div>
 
-            <button
+            <Button
               type="submit"
+              variant="default"
               disabled={addContribution.isPending || !amount || !name.trim()}
-              className="w-full py-3 bg-brand-500 hover:bg-brand-400 disabled:opacity-50 text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-98"
+              className="w-full py-3 bg-brand-500 hover:bg-brand-400 text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-98"
             >
               {addContribution.isPending ? "Сохраняем..." : "Зафиксировать взнос ✨"}
-            </button>
+            </Button>
           </form>
 
           {/* List of Contributors */}

@@ -91,4 +91,52 @@ describe("TelegramService", () => {
       },
     })
   })
+
+  it("sends notifications with inline buttons when user has telegramChatId", async () => {
+    mockPrisma.user.findUnique.mockResolvedValue({
+      telegramChatId: "12345678",
+    })
+
+    const sendSpy = jest.spyOn(service, "sendMessage").mockResolvedValue(true)
+
+    await service.notifyReservation("user-1", "MacBook Pro", "Bob")
+    expect(sendSpy).toHaveBeenCalledWith(
+      "12345678",
+      expect.stringContaining("MacBook Pro"),
+      expect.objectContaining({
+        reply_markup: expect.objectContaining({
+          inline_keyboard: expect.any(Array),
+        }),
+      }),
+    )
+
+    await service.notifyPriceDrop(
+      "user-1",
+      "MacBook Pro",
+      2000,
+      1800,
+      "USD",
+      "https://example.com/macbook",
+    )
+    expect(sendSpy).toHaveBeenCalledWith(
+      "12345678",
+      expect.stringContaining("1800 USD"),
+      expect.objectContaining({
+        reply_markup: expect.objectContaining({
+          inline_keyboard: expect.any(Array),
+        }),
+      }),
+    )
+
+    await service.notifyGroupGiftContribution("user-1", "MacBook Pro", "Charlie", 100, "USD")
+    expect(sendSpy).toHaveBeenCalledWith(
+      "12345678",
+      expect.stringContaining("+100 USD"),
+      expect.objectContaining({
+        reply_markup: expect.objectContaining({
+          inline_keyboard: expect.any(Array),
+        }),
+      }),
+    )
+  })
 })
