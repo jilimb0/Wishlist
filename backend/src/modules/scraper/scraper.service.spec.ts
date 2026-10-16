@@ -1,7 +1,7 @@
 import { BadRequestException } from "@nestjs/common"
 import { Test, type TestingModule } from "@nestjs/testing"
 import axios from "axios"
-import { ScraperService } from "./scraper.service"
+import { resetScraperState, ScraperService } from "./scraper.service"
 
 jest.mock("axios")
 
@@ -9,6 +9,7 @@ describe("ScraperService", () => {
   let service: ScraperService
 
   beforeEach(async () => {
+    resetScraperState()
     const module: TestingModule = await Test.createTestingModule({
       providers: [ScraperService],
     }).compile()
@@ -104,5 +105,42 @@ describe("ScraperService", () => {
     expect(result.price).toBe(8990)
     expect(result.currency).toBe("RUB")
     expect(result.imageUrl).toContain("12345678")
+  })
+
+  it("serves repeated requests from in-memory cache without hitting network again", async () => {
+    const mockHtml = `
+      <html>
+        <head><title>Cached Headphones</title></head>
+        <body><span id="productTitle">Cached Headphones</span></body>
+      </html>
+    `
+    ;(axios.get as jest.Mock).mockResolvedValueOnce({ data: mockHtml })
+
+    const url = "https://www.amazon.com/dp/B000000001"
+    const firstResult = await service.scrape(url)
+    expect(firstResult.title).toBe("Cached Headphones")
+    expect(axios.get).toHaveBeenCalledTimes(1)
+
+    // Second call for the same URL must come from cache
+    const secondResult = await service.scrape(url)
+    expect(secondResult).toEqual(firstResult)
+    expect(axios.get).toHaveBeenCalledTimes(1) // Still 1!
+  })
+
+  it("trips Circuit Breaker after 3 consecutive failures and blocks further requests", async () => {
+    ;(axios.get as jest.Mock).mockRejectedValue(new Error("503 Service Unavailable"))
+
+    const failUrl1 = "https://www.broken-shop.com/item1"
+    const failUrl2 = "https://www.broken-shop.com/item2"
+    const failUrl3 = "https://www.broken-shop.com/item3"
+    const failUrl4 = "https://www.broken-shop.com/item4"
+
+    await expect(service.scrape(failUrl1)).rejects.toThrow("503 Service Unavailable")
+    await expect(service.scrape(failUrl2)).rejects.toThrow("503 Service Unavailable")
+    await expect(service.scrape(failUrl3)).rejects.toThrow("503 Service Unavailable")
+
+    // 4th call should immediately fail with Circuit Breaker OPEN without touching axios
+    await expect(service.scrape(failUrl4)).rejects.toThrow(/Circuit Breaker OPEN/)
+    expect(axios.get).toHaveBeenCalledTimes(3)
   })
 })

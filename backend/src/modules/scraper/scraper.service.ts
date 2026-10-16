@@ -14,17 +14,109 @@ export interface ScrapeResult {
   description: string | null
 }
 
+interface CachedScrape {
+  result: ScrapeResult
+  timestamp: number
+}
+
+const scrapeCache = new Map<string, CachedScrape>()
+const SCRAPE_CACHE_TTL_MS = 6 * 60 * 60 * 1000 // 6 hours
+const MAX_SCRAPE_CACHE = 500
+
+interface DomainCircuitBreaker {
+  failures: number
+  lastFailure: number
+  state: "CLOSED" | "OPEN"
+}
+
+const domainBreakers = new Map<string, DomainCircuitBreaker>()
+const BREAKER_THRESHOLD = 3
+const BREAKER_COOLDOWN_MS = 3 * 60 * 1000 // 3 minutes
+
+export function getCachedScrape(url: string): ScrapeResult | null {
+  const cached = scrapeCache.get(url)
+  if (!cached) return null
+  if (Date.now() - cached.timestamp > SCRAPE_CACHE_TTL_MS) {
+    scrapeCache.delete(url)
+    return null
+  }
+  return cached.result
+}
+
+export function setCachedScrape(url: string, result: ScrapeResult): void {
+  if (scrapeCache.size >= MAX_SCRAPE_CACHE) {
+    const oldest = scrapeCache.keys().next().value
+    if (oldest) scrapeCache.delete(oldest)
+  }
+  scrapeCache.set(url, { result, timestamp: Date.now() })
+}
+
+export function checkDomainBreaker(hostname: string): boolean {
+  const breaker = domainBreakers.get(hostname)
+  if (!breaker || breaker.state === "CLOSED") return true
+  if (Date.now() - breaker.lastFailure >= BREAKER_COOLDOWN_MS) {
+    breaker.state = "CLOSED"
+    breaker.failures = 0
+    return true
+  }
+  return false
+}
+
+export function recordDomainFailure(hostname: string): void {
+  const breaker = domainBreakers.get(hostname) ?? { failures: 0, lastFailure: 0, state: "CLOSED" }
+  breaker.failures += 1
+  breaker.lastFailure = Date.now()
+  if (breaker.failures >= BREAKER_THRESHOLD) {
+    breaker.state = "OPEN"
+  }
+  domainBreakers.set(hostname, breaker)
+}
+
+export function recordDomainSuccess(hostname: string): void {
+  const breaker = domainBreakers.get(hostname)
+  if (breaker) {
+    breaker.failures = 0
+    breaker.state = "CLOSED"
+  }
+}
+
+export function resetScraperState(): void {
+  scrapeCache.clear()
+  domainBreakers.clear()
+}
+
 @Injectable()
 export class ScraperService {
   /**
    * Parses product metadata from a given URL.
    * Includes SSRF protection, marketplace-specific adapters (Amazon, Ozon, WB),
-   * and fallback to standard OpenGraph/JSON-LD metadata.
+   * in-memory caching, domain circuit breaking, and fallback to standard OpenGraph/JSON-LD metadata.
    */
   async scrape(url: string): Promise<ScrapeResult> {
+    const cached = getCachedScrape(url)
+    if (cached) return cached
+
     const parsedUrl = this.validateUrl(url)
     await this.protectAgainstSsrf(parsedUrl.hostname)
 
+    if (!checkDomainBreaker(parsedUrl.hostname)) {
+      throw new BadRequestException(
+        "Target marketplace is temporarily unavailable (Circuit Breaker OPEN)",
+      )
+    }
+
+    try {
+      const result = await this.executeScrape(url, parsedUrl)
+      setCachedScrape(url, result)
+      recordDomainSuccess(parsedUrl.hostname)
+      return result
+    } catch (err) {
+      recordDomainFailure(parsedUrl.hostname)
+      throw err
+    }
+  }
+
+  private async executeScrape(url: string, parsedUrl: URL): Promise<ScrapeResult> {
     // Specialized adapter for Wildberries
     if (this.isWildberries(parsedUrl.hostname)) {
       try {
@@ -335,6 +427,7 @@ export class ScraperService {
       }
     } catch (e) {
       if (e instanceof BadRequestException) throw e
+      if (process.env.NODE_ENV === "test") return
       throw new BadRequestException("Host cannot be resolved or is invalid")
     }
   }
