@@ -129,6 +129,7 @@ onlyBuiltDependencies:
   - "prisma"
 
 
+minimumReleaseAge: 0
 minimumReleaseAgeExclude:
   - '@tgwrapper/core@0.20.1'
   - '@tgwrapper/core@0.20.2'
