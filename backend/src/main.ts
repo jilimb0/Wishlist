@@ -1,3 +1,4 @@
+import crypto from "node:crypto"
 import { join } from "node:path"
 import { ValidationPipe } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
@@ -22,6 +23,18 @@ async function bootstrap() {
   })
 
   app.useLogger(PinoLogger.create("WishTracker"))
+
+  app.use((req: any, res: any, next: () => void) => {
+    const rawCorrelationId = req.headers["x-correlation-id"] || req.headers["x-request-id"]
+    const correlationId = Array.isArray(rawCorrelationId)
+      ? rawCorrelationId[0]
+      : rawCorrelationId || crypto.randomUUID()
+    res.setHeader("X-Correlation-ID", correlationId)
+    res.setHeader("X-Content-Type-Options", "nosniff")
+    res.setHeader("X-Frame-Options", "DENY")
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin")
+    next()
+  })
 
   app.use(helmet())
 
