@@ -1,4 +1,4 @@
-# План внедрения System Design и архитектурной устойчивости: Wishlist
+# Отчет о внедрении System Design и архитектурной устойчивости: Wishlist
 
 > **Статус:** [x] Имплементировано (100%)  
 > **Область:** Marketplace Domain Circuit Breakers (Ozon/Wildberries/Amazon), Product Card TTL 6h Caching, Timeout Supervision  
