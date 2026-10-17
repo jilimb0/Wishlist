@@ -52,8 +52,8 @@ function scrapePage() {
             break
           }
         }
-      } catch (_e) {
-        // ignore
+      } catch (err) {
+        console.debug("[WishlistExtension] Failed to parse JSON-LD:", err)
       }
     }
   }

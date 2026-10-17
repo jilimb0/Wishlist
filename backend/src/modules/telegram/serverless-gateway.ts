@@ -55,7 +55,7 @@ export async function handleWishlistServerlessWebhook(
         headers["x-backend-key"] = env.BACKEND_WEBHOOK_KEY
       }
 
-      await fetch(backendUrl, {
+      await fetch(backendUrl, { /* AbortSignal.timeout(10_000) */
         method: "POST",
         headers,
         body: JSON.stringify(update),

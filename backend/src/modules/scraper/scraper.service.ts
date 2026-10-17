@@ -3,6 +3,7 @@ import { isIP } from "node:net"
 import { promisify } from "node:util"
 import { BadRequestException, Injectable } from "@nestjs/common"
 import axios from "axios"
+import { scrapeWildberriesProduct } from "./wildberries.scraper"
 
 const lookup = promisify(dns.lookup)
 
@@ -122,7 +123,7 @@ export class ScraperService {
       try {
         const wbResult = await this.scrapeWildberries(url, parsedUrl)
         if (wbResult) return wbResult
-      } catch {
+      } catch (err) { console.error("[UDPA-Handled]", err);
         // Fall back to standard scraper on error
       }
     }
@@ -236,60 +237,7 @@ export class ScraperService {
   }
 
   private async scrapeWildberries(_rawUrl: string, parsedUrl: URL): Promise<ScrapeResult | null> {
-    const idMatch = parsedUrl.pathname.match(/\/catalog\/(\d+)/)
-    if (!idMatch) return null
-
-    const productId = idMatch[1]
-    const apiUrl = `https://card.wb.ru/cards/v1/detail?appType=1&curr=rub&dest=-1257786&spp=30&nm=${productId}`
-
-    const res = await axios.get(apiUrl, {
-      timeout: 5000,
-      headers: {
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15",
-      },
-    })
-
-    const product = res.data?.data?.products?.[0]
-    if (!product) return null
-
-    const title =
-      product.name || product.brand
-        ? `${product.brand || ""} ${product.name || ""}`.trim()
-        : `Wildberries Товар ${productId}`
-    const priceKopecks = product.salePriceU || product.priceU
-    const price = priceKopecks ? priceKopecks / 100 : null
-
-    // Determine Wildberries basket host for images
-    const idNum = Number.parseInt(productId, 10)
-    const vol = Math.floor(idNum / 100000)
-    const part = Math.floor(idNum / 1000)
-    let basket = "01"
-    if (vol >= 0 && vol <= 143) basket = "01"
-    else if (vol >= 144 && vol <= 287) basket = "02"
-    else if (vol >= 288 && vol <= 431) basket = "03"
-    else if (vol >= 432 && vol <= 719) basket = "04"
-    else if (vol >= 720 && vol <= 1007) basket = "05"
-    else if (vol >= 1008 && vol <= 1061) basket = "06"
-    else if (vol >= 1062 && vol <= 1115) basket = "07"
-    else if (vol >= 1116 && vol <= 1169) basket = "08"
-    else if (vol >= 1170 && vol <= 1313) basket = "09"
-    else if (vol >= 1314 && vol <= 1601) basket = "10"
-    else if (vol >= 1602 && vol <= 1655) basket = "11"
-    else if (vol >= 1656 && vol <= 1919) basket = "12"
-    else if (vol >= 1920 && vol <= 2045) basket = "13"
-    else if (vol >= 2046 && vol <= 2189) basket = "14"
-    else if (vol >= 2190 && vol <= 2405) basket = "15"
-    else basket = "16"
-
-    const imageUrl = `https://basket-${basket}.wbbasket.ru/vol${vol}/part${part}/${productId}/images/big/1.webp`
-
-    return {
-      title,
-      price,
-      currency: "RUB",
-      imageUrl,
-      description: product.description || `Артикул WB: ${productId}`,
-    }
+    return scrapeWildberriesProduct(parsedUrl)
   }
 
   private parseAmazonHtml(html: string, url: string): ScrapeResult | null {
@@ -339,8 +287,8 @@ export class ScraperService {
         const parsed = JSON.parse(dynamicImageMatch[1].replace(/&quot;/g, '"'))
         const firstKey = Object.keys(parsed)[0]
         if (firstKey) imageUrl = firstKey
-      } catch {
-        // ignore
+      } catch (err) {
+        console.debug("[Scraper] dynamic-image JSON parse error:", err)
       }
     }
 
@@ -517,13 +465,13 @@ export class ScraperService {
               return { price, currency }
             }
           }
-        } catch (_e) {
-          // Continue to next script tag
+        } catch (err) {
+          console.debug("[Scraper] ld+json script parse error:", err)
         }
         match = regex.exec(html)
       }
-    } catch (_e) {
-      // Ignore
+    } catch (err) {
+      console.debug("[Scraper] ld+json block regex error:", err)
     }
     return null
   }
@@ -531,7 +479,8 @@ export class ScraperService {
   private resolveUrl(base: string, relative: string): string {
     try {
       return new URL(relative, base).href
-    } catch (_e) {
+    } catch (err) {
+      console.debug("[Scraper] URL resolve fallback:", err)
       return relative
     }
   }

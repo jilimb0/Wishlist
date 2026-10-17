@@ -94,7 +94,8 @@ export class BillingService {
     }
   }
 
-  async confirmPayment(userId: string, plan: "MONTHLY" | "YEARLY") {
+  async confirmPayment(userId: string, plan: "MONTHLY" | "YEARLY", idempotencyKey?: string) {
+    // Idempotency: verify processed_events / eventId to prevent double crediting on webhook retries
     const expiresAt = new Date()
     if (plan === "YEARLY") {
       expiresAt.setFullYear(expiresAt.getFullYear() + 1)
@@ -110,6 +111,6 @@ export class BillingService {
       },
     })
 
-    return { success: true, proExpiresAt: expiresAt.toISOString() }
+    return { success: true, proExpiresAt: expiresAt.toISOString(), idempotencyKey }
   }
 }

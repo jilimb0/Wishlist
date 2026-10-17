@@ -27,7 +27,8 @@ export function detectMerchant(rawUrl: string): AffiliateMerchant {
       return "WILDBERRIES"
     }
     return "OTHER"
-  } catch {
+  } catch (err) {
+    console.debug("[MerchantDetection] Invalid URL parse:", err)
     return "OTHER"
   }
 }
@@ -57,7 +58,8 @@ export function generateAffiliateUrl(
     }
 
     return rawUrl
-  } catch {
+  } catch (err) {
+    console.debug("[AffiliateUrl] URL transform fallback:", err)
     return rawUrl
   }
 }

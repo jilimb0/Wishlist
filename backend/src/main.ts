@@ -24,7 +24,7 @@ async function bootstrap() {
 
   app.useLogger(PinoLogger.create("WishTracker"))
 
-  app.use((req: any, res: any, next: () => void) => {
+  app.use((req: unknown, res: unknown, next: () => void) => {
     const rawCorrelationId = req.headers["x-correlation-id"] || req.headers["x-request-id"]
     const correlationId = Array.isArray(rawCorrelationId)
       ? rawCorrelationId[0]

@@ -30,8 +30,8 @@ export function ShareWishlistModal({ isOpen, onClose, wishlist }: ShareWishlistM
       await navigator.clipboard.writeText(`${currentText}\n${shareUrl}`)
       setCopied(true)
       setTimeout(() => setCopied(false), 2500)
-    } catch {
-      // fallback
+    } catch (err) {
+      console.warn("Clipboard copy failed:", err)
     }
   }
 
@@ -43,8 +43,8 @@ export function ShareWishlistModal({ isOpen, onClose, wishlist }: ShareWishlistM
           text: currentText,
           url: shareUrl,
         })
-      } catch {
-        // cancelled
+      } catch (err) {
+        console.debug("Native share dismissed or cancelled:", err)
       }
     } else {
       handleCopy()

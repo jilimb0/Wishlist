@@ -37,6 +37,11 @@ export class PriceTrackingService {
 
     this.logger.log(`Price tracking: checking ${items.length} items`)
 
+    const priceHistories: Array<{ itemId: string; price: number; currency: string }> = []
+    const itemUpdates: Array<{ id: string; currentPrice: number; currency: string }> = []
+    const notifications: Array<{ userId: string; type: NotificationType; title: string; message: string; relatedItemId: string }> = []
+    const telegramAlerts: Array<{ userId: string; title: string; previous: number; price: number; currency: string; url?: string | null }> = []
+
     for (const item of items) {
       if (!item.url) continue
 
@@ -47,17 +52,16 @@ export class PriceTrackingService {
         const previous = item.currentPrice ? Number(item.currentPrice) : null
         const currency = scraped.currency || item.currency
 
-        await this.prisma.priceHistory.create({
-          data: {
-            itemId: item.id,
-            price: scraped.price,
-            currency,
-          },
+        priceHistories.push({
+          itemId: item.id,
+          price: scraped.price,
+          currency,
         })
 
-        await this.prisma.item.update({
-          where: { id: item.id },
-          data: { currentPrice: scraped.price, currency },
+        itemUpdates.push({
+          id: item.id,
+          currentPrice: scraped.price,
+          currency,
         })
 
         if (previous != null && scraped.price < previous) {
@@ -67,31 +71,57 @@ export class PriceTrackingService {
             if (sub.notifyNewItems) notifyUserIds.add(sub.userId)
           }
 
-          await this.prisma.notification.createMany({
-            data: [...notifyUserIds].map((userId) => ({
+          for (const userId of notifyUserIds) {
+            notifications.push({
               userId,
               type: NotificationType.PRICE_DROP,
               title: "Price drop",
               message: `"${item.title}" dropped to ${scraped.price} ${currency} (was ${previous} ${currency}, −${drop})`,
               relatedItemId: item.id,
-            })),
-          })
-
-          // Telegram notifications for price drops
-          for (const userId of notifyUserIds) {
-            await this.telegramService.notifyPriceDrop(
+            })
+            telegramAlerts.push({
               userId,
-              item.title,
+              title: item.title,
               previous,
-              scraped.price,
+              price: scraped.price,
               currency,
-              item.url,
-            )
+              url: item.url,
+            })
           }
         }
       } catch (error) {
         this.logger.warn(`Price track failed for item ${item.id}: ${(error as Error).message}`)
       }
+    }
+
+    if (priceHistories.length > 0) {
+      await this.prisma.priceHistory.createMany({ data: priceHistories })
+    }
+
+    if (itemUpdates.length > 0) {
+      await this.prisma.$transaction(
+        itemUpdates.map((u) =>
+          this.prisma.item.update({
+            where: { id: u.id },
+            data: { currentPrice: u.currentPrice, currency: u.currency },
+          }),
+        ),
+      )
+    }
+
+    if (notifications.length > 0) {
+      await this.prisma.notification.createMany({ data: notifications })
+    }
+
+    for (const alert of telegramAlerts) {
+      await this.telegramService.notifyPriceDrop(
+        alert.userId,
+        alert.title,
+        alert.previous,
+        alert.price,
+        alert.currency,
+        alert.url,
+      )
     }
   }
 }

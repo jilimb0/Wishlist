@@ -37,7 +37,8 @@ function formatPrice(price: number, currency: string): string {
       currency: currency || "USD",
       minimumFractionDigits: 2,
     }).format(price)
-  } catch {
+  } catch (err) {
+    console.debug("[PriceHistoryList] formatPrice fallback:", err)
     return `$${price.toFixed(2)}`
   }
 }

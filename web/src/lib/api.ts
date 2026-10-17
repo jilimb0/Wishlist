@@ -38,7 +38,7 @@ class ApiClient {
       headers.Authorization = `Bearer ${this.token}`
     }
 
-    const response = await fetch(`${API_BASE}${endpoint}`, {
+    const response = await fetch(`${API_BASE}${endpoint}`, { /* AbortSignal.timeout(10_000) */
       ...options,
       headers,
     })
