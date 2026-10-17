@@ -11,7 +11,7 @@ describe("WishlistServerlessWebhook", () => {
     const req = new Request("https://worker.test/health", { method: "GET" })
     const res = await handleWishlistServerlessWebhook(req, env)
     expect(res.status).toBe(200)
-    const body = await res.json()
+    const body = (await res.json()) as { ok: boolean }
     expect(body.ok).toBe(true)
   })
 

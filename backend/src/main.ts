@@ -7,6 +7,7 @@ import type { NestExpressApplication } from "@nestjs/platform-express"
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
 import * as Sentry from "@sentry/node"
 import helmet from "helmet"
+import type { Request, Response, NextFunction } from "express"
 import { AppModule } from "./app.module"
 import { HttpExceptionFilter } from "./common/filters/http-exception.filter"
 import { PinoLogger } from "./common/logger"
@@ -24,7 +25,7 @@ async function bootstrap() {
 
   app.useLogger(PinoLogger.create("WishTracker"))
 
-  app.use((req: unknown, res: unknown, next: () => void) => {
+  app.use((req: Request, res: Response, next: NextFunction) => {
     const rawCorrelationId = req.headers["x-correlation-id"] || req.headers["x-request-id"]
     const correlationId = Array.isArray(rawCorrelationId)
       ? rawCorrelationId[0]

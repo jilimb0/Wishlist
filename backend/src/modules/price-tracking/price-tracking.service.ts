@@ -120,7 +120,7 @@ export class PriceTrackingService {
         alert.previous,
         alert.price,
         alert.currency,
-        alert.url,
+        alert.url || "",
       )
     }
   }
