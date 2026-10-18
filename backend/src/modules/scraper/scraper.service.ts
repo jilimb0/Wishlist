@@ -123,7 +123,8 @@ export class ScraperService {
       try {
         const wbResult = await this.scrapeWildberries(url, parsedUrl)
         if (wbResult) return wbResult
-      } catch (err) { console.error("[UDPA-Handled]", err);
+      } catch (err) {
+        console.error("[UDPA-Handled]", err)
         // Fall back to standard scraper on error
       }
     }

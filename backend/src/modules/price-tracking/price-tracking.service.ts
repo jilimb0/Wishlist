@@ -39,8 +39,21 @@ export class PriceTrackingService {
 
     const priceHistories: Array<{ itemId: string; price: number; currency: string }> = []
     const itemUpdates: Array<{ id: string; currentPrice: number; currency: string }> = []
-    const notifications: Array<{ userId: string; type: NotificationType; title: string; message: string; relatedItemId: string }> = []
-    const telegramAlerts: Array<{ userId: string; title: string; previous: number; price: number; currency: string; url?: string | null }> = []
+    const notifications: Array<{
+      userId: string
+      type: NotificationType
+      title: string
+      message: string
+      relatedItemId: string
+    }> = []
+    const telegramAlerts: Array<{
+      userId: string
+      title: string
+      previous: number
+      price: number
+      currency: string
+      url?: string | null
+    }> = []
 
     for (const item of items) {
       if (!item.url) continue

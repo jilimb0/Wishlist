@@ -1,6 +1,5 @@
-import { Test, type TestingModule } from "@nestjs/testing"
 import { ConfigService } from "@nestjs/config"
-import { NotificationType } from "@prisma/client"
+import { Test, type TestingModule } from "@nestjs/testing"
 import { PrismaService } from "../../prisma/prisma.service"
 import { ScraperService } from "../scraper/scraper.service"
 import { TelegramService } from "../telegram/telegram.service"

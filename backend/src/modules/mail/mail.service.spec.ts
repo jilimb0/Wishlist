@@ -1,5 +1,5 @@
-import { Test, type TestingModule } from "@nestjs/testing"
 import { ConfigService } from "@nestjs/config"
+import { Test, type TestingModule } from "@nestjs/testing"
 import { MailService } from "./mail.service"
 
 describe("MailService", () => {
@@ -17,10 +17,7 @@ describe("MailService", () => {
     })
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        MailService,
-        { provide: ConfigService, useValue: config },
-      ],
+      providers: [MailService, { provide: ConfigService, useValue: config }],
     }).compile()
     service = module.get(MailService)
   })

@@ -1,6 +1,5 @@
 import { ConflictException, ForbiddenException, NotFoundException } from "@nestjs/common"
 import { Test, type TestingModule } from "@nestjs/testing"
-import { ReservationStatus } from "@prisma/client"
 import { PrismaService } from "../../prisma/prisma.service"
 import { TelegramService } from "../telegram/telegram.service"
 import { ReservationsService } from "./reservations.service"
@@ -76,9 +75,9 @@ describe("ReservationsService", () => {
 
     it("throws ConflictException on Prisma unique constraint error", async () => {
       prisma.$transaction.mockRejectedValue({ code: "P2002" })
-      await expect(
-        service.reserve("item-1", "user-2", { isAnonymous: false }),
-      ).rejects.toThrow(ConflictException)
+      await expect(service.reserve("item-1", "user-2", { isAnonymous: false })).rejects.toThrow(
+        ConflictException,
+      )
     })
   })
 

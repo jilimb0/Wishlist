@@ -180,26 +180,27 @@ export class FriendsService {
     })
 
     // Batch query friendship status to avoid N+1 queries
-    const userIds = users.map((u) => u.id);
-    const friendships = userIds.length > 0
-      ? await this.prisma.friendship.findMany({
-          where: {
-            OR: [
-              { userId: currentUserId, friendId: { in: userIds } },
-              { userId: { in: userIds }, friendId: currentUserId },
-            ],
-          },
-        })
-      : [];
+    const userIds = users.map((u) => u.id)
+    const friendships =
+      userIds.length > 0
+        ? await this.prisma.friendship.findMany({
+            where: {
+              OR: [
+                { userId: currentUserId, friendId: { in: userIds } },
+                { userId: { in: userIds }, friendId: currentUserId },
+              ],
+            },
+          })
+        : []
 
-    const friendshipMap = new Map<string, (typeof friendships)[0]>();
+    const friendshipMap = new Map<string, (typeof friendships)[0]>()
     for (const f of friendships) {
-      const otherId = f.userId === currentUserId ? f.friendId : f.userId;
-      friendshipMap.set(otherId, f);
+      const otherId = f.userId === currentUserId ? f.friendId : f.userId
+      friendshipMap.set(otherId, f)
     }
 
     return users.map((user) => {
-      const friendship = friendshipMap.get(user.id);
+      const friendship = friendshipMap.get(user.id)
       return {
         ...user,
         friendship: friendship
@@ -210,8 +211,8 @@ export class FriendsService {
               updatedAt: friendship.updatedAt,
             }
           : null,
-      };
-    });
+      }
+    })
   }
 
   async removeFriendship(userId: string, friendshipId: string) {

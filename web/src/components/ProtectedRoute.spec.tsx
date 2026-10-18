@@ -1,6 +1,5 @@
 import { render, screen } from "@testing-library/react"
-import React from "react"
-import { MemoryRouter, Route, Routes } from "react-router-dom"
+import { MemoryRouter } from "react-router-dom"
 import { describe, expect, it, vi } from "vitest"
 import { ProtectedRoute } from "./ProtectedRoute"
 

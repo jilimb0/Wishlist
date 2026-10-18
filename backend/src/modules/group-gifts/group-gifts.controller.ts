@@ -43,7 +43,8 @@ export class GroupGiftsController {
         const token = authHeader.split(" ")[1]
         const payload = this.jwtService.decode(token) as { sub?: string; id?: string } | null
         userId = payload?.sub || payload?.id
-      } catch (err) { console.error("[UDPA-Handled]", err);
+      } catch (err) {
+        console.error("[UDPA-Handled]", err)
         // guest contribution
       }
     }
